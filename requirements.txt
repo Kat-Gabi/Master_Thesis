@@ -1,2 +1,6 @@
-torch >= 2.1.0
-python >= 3.11
+torch >= 2.1.2
+numpy >= 1.19
+
+# data
+opencv-python
+
