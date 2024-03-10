@@ -4,6 +4,7 @@ numpy >= 1.19
 
 # data
 opencv-python
+retina-face
 
 #FG_NET
 deeplake
