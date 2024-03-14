@@ -1,5 +1,5 @@
 torch >= 2.1.2
-torchvision
+torchvision >= 0.9.0 #AdaFace req. 
 numpy >= 1.19
 
 # data
@@ -9,3 +9,5 @@ retina-face
 #FG_NET
 deeplake
 flask
+
+# AdaFace
