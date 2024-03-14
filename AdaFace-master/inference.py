@@ -6,10 +6,10 @@ import numpy as np
 
 
 adaface_models = {
-    'ir_50':"pretrained/adaface_ir50_ms1mv2.ckpt",
+    'ir_50': "AdaFace-master/pretrained/adaface_ir18_casia.ckpt", #"pretrained/adaface_ir50_ms1mv2.ckpt",
 }
 
-def load_pretrained_model(architecture='ir_50'):
+def load_pretrained_model(architecture='ir_18'):
     # load model and pretrained statedict
     assert architecture in adaface_models.keys()
     model = net.build_model(architecture)
@@ -27,7 +27,7 @@ def to_input(pil_rgb_image):
 
 if __name__ == '__main__':
 
-    model = load_pretrained_model('ir_50')
+    model = load_pretrained_model('ir_18')
     feature, norm = model(torch.randn(2,3,112,112))
 
     test_image_path = 'face_alignment/test_images'
