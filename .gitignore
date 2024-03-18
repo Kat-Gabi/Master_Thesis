@@ -176,3 +176,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 models/adaface_ir18_casia.ckpt
+
+
+
+# Data complete sets
+data/raw_full/
+
