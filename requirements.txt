@@ -12,3 +12,7 @@ deeplake
 flask
 
 # AdaFace
+
+# OFIQ
+cmake
+conan==2.0.17
