@@ -1,6 +1,6 @@
 pytorch-lightning==1.8.6
 torch<=1.13.1 #does not exist?
-tqdmpip 
+tqdm
 bcolz-zipline
 prettytable
 menpo
