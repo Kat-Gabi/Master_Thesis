@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 sys.path.append("..")
-sys.path.append("../../")
+#sys.path.append("../../")
 
 from utils import utils
 from network_inf import builder_inf
@@ -23,10 +23,12 @@ import time
 import pprint
 import os
 
+
+
 # parse the args
 cprint('=> parse the args ...', 'green')
 parser = argparse.ArgumentParser(description='Trainer for posenet')
-parser.add_argument('--arch', default='iresnet100', type=str,
+parser.add_argument('--arch', default='iresnet18', type=str,
                     help='backbone architechture')
 parser.add_argument('--inf_list', default='', type=str,
                     help='the inference list')
@@ -67,12 +69,16 @@ class ImgInfLoader(data.Dataset):
         if not os.path.isfile(img_path):
             raise Exception('{} does not exist'.format(img_path))
             exit(1)
-        img = cv2.imread(img_path)
+        img = cv2.imread(img_path) # opens with BRG by default..
         if img is None:
             raise Exception('{} is empty'.format(img_path))
             exit(1)
         _img = cv2.flip(img, 1)
-        return [self.transform(img), self.transform(_img)], img_path
+        
+
+        
+        
+        return [self.transform(img), self.transform(_img)], img_path 
 
     def __len__(self):
         return len(self.imgs)
@@ -95,10 +101,13 @@ def main_worker(ngpus_per_node, args):
 
     cprint('=> building the dataloader ...', 'green')
     trans = transforms.Compose([
+        transforms.ToPILImage(),  # Convert NumPy array to PIL Image to resize
+        transforms.Resize((112, 112)),
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0., 0., 0.],
             std=[1., 1., 1.]),
+        transforms.Lambda(lambda x: x.numpy()), #maybe
     ])
     inf_dataset = ImgInfLoader(
         ann_file=args.inf_list,
@@ -159,6 +168,7 @@ def main_worker(ngpus_per_node, args):
 
 if __name__ == '__main__':
     # parse the args
+    #torch.cuda.empty_cache()
     cprint('=> parse the args ...', 'green')
     pprint.pprint(vars(args))
     main(args)
