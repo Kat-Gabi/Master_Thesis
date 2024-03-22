@@ -1,12 +1,12 @@
-torchvision
+#torchvision
 torchshard
-torch
+#torch
 numpy
 scipy
 termcolor
 opencv-contrib-python
-jupyterlab
-notebook
+#jupyterlab
+#notebook
 seaborn
 Pillow==6.2.2
 matplotlib 
@@ -15,4 +15,4 @@ six
 imageio
 scikit-image
 tqdm
-sklearn
+scikit-learn
