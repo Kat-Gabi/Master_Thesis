@@ -45,10 +45,11 @@ if __name__ == '__main__':
     model = load_pretrained_model('ir_18')
     
     transform = transforms.Compose([
-    ToInputTransform()
-    ])
+        transforms.Resize((112, 112)),
+        ToInputTransform()
+        ])
 
-    test_image_path = '/work3/s174139/Master_Thesis/data/raw/YLFW_bench/data_p2' #/work3/s174139/Master_Thesis/AdaFace-master/face_alignment/test_images'
+    test_image_path = '/work3/s174139/Master_Thesis/data/raw/RLFW_mini/data' #/work3/s174139/Master_Thesis/AdaFace-master/face_alignment/test_images'
     
     dataset = datasets.ImageFolder(test_image_path, transform=transform)
 
@@ -71,7 +72,7 @@ if __name__ == '__main__':
     }
 
     # Save the dictionary
-    torch.save(data_dict, '/work3/s174139/Master_Thesis/master_thesis/saved_predictions/image_data_similarity_scores_ylfw.pt')
+    torch.save(data_dict, '/work3/s174139/Master_Thesis/master_thesis/saved_predictions/image_data_similarity_scores_rfw.pt')
 
     
     
