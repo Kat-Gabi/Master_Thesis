@@ -6,7 +6,7 @@ import numpy as np
 
 
 adaface_models = {
-    'ir_50': "AdaFace-master/pretrained/adaface_ir18_casia.ckpt", #"pretrained/adaface_ir50_ms1mv2.ckpt",
+    'ir_18': "pretrained/adaface_ir18_casia.ckpt", #"pretrained/adaface_ir50_ms1mv2.ckpt",
 }
 
 def load_pretrained_model(architecture='ir_18'):
@@ -23,6 +23,8 @@ def to_input(pil_rgb_image):
     np_img = np.array(pil_rgb_image)
     brg_img = ((np_img[:,:,::-1] / 255.) - 0.5) / 0.5
     tensor = torch.tensor([brg_img.transpose(2,0,1)]).float()
+    #brg_imgs = brg_img.transpose(2, 0, 1)
+    #tensor = torch.tensor(brg_imgs).float()
     return tensor
 
 if __name__ == '__main__':
@@ -30,16 +32,25 @@ if __name__ == '__main__':
     model = load_pretrained_model('ir_18')
     feature, norm = model(torch.randn(2,3,112,112))
 
-    test_image_path = 'face_alignment/test_images'
+    #test_image_path = 'face_alignment/test_images'
+    test_image_path = '../data/raw/YLFW_bench/data_p2/African_0'
     features = []
+    im_names = []
     for fname in sorted(os.listdir(test_image_path)):
         path = os.path.join(test_image_path, fname)
         aligned_rgb_img = align.get_aligned_face(path)
         bgr_tensor_input = to_input(aligned_rgb_img)
         feature, _ = model(bgr_tensor_input)
         features.append(feature)
+        im_names.append(fname)
 
     similarity_scores = torch.cat(features) @ torch.cat(features).T
     print(similarity_scores)
+    
+    data_dict = {
+    'img_names': im_names,
+    'similarity_scores': similarity_scores
+}
+    torch.save(similarity_scores, 'data_dict_test.pt')
     
 
