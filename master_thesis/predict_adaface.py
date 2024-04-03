@@ -66,6 +66,7 @@ if __name__ == '__main__':
     print(similarity_scores)
     
     data_dict = {
+    'file_name': dataset.imgs,
     'image_id': image_id,
     'feature_vectors': features,
     'similarity_scores': similarity_scores
