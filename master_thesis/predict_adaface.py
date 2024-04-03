@@ -8,7 +8,7 @@ import os
 desired_directory = '/work3/s174139/Master_Thesis/AdaFace-master' 
 
 # Change the current working directory
-print("HELLO","/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/AdaFace-master")
+print("WORKING DIR HERE","/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/AdaFace-master")
 sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/AdaFace-master")
 
 # Model specific imports
@@ -17,6 +17,9 @@ import torch
 from face_alignment import align
 import numpy as np
 from torchvision import datasets, transforms
+
+
+##% Model and Training starts here
 
 adaface_models = {
     'ir_18': "/work3/s174139/Master_Thesis/AdaFace-master/pretrained/adaface_ir18_casia.ckpt", #"pretrained/adaface_ir50_ms1mv2.ckpt",
@@ -75,7 +78,6 @@ if __name__ == '__main__':
     # Save the dictionary
     torch.save(data_dict, '/work3/s174139/Master_Thesis/master_thesis/saved_predictions/image_data_similarity_scores_rfw.pt')
 
-    
     
     
     # features = []

@@ -7,12 +7,15 @@ cudatoolkit == 10.2 #AdaFace req.
 opencv-python
 retina-face
 
-#FG_NET
+# FG_NET
 deeplake
 flask
 
 # AdaFace
 
+# WANDB
+wandb
+codecarbon
 
 # OFIQ
 cmake
