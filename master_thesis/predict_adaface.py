@@ -52,33 +52,60 @@ if __name__ == '__main__':
         ToInputTransform()
         ])
 
-    test_image_path = '/work3/s174139/Master_Thesis/data/raw/RLFW_mini/data' #/work3/s174139/Master_Thesis/AdaFace-master/face_alignment/test_images'
+    test_image_path = '/work3/s174139/Master_Thesis/data/raw_full/children' #/work3/s174139/Master_Thesis/AdaFace-master/face_alignment/test_images'
     
     dataset = datasets.ImageFolder(test_image_path, transform=transform)
+    
+    batch_size = 512  # Define your batch size
 
+
+    # WITH BATCH
     features = []
-    image_id = []
-    for images, ids in dataset:
-        # output of forward pass
-        feature, _ = model(images) 
-        features.append(feature)
-        image_id.append(ids)
+    image_ids = []
+    for i in range(0, len(dataset), batch_size):
+        batch_images = []
+        batch_ids = []
+        for j in range(batch_size):
+            if i + j < len(dataset):
+                image, id = dataset[i + j]
+                batch_images.append(image)
+                batch_ids.append(id)
+        
+        if batch_images:
+            batch_images = torch.stack(batch_images) # Convert list of images to tensor
+            with torch.no_grad():  # Disable gradient calculation for efficiency
+                features_batch, _ = model(batch_images.squeeze(1))  # Forward pass through the model
+            features.append(features_batch.cpu()) 
+            image_ids.append(batch_ids)
+            print("Batch {}/{}".format(round(i/batch_size), round(len(dataset)/512)))
+
         
     similarity_scores = torch.cat(features) @ torch.cat(features).T
     
-    print(similarity_scores)
+    print("similarity scores calculated! Saving dictionary")
     
     data_dict = {
     'file_name': dataset.imgs,
-    'image_id': image_id,
+    'image_id': image_ids,
     'feature_vectors': features,
     'similarity_scores': similarity_scores
     }
 
     # Save the dictionary
-    torch.save(data_dict, '/work3/s174139/Master_Thesis/master_thesis/saved_predictions/image_data_similarity_scores_rfw.pt')
+    torch.save(data_dict, '/work3/s174139/Master_Thesis/master_thesis/saved_predictions/similarity_scores_children.pt')
 
     
+    
+    
+    # Before batch:
+    
+    # features = []
+    # image_id = []
+    # for images, ids in dataset:
+    #     # output of forward pass
+    #     feature, _ = model(images) 
+    #     features.append(feature)
+    #     image_id.append(ids)
     
     # features = []
     # image_path = []
