@@ -75,8 +75,8 @@ if __name__ == '__main__':
             batch_images = torch.stack(batch_images) # Convert list of images to tensor
             with torch.no_grad():  # Disable gradient calculation for efficiency
                 features_batch, _ = model(batch_images.squeeze(1))  # Forward pass through the model
-            features.append(features_batch.cpu()) 
-            image_ids.append(batch_ids)
+            features.extend(features_batch.cpu()) 
+            image_ids.extend(batch_ids)
             print("Batch {}/{}".format(round(i/batch_size), round(len(dataset)/512)))
 
         
