@@ -52,7 +52,7 @@ if __name__ == '__main__':
         ToInputTransform()
         ])
 
-    test_image_path = '/work3/s174139/Master_Thesis/data/raw_full/adults' #/work3/s174139/Master_Thesis/AdaFace-master/face_alignment/test_images'
+    test_image_path = '/work3/s174139/Master_Thesis/data/raw_full/children' #/work3/s174139/Master_Thesis/AdaFace-master/face_alignment/test_images'
     
     dataset = datasets.ImageFolder(test_image_path, transform=transform)
     
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     }
 
     # Save the dictionary
-    torch.save(data_dict, '/work3/s174139/Master_Thesis/master_thesis/saved_predictions/similarity_scores_adults.pt')
+    torch.save(data_dict, '/work3/s174139/Master_Thesis/master_thesis/saved_predictions/similarity_scores_children.pt')
 
     
     
