@@ -52,7 +52,7 @@ if __name__ == '__main__':
         ToInputTransform()
         ])
 
-    test_image_path = '/work3/s174139/Master_Thesis/data/raw_full/children' #/work3/s174139/Master_Thesis/AdaFace-master/face_alignment/test_images'
+    test_image_path = '/work3/s174139/Master_Thesis/data/raw_full/children/children' #/work3/s174139/Master_Thesis/AdaFace-master/face_alignment/test_images'
     
     dataset = datasets.ImageFolder(test_image_path, transform=transform)
     
@@ -75,7 +75,7 @@ if __name__ == '__main__':
             batch_images = torch.stack(batch_images) # Convert list of images to tensor
             with torch.no_grad():  # Disable gradient calculation for efficiency
                 features_batch, _ = model(batch_images.squeeze(1))  # Forward pass through the model
-            features.extend(features_batch.cpu()) 
+            features.append(features_batch.cpu()) 
             image_ids.extend(batch_ids)
             print("Batch {}/{}".format(round(i/batch_size), round(len(dataset)/512)))
 
@@ -90,9 +90,11 @@ if __name__ == '__main__':
     'feature_vectors': features,
     'similarity_scores': similarity_scores
     }
+    print(data_dict["image_id"])
+    print("SET", set(data_dict["image_id"]))
 
     # Save the dictionary
-    torch.save(data_dict, '/work3/s174139/Master_Thesis/master_thesis/saved_predictions/similarity_scores_children.pt')
+    torch.save(data_dict, '/work3/s174139/Master_Thesis/master_thesis/saved_predictions/similarity_scores_children_baseline1.pt')
 
     
     
