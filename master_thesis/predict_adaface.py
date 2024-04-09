@@ -17,7 +17,7 @@ import torch
 from face_alignment import align
 import numpy as np
 from torchvision import datasets, transforms
-
+torch.cuda.empty_cache()
 
 ##% Model and Training starts here
 
@@ -75,7 +75,7 @@ if __name__ == '__main__':
             batch_images = torch.stack(batch_images) # Convert list of images to tensor
             with torch.no_grad():  # Disable gradient calculation for efficiency
                 features_batch, _ = model(batch_images.squeeze(1))  # Forward pass through the model
-            features.append(features_batch.cpu()) 
+            features.extend(features_batch.cpu()) 
             image_ids.extend(batch_ids)
             print("Batch {}/{}".format(round(i/batch_size), round(len(dataset)/512)))
 
@@ -92,6 +92,8 @@ if __name__ == '__main__':
     }
     print(data_dict["image_id"])
     print("SET", set(data_dict["image_id"]))
+    
+    print(len(data_dict["feature_vectors"]))
 
     # Save the dictionary
     torch.save(data_dict, '/work3/s174139/Master_Thesis/master_thesis/saved_predictions/similarity_scores_children_baseline1.pt')

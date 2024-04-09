@@ -22,7 +22,7 @@ def main(folder_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Creates a list of image paths in .file format") #description of parser
-    parser.add_argument("folder_path", type=str, help="Path to the folder containing image files or folders with image files.") # pass eg /work3/s174139/Master_Thesis/data/raw/YLFW_bench/data_p2
+    parser.add_argument("folder_path", type=str, help="Path to the folder containing image files or folders with image files.") # pass eg /work3/s174139/Master_Thesis/data/raw_full/children
     args = parser.parse_args() #save the arguments with name folde the added argument to access
     main(args.folder_path)
 
