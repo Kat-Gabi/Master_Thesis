@@ -161,7 +161,7 @@ def main_worker(ngpus_per_node, args):
             # compute output
             embedding_feat = model(input[0])
 
-            # embedding_feat = F.normalize(embedding_feat, p=2, dim=1)
+            embedding_feat = F.normalize(embedding_feat, p=2, dim=1)
             _feat = embedding_feat.data.cpu().numpy()
 
             # measure elapsed time
