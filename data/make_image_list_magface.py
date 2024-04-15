@@ -12,7 +12,7 @@ def main(folder_path):
         # Save the list of file paths to a text file
         output_folder = "/".join(folder_path.split("/")[:-1])
         print("out", output_folder)
-        output_file_path = os.path.join(output_folder, 'img.list')
+        output_file_path = os.path.join(output_folder, 'img_children_new.list')
         with open(output_file_path, 'w') as file:
             for path in file_paths:
                 file.write(path + '\n')
