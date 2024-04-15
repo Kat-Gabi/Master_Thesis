@@ -11,7 +11,8 @@ retina-face
 deeplake
 flask
 
-# AdaFace
+# MagFace
+scikit-learn
 
 # WANDB
 wandb
