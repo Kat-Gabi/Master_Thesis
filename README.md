@@ -61,3 +61,13 @@ The directory structure of the project looks like this:
 Created using [mlops_template](https://github.com/SkafteNicki/mlops_template),
 a [cookiecutter template](https://github.com/cookiecutter/cookiecutter) for getting
 started with Machine Learning Operations (MLOps).
+
+
+## Data loading 
+YLFW data is downloaded through https://github.com/JessyFrish/YLFW_Links, YLFW_benchmark
+RFW are downloaded through http://whdeng.cn/RFW/testing.html by asking for access. 
+Age estimation of the face images has been done using Cognitec FaceVACS. 
+Preprocessing of the images are done through data_loading_ylfw.ipynb and data_loading_rfw.ipynb, which creates the csv files raw_ylfw_df.csv and raw_rfw_df.csv. 
+To move these csvs to folders AdaFace and MagFace can work with, move_data function in Data_proc_funcs.py is used. 
+The balancing of the two data sets to create the final children and adults data sets are done in balance_data functions in Data_proc_funcs.py. 
+To use the respective balanced datasets for training MagFace, use make_image_lits_magface.py. 

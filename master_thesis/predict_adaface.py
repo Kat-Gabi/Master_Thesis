@@ -74,21 +74,22 @@ if __name__ == '__main__':
         if batch_images:
             batch_images = torch.stack(batch_images) # Convert list of images to tensor
             with torch.no_grad():  # Disable gradient calculation for efficiency
-                features_batch, _ = model(batch_images.squeeze(1))  # Forward pass through the model
+                features_batch, _ = model(batch_images.squeeze(1))  # Forward pass through the model # Removes extra batch dimension from Image_Folder
+            
+            # Normalize the feature vectors
+            features_batch = torch.nn.functional.normalize(features_batch, p=2, dim=1)
+
             features.extend(features_batch.cpu()) 
             image_ids.extend(batch_ids)
             print("Batch {}/{}".format(round(i/batch_size), round(len(dataset)/512)))
 
-        
-    similarity_scores = torch.cat(features) @ torch.cat(features).T
-    
-    print("similarity scores calculated! Saving dictionary")
+
+    print("Saving dictionary")
     
     data_dict = {
     'file_name': dataset.imgs,
     'image_id': image_ids,
     'feature_vectors': features,
-    'similarity_scores': similarity_scores
     }
     print(data_dict["image_id"])
     print("SET", set(data_dict["image_id"]))
