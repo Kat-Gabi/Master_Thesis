@@ -2,7 +2,7 @@
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
-import torch
+# import torch
 import seaborn as sns
 import pandas as pd
 sns.set(style="white")
