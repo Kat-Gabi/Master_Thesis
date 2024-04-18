@@ -114,7 +114,7 @@ def load_enrolled_magface_vectors(feature_list, enrolled_img_names, canonical=Fa
         file_name = [file_name[ele] for ele in range(len(lines)) if file_name[ele].split("/")[-1] in np.array(df_c_can.Filename)]
         norm_feature_vectors = np.array([mated_feature_dict[file_name[ele]] for ele in range(len(file_name))])
     else: 
-        norm_feature_vectors = np.array([mated_feature_dict[file_name[ele]] for ele in range(len(lines))]) 
+        norm_feature_vectors = np.array([mated_feature_dict[file_name[ele]] for ele in range(len(file_name))]) 
     
     image_names = [full_name.split("/")[-1][:-4] for full_name in file_name]
     identity_names = convert_unique_ids(file_name) # from /data/Indian_682/Indian_682_0 to just Indian_682
