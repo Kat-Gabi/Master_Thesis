@@ -74,11 +74,14 @@ def load_magface_vectors(feature_list, canonical=False, df_c_can=None):
     identity_names = convert_unique_ids(file_name) # from /data/Indian_682/Indian_682_0 to just Indian_682
     factors_c, unique_ids = factorize_ids(identity_names) #Factorized list: [0, 1, 2, 2], Image IDs mapping: {'Indian_682': 0, 'Asian_504': 1,..}
     num_ids = np.array(factors_c)
+
     
     return image_names, identity_names, num_ids, norm_feature_vectors
 
 # Example usage:
-#ids_c, num_ids_c, norm_feats_c = load_magface_vectors('../data/feat_children.list')
+# image_names_c, ids_c, num_ids_c, norm_feats_c = load_magface_vectors('../data/feat_children.list')
+# sim_mat = np.dot(norm_feats_c, norm_feats_c.T)
+
 #df_c_can = pd.read_csv("../data/OFIQ_results/canonical_children.csv", sep=";")
 #ids_can, num_ids_can, norm_feats_can = load_magface_vectors('../data/feat_children.list', canonical=True, df_c_can=df_c_can)
 
@@ -126,7 +129,7 @@ def load_enrolled_magface_vectors(feature_list, enrolled_img_names, canonical=Fa
 # Example usage
 # enrolled_img_names_c = c_df[c_df.enrolled == "enrolled"].img_name.to_list()
 # image_names_c, ids_c, enrolled_num_ids_c, enrolled_norm_feats_c = load_enrolled_magface_vectors(feature_list, enrolled_img_names_c, canonical=False, df_c_can=None):
-
+# 
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
@@ -387,9 +390,98 @@ def GARBE(fnir_c, fnir_a, fpir_c, fpir_a, alpha=0.5):
     FND = fnir_c/fnir_a
     print("FND result: ", FND)
     
-    GARBE = alpha_val * FPD + (1 - alpha_val) * FND
+    GARBE = alpha * FPD + (1 - alpha) * FND
     print("GARBE result MagFace: ", GARBE)
 
     return FPD, FND, GARBE
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+###### GABY NEW #########
+## Function for calculating FPIR
+def remove_probeid_in_classification(arr, value):
+    for i, v in enumerate(arr):
+        if v == value:
+            return np.delete(arr, i)
+    return arr  # Value not found in the array, return the original array
+
+
+def compute_fpir_utils(non_enrolled_sim_score, non_enrolled_image_names, ids, num_ids, thold=0.5):
+
+    # U_D: set of non-mated identification transactions with reference database D. I.e. equal to number IDs with no enrolled ids.
+    U_d_set_len = len(non_enrolled_sim_score)
+    cand_list_returned = 0
+
+    # for each m_i (mated reference for transaction i), get score of a reference in identification transaction i. I.e. number of transactions equal to number of mated ids**2
+    # Initialize the list to store the mated similarity scores
+    nonmated_sim_scores = []
+
+    for i in range(U_d_set_len):
+        probe = num_ids[i]
+
+        # for the non enrolled probe id, check if any of its similarity scores are above thold
+        classified_pos_list = non_enrolled_sim_score[i] > thold
+        classified_pos_idx = list(np.where(classified_pos_list)[0]) # get indexes where the score is above threshold
+        face_idx_pos_class = num_ids[classified_pos_idx] # get numerical ids in the positive class
+        # remove first instance of probe id in classification list
+        face_idx_pos_class_filtered = remove_probeid_in_classification(face_idx_pos_class, probe)
+
+        # if length of candidate list (filtered, i.e. without the probe itsef) is greater than 0, count 1
+        if len(face_idx_pos_class_filtered) > 0:
+            cand_list_returned += 1
+
+    fpir = cand_list_returned/U_d_set_len
+
+    return fpir
+
+# ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+## Function for calculating FNIR
+def compute_fnir_utils(enrolled_sim_score, enrolled_image_names, ids, num_ids, thold=0.5):
+    # M_D: set of mated identification transactions with reference database. - i.e. there can be multiple ids?
+    M_d_set_len = len(enrolled_image_names)
+    neg_ref = 0
+    
+    # For each id corresponding to the id in the set, check if one of it's corresponding ids are above threshold
+    
+    # Iterate over each enrolled reference for transaction i
+    for i in range(M_d_set_len):
+        probe = num_ids[i] # numerical id by magface, e.g. str value "African_244" becomes num. value 35. 
+        
+        # Check if the reference probe id is in negative list/below threshold
+        classified_negative_list = enrolled_sim_score[i] <= thold
+        classified_negative_idx = list(np.where(classified_negative_list)[0])  # Get indexes where the score is below threshold
+        face_idx_neg_class = num_ids[classified_negative_idx]  # Get numerical ids in the negative class
+        # If numerical id in negative list is equal to the probe id, count 1
+        if probe in face_idx_neg_class:
+            neg_ref += 1
+
+    # Calculate FNIR
+    fnir = neg_ref / M_d_set_len
+
+    return fnir
+
+# ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+# Function for removing ones to get similarity scores flattened for plots
+def remove_ones(matrix, reshape=False):
+    # number of 1s to remove
+    n_remove = len(matrix)
+    # Flatten the matrix
+    flattened_matrix = matrix.flatten()
+
+    # Sort the flattened matrix in descending order
+    sorted_indices = np.argsort(flattened_matrix)[::-1]
+
+    # Get indices of the 10 highest values
+    top_n_indices = sorted_indices[:n_remove]
+
+    # Remove the indices of the 10 highest values from the flattened matrix
+    filtered_indices = np.delete(np.arange(len(flattened_matrix)), top_n_indices)
+    final_matrix = flattened_matrix[filtered_indices]
+    if reshape:
+    # Reshape the modified flattened matrix back into the original shape
+        final_matrix = final_matrix.reshape(matrix.shape)
+
+    return final_matrix
+#Example usage:
+#enrolled_sim_scores_flattened_without_ones = remove_ones(enrolled_sim_score)
