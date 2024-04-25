@@ -149,19 +149,18 @@ def load_adaface_vectors(file_path, canonical=False, df_c_can=None):
     norm_feature_vectors = np.array(data["feature_vectors"]) # feature vectors are normalized in adaface
     num_ids = np.array(data["image_id"])
     
-    
     file_name = np.array([n for n, _ in data["file_name"]])
 
     # convert to dict as magface:
     file_names_vectors_dict = {}
 
     # Iterate over the names and values
-    for file_name, feature_vect in zip(file_name, norm_feature_vectors):
+    for file_name_i, feature_vect in zip(file_name, norm_feature_vectors):
         # Assign the name as key and the corresponding list of values as value
-        file_names_vectors_dict[file_name] = feature_vect
-    
+        file_names_vectors_dict[file_name_i] = feature_vect
+
     if canonical:
-        file_name = [file_name[ele] for ele in range(len(data["image_id"])) if file_name[ele].split("/")[-1] in np.array(df_c_can.Filename)]
+        file_name = [file_name[ele] for ele in range(len(file_name)) if file_name[ele].split("/")[-1] in np.array(df_c_can.Filename)]
         norm_feature_vectors = np.array([file_names_vectors_dict[file_name[ele]] for ele in range(len(file_name))]) #unsorted image quality
         image_names = [full_name.split("/")[-1][:-4] for full_name in file_name]
         identity_names = convert_unique_ids(file_name)
@@ -203,10 +202,10 @@ def load_enrolled_adaface_vectors(file_path, enrolled_img_names, canonical=True,
     
     if canonical:
         # only get mated canonical image names and feature vectors
-        file_name = [file_name[ele] for ele in range(len(data["image_id"])) if file_name[ele].split("/")[-1] in np.array(df_c_can.Filename)]
+        file_name = [file_name[ele] for ele in range(len(data)) if file_name[ele].split("/")[-1] in np.array(df_c_can.Filename)]
         norm_feature_vectors = np.array([mated_feature_dict[file_name[ele]] for ele in range(len(file_name))]) 
     else: 
-        norm_feature_vectors = np.array([mated_feature_dict[file_name[ele]] for ele in range(len(data["image_id"]))]) 
+        norm_feature_vectors = np.array([mated_feature_dict[file_name[ele]] for ele in range(len(data))]) 
         
     image_names = [full_name.split("/")[-1][:-4] for full_name in file_name]
     identity_names = convert_unique_ids(file_name)
@@ -274,7 +273,7 @@ def compute_fpir(non_enrolled_sim_score, num_ids_non_enrolled, num_ids_all, thol
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 ## Function for calculating FNIR
-def compute_fnir_utils(enrolled_sim_score, enrolled_num_id, thold=0.5):
+def compute_fnir(enrolled_sim_score, enrolled_num_id, thold=0.5):
     """
     FNIR formula from ISO standard ISO/IEC 19795-1:2021
     """
