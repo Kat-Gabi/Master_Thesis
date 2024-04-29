@@ -18,6 +18,26 @@ def extract_landmarks(image_path):
     landmark_values = RetinaFace.detect_faces(image_path)["face_1"]["landmarks"].values()
     return np.array([sublist for sublist in landmark_values])
 
+def change_id_incremental(file_path):
+    "file_path: your_file_path_here.list"
+    # Read the contents of the .list file
+    with open(file_path, "r") as file:
+        lines = file.readlines()
+
+    # Extract IDs and create a mapping
+    id_mapping = {}
+    for line in lines:
+        parts = line.strip().split()
+        image_path = parts[0]
+        id_value = int(parts[-1])
+        if id_value not in id_mapping:
+            id_mapping[id_value] = len(id_mapping)
+        parts[-1] = str(id_mapping[id_value])
+        lines[lines.index(line)] = ' '.join(parts) + '\n'
+
+    # Write the updated contents back to the .list file
+    with open(file_path, "w") as file:
+        file.writelines(lines)
 
 if __name__ == "__main__":
         
@@ -51,7 +71,7 @@ if __name__ == "__main__":
                     aligned_resized_image = face_align.norm_crop(cv_image, landmarks_np, image_size, mode='arcface') 
                     output_image_path = os.path.join(imgs_output_folder, os.path.basename(img))
                     cv2.imwrite(output_image_path, aligned_resized_image)
-                    train_list_file.write(f'{input_image_path} 0 {img.split("_")[0]}\n') #corresponding to id. list format required by magface
+                    train_list_file.write(f'{input_image_path} 0 {img.split("_")[0]}\n') #corresponding to id. list format required by magface. First id should be 0. 
                 except:
                     print("Error processing image, possibly due to low image quality:", img)
                 pass
@@ -60,7 +80,8 @@ if __name__ == "__main__":
             print("\n*** {id_counter} images were preprocessed and saved in new directory age_group_{ag} :) ***".format(id_counter=id_counter, ag=age_group))
             
     # Check number of ids in list 
-    list_folder = "../../data/fine_tune_train_list.list"
+    list_folder = "../../data/fine_tune_train.list"
+    change_id_incremental(list_folder) #OBS lidt i tvivl om de skal være sorteret så alle 0'ere er  samlet, men Francks er ligesom vores..
     with open(list_folder, 'r') as f:
         lines = f.readlines()
     imids = []
@@ -68,7 +89,8 @@ if __name__ == "__main__":
         parts = line.strip().split(' ')
         imids.append(parts[-1])
     print("number of unique ids: ", len(set(imids)) )
-                        
+
+
                 
 
     

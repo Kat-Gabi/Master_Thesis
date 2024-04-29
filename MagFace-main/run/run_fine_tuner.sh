@@ -45,7 +45,7 @@ python -u fine_tuner.py \
     --epochs 2 \
     --start-epoch 0 \
     --batch-size 6 \
-    --embedding-size 6 \
+    --embedding-size 512 \
     --last-fc-size 2 \
     --arc-scale 64 \
     --learning-rate 0.1 \
@@ -53,7 +53,7 @@ python -u fine_tuner.py \
     --weight-decay 5e-4 \
     --lr-drop-epoch 2 \
     --lr-drop-ratio 0.1 \
-    --print-freq 100 \
+    --print-freq 10 \
     --pth-save-fold ${OUTPUT} \
     --pth-save-epoch 1 \
     --l_a ${la} \
