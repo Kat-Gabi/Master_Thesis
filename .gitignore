@@ -184,3 +184,4 @@ MagFace-main/inference/magface_iresnet18_casia_dp.pth
 # Data complete sets
 data/raw_full/
 
+/MagFace-main/run/wandb
