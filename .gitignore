@@ -184,4 +184,6 @@ MagFace-main/inference/magface_iresnet18_casia_dp.pth
 # Data complete sets
 data/raw_full/
 
+data/feat_img_adults_full.list
+data/feat_img_children_full.list
 /MagFace-main/run/wandb
