@@ -291,12 +291,10 @@ def compute_fnir(enrolled_sim_mat, sim_mat, enrolled_ids, enrolled_num_id, ids, 
     
     # Get enrolled similarity scores
     enrolled_sim_scores = []
-    n_trans = 0
     
     ## Iterate over each enrolled reference for transaction i
     for m_i, id_now in enumerate(ids):
         # Check if the identity is enrolled
-        n_trans += 1
         if id_now in M_d_set:
             mated_ids_exact = [id == id_now for id in ids] # Array of true and falses
             mated_sim_scores_slice = sim_mat[m_i] # Row corresponding to the enrolled probe id
