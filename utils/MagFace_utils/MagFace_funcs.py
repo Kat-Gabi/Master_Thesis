@@ -486,22 +486,40 @@ def compute_fpir(non_enrolled_sim_score, num_ids_non_enrolled, num_ids_all, thol
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 ## Function for calculating FNIR
-def compute_fnir(enrolled_sim_score, enrolled_num_id, thold=0.5):
+## Function for calculating FNIR
+def compute_fnir(enrolled_sim_mat, sim_mat, enrolled_ids, enrolled_num_id, ids, thold=0.5):
     """
     FNIR formula from ISO standard ISO/IEC 19795-1:2021
+    ids: unique ids for all images in results
+    enrolled_ids: ids for the enrolled images
+    enrolled_sim_mat: enrolled similarity matrix
+    sim_mat: all similarity scores
     """
     # M_D: set of mated identification transactions with reference database. - i.e. there can be multiple ids?
-    M_d_set_len = len(enrolled_sim_score)
+    M_d_set = set(enrolled_ids)
+    M_d_set_len = len(enrolled_sim_mat)
     neg_ref = 0
     
     # For each id corresponding to the id in the set, check if one of it's corresponding ids are above threshold
+    
+    # Get enrolled similarity scores
+    enrolled_sim_scores = []
+    
+    ## Iterate over each enrolled reference for transaction i
+    for m_i, id_now in enumerate(ids):
+        # Check if the identity is enrolled
+        if id_now in M_d_set:
+            mated_ids_exact = [id == id_now for id in ids] # Array of true and falses
+            mated_sim_scores_slice = sim_mat[m_i] # Row corresponding to the enrolled probe id
+            mated_sim_scores_slice_slice = [value for value, keep in zip(mated_sim_scores_slice, mated_ids_exact) if keep] #Only enrolled similarity scores for the same ids corresponding to the probe id
+            enrolled_sim_scores.extend(mated_sim_scores_slice_slice)
     
     # Iterate over each enrolled reference for transaction i
     for i in range(M_d_set_len):
         probe = enrolled_num_id[i] # numerical id by magface, e.g. str value "African_244" becomes num. value 35. 
         
         # Check if the reference probe id is in negative list/below threshold
-        classified_negative_list = enrolled_sim_score[i] <= thold
+        classified_negative_list = enrolled_sim_mat[i] <= thold
         classified_negative_idx = list(np.where(classified_negative_list)[0])  # Get indexes where the score is below threshold
         face_idx_neg_class = enrolled_num_id[classified_negative_idx]  # Get numerical ids in the negative class
         # If numerical id in negative list is equal to the probe id, count 1
@@ -510,8 +528,20 @@ def compute_fnir(enrolled_sim_score, enrolled_num_id, thold=0.5):
 
     # Calculate FNIR
     fnir = neg_ref / M_d_set_len
+    
+    enrolled_sim_scores_final = np.array(enrolled_sim_scores)
+    enrolled_sim_scores_final = enrolled_sim_scores_final[enrolled_sim_scores_final<0.999]
+    
+    i = 0
+    while len(enrolled_sim_scores_final) > (len(enrolled_sim_scores)-len(enrolled_ids)):
+        i += 0.001
+        print("NOT SAME LENGTH", len(enrolled_sim_scores_final), len(enrolled_sim_scores)-len(enrolled_ids))
+        enrolled_sim_scores_final = enrolled_sim_scores_final[enrolled_sim_scores_final<0.999+i]
+        
+    return fnir, enrolled_sim_scores_final
 
-    return fnir
+
+
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 def remove_ones(matrix, reshape=False):

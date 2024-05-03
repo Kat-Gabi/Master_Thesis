@@ -46,7 +46,7 @@ cprint('=> parse the args ...', 'green')
 parser = argparse.ArgumentParser(description='Trainer for Magface')
 parser.add_argument('--pretrained', default='', type=str, help='Path to pretrained model')
 parser.add_argument('--cpu_mode', default='1', type=str, help='1 for CPU or 0 for GPU')
-parser.add_argument('--arch', default='resnet100', type=str,
+parser.add_argument('--arch', default='iresnet18', type=str,
                     help='backbone architechture')
 parser.add_argument('--train_list', default='', type=str,
                     help='')
@@ -111,6 +111,7 @@ wandb.init(
     # set the wandb project where this run will be logged
     project="face-rec-models",
     name="magface-fine-tuner",
+    config={"lr": args.lr, "epochs": args.epochs}
 )
 
     # track hyperparameters and run metadata
@@ -120,45 +121,64 @@ def load_dict_finetuner(args, model):
     """
     Function for loading pre-trained model weights (from MagFace network_inf.py)
     Pre-trained model in this thesis is: iresnet18
+    Updates this model with the weights from a model from a checkpoint. 
     Returns model 
     """
     if os.path.isfile(args.pretrained): #pretrained should be checkpoint path!
         cprint('=> loading pth from {} ...'.format(args.pretrained), 'green')
         if args.cpu_mode:
+            print("cpu!!!")
             checkpoint = torch.load(args.pretrained, map_location=torch.device("cpu")) #pretrained should be checkpoint path!
         else:
             checkpoint = torch.load(args.pretrained, map_location=torch.device('cuda'))
+        
         _state_dict = clean_dict_finetuner(model, checkpoint['state_dict'])
         print("HERE")
         model_dict = model.state_dict()
         model_dict.update(_state_dict)
         model.load_state_dict(model_dict)
+        
         # delete to release more space
         del checkpoint
         del _state_dict
     else:
+        print("sys exit")
         sys.exit("=> No checkpoint found at '{}'".format(args.pretrained)) #pretrained should be checkpoint path!
     return model
 
 
 def clean_dict_finetuner(model, state_dict):
-    "Function used in load_dict"
+    """Function used in load_dict. This function filters out unnecessary 
+    keys from the loaded state dictionary based on the model's state dictionary. """
+    i = 0
     _state_dict = OrderedDict()
     for k, v in state_dict.items():
         # # assert k[0:1] == 'features.module.'
         new_k = 'features.'+'.'.join(k.split('.')[2:])
+        i += 1
+
         if new_k in model.state_dict().keys() and \
            v.size() == model.state_dict()[new_k].size():
             _state_dict[new_k] = v
+        else:
+            print("K? ", new_k)
+            print(v.size())
+            print()
+            #print(k,i, "III, did not happen",v.size(), model.state_dict()[new_k].size(), "\nhvordan ser v ud V", v ) 
         # assert k[0:1] == 'module.features.'
         new_kk = '.'.join(k.split('.')[1:])
         if new_kk in model.state_dict().keys() and \
            v.size() == model.state_dict()[new_kk].size():
             _state_dict[new_kk] = v
+        else:
+            print("new KK 2", new_kk)
     num_model = len(model.state_dict().keys())
     num_ckpt = len(_state_dict.keys())
     if num_model != num_ckpt:
-        sys.exit("=> Not all weights loaded, model params: {}, loaded params: {}".format(
+        if num_model == num_ckpt + 1:
+          print(f'=> fc.weight not loaded! Model params: {num_model}, loaded params: {num_ckpt}')
+        else:  
+          sys.exit("=> Not all weights loaded, model params: {}, loaded params: {}".format(
             num_model, num_ckpt))
     return _state_dict
 
@@ -192,7 +212,9 @@ def main_worker(args):
         #model = load_dict_inf(args, model) # loading using pre-trained model (as in network_inf.py)
         load_dict_finetuner(args, model)
         print("MODEL2:")
-        model = torch.nn.DataParallel(model).cuda()
+        #model = torch.nn.DataParallel(model).cuda()
+        model = torch.nn.DataParallel(model) # if no gpu
+
         print("MODEL3:")
         # for name, param in model.named_parameters():
         #     cprint(' : layer name and parameter size - {} - {}'.format(name, param.size()), 'green')
@@ -200,8 +222,10 @@ def main_worker(args):
         cprint('=> FREEZING ALL LAYERS EXCEPT fc ...', 'green')
         # Freezing all layers except the last layer
         for name, param in model.named_parameters():
-            if not name.startswith('module.fc'):  # Stating the layers does not need to get updated
+            if not name.startswith('module.fc'):  # Stating the earlier layers does not need to get updated
                 param.requires_grad = False
+            else:
+                print("NAME FC?", name)
         
 
         cprint('=> building the optimizer ...', 'green')
@@ -230,7 +254,8 @@ def main_worker(args):
             current_lr = utils.adjust_learning_rate(optimizer, epoch, args)
 
             # train for one epoch
-            co2_emission, acc1, acc5, loss = do_train(train_loader, model, criterion, optimizer, epoch, args)
+            #co2_emission, acc1, acc5, loss = do_train(train_loader, model, criterion, optimizer, epoch, args)
+            do_train(train_loader, model, criterion, optimizer, epoch, args)
 
             # save pth
             if epoch % args.pth_save_epoch == 0:
@@ -281,16 +306,19 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
 
     # update lr
     learning_rate.update(current_lr)
-    model = model.to('cuda')
+    model = model.to('cpu') #or cuda
 
     for i, (input, target) in enumerate(train_loader):
         # measure data loading time
         data_time.update(time.time() - end)
         global iters
         iters += 1
+        
+        input = input.to('cpu', non_blocking=True) #or cuda
+        target = target.to('cpu', non_blocking=True) #or cuda
 
-        input = input.cuda(non_blocking=True)
-        target = target.cuda(non_blocking=True)
+        #input = input.cuda(non_blocking=True)
+        #target = target.cuda(non_blocking=True)
 
         # compute output
         output, x_norm = model(input, target)
@@ -334,7 +362,7 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
                 np.savez('{}/vis/epoch_{}_iter{}'.format(args.pth_save_fold, epoch, i),
                          x_norm, logit, cos_theta)
     emissions = tracker.stop()
-    return emissions, acc1, acc5, loss
+    #return emissions, acc1, acc5, loss
 
 
 def debug_info(x_norm, l_a, u_a, l_margin, u_margin):
