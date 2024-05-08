@@ -13,9 +13,8 @@ lg=35
 # settings
 MODEL_ARC=iresnet18
 OUTPUT=./test/
-PRETRAINED_MODEL=../../MagFace-main/inference/magface_iresnet18_casia_dp.pth
-TRAIN_LIST=../../data/fine_tune_train_list.list
-
+PRETRAINED_MODEL=../models/magface_iresnet18_casia_dp.pth
+TRAIN_LIST=../Master_thesis_data_prep/image_lists/fine_tune_train_list.list
 
 
 # Check if pretrained model file exists
@@ -38,14 +37,14 @@ mkdir -p "${OUTPUT}/vis/"
 
 python -u fine_tuner.py \
     --arch ${MODEL_ARC} \
-    --train_list ../../data/fine_tune_train_list.list \
+    --train_list ../Master_thesis_data_prep/image_lists/fine_tune_train_list.list \
     --pretrained ${PRETRAINED_MODEL} \
     --cpu_mode 1 \
     --workers 8 \
     --epochs 2 \
     --start-epoch 0 \
     --batch-size 6 \
-    --embedding-size 512 \
+    --embedding-size 6 \
     --last-fc-size 2 \
     --arc-scale 64 \
     --learning-rate 0.1 \
