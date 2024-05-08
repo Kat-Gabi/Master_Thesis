@@ -177,13 +177,15 @@ cython_debug/
 #.idea/
 AdaFace-master/pretrained/adaface_ir18_casia.ckpt
 models/adaface_ir18_casia.ckpt
-MagFace-main/inference/magface_iresnet18_casia_dp.pth
+MagFace-main/models/magface_iresnet18_casia_dp.pth
 
 
 
 # Data complete sets
 data/raw_full/
+data/data_full/
 
 data/feat_img_adults_full.list
 data/feat_img_children_full.list
 /MagFace-main/run/wandb
+/MagFace-main/Master_thesis_data_prep/image_lists
