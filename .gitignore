@@ -187,3 +187,4 @@ data/raw_full/
 data/feat_img_adults_full.list
 data/feat_img_children_full.list
 /MagFace-main/run/wandb
+/data/data_full
