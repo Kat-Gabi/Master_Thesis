@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# If you don't have acess to run, run: tr -d '\r' <run_fine_tuner.sh > run_fine_tuner_new.sh
+# To create new executable file
+# Then run chmod +x run_fine_tuner_new.sh
+# Consider to replace woth the same name again. 
 echo "Starting fine tuner script..."
 
 
@@ -14,7 +18,7 @@ lg=35
 MODEL_ARC=iresnet18
 OUTPUT=./test/
 PRETRAINED_MODEL=../models/magface_iresnet18_casia_dp.pth
-TRAIN_LIST=../Master_thesis_data_prep/image_lists/fine_tune_train_list.list
+TRAIN_LIST=../../data/data_full/HDA_aligned_resized/fine_tune_train_list.list
 
 
 # Check if pretrained model file exists
@@ -37,14 +41,14 @@ mkdir -p "${OUTPUT}/vis/"
 
 python -u fine_tuner.py \
     --arch ${MODEL_ARC} \
-    --train_list ../Master_thesis_data_prep/image_lists/fine_tune_train_list.list \
+    --train_list ${TRAIN_LIST} \
     --pretrained ${PRETRAINED_MODEL} \
     --cpu_mode 1 \
-    --workers 8 \
-    --epochs 2 \
+    --workers 1 \
+    --epochs 5 \
     --start-epoch 0 \
-    --batch-size 6 \
-    --embedding-size 6 \
+    --batch-size 256 \
+    --embedding-size 512 \
     --last-fc-size 2 \
     --arc-scale 64 \
     --learning-rate 0.1 \

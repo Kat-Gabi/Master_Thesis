@@ -48,11 +48,10 @@ if __name__ == "__main__":
     imgs_output_folder = output_folder + '/images'
     rest_path = '/probes/images'
     image_size=112
-
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(imgs_output_folder, exist_ok=True)
 
-    with open(os.path.join(data_root_folder, 'data/data_full/HDA_aligned_resized/fine_tune_train_list.list'), 'w') as train_list_file:
+    with open(os.path.join(data_root_folder, 'data_full/HDA_aligned_resized/fine_tune_train_list.list'), 'w') as train_list_file:
         for age_group in range(5):
             id_counter = 0
             # Create output directory for the current age group   
@@ -80,7 +79,7 @@ if __name__ == "__main__":
             print("\n*** {id_counter} images were preprocessed and saved in new directory age_group_{ag} :) ***".format(id_counter=id_counter, ag=age_group))
             
     # Check number of ids in list 
-    list_folder = "../../data/data_full/HDA_aligned_resized/fine_tune_train.list"
+    list_folder = "../../data/data_full/HDA_aligned_resized/fine_tune_train_list.list"
     change_id_incremental(list_folder) #OBS lidt i tvivl om de skal være sorteret så alle 0'ere er  samlet, men Francks er ligesom vores..
     with open(list_folder, 'r') as f:
         lines = f.readlines()

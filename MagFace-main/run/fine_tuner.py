@@ -114,13 +114,14 @@ wandb.init(
     config={"lr": args.lr, "epochs": args.epochs}
 )
 
-    # track hyperparameters and run metadata
+    #track hyperparameters and run metadata
     #config={args})
 
 def load_dict_finetuner(args, model):
     """
     Function for loading pre-trained model weights (from MagFace network_inf.py)
-    Pre-trained model in this thesis is: iresnet18
+    Model weights, optimizer etc. are stored in checkpoint['state_dict']
+    Pre-trained model in this thesis is: iresnet18, loaded from magface.builder
     Updates this model with the weights from a model from a checkpoint. 
     Returns model 
     """
@@ -184,7 +185,8 @@ def clean_dict_finetuner(model, state_dict):
 
 
 def main(args):
-    # check the feasible of the lambda g
+    "from trainer.py"
+    # check the feasible of the lambda g - magface settings
     s = 64
     k = (args.u_margin-args.l_margin)/(args.u_a-args.l_a)
     min_lambda = s*k*args.u_a**2*args.l_a**2/(args.u_a**2-args.l_a**2)
@@ -204,17 +206,26 @@ def main_worker(args):
     print("Value of args.pretrained:", args.pretrained)  # Add this line for debugging
 
     if args.pretrained:
-        print("Value of args.pretrained: AFTER", args.pretrained)
-
+        
         cprint('=> modeling the network ...', 'green')
         model = magface.builder(args)
-        print("MODEL1:")
+        print("MODEL1:", model)
+        num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        print("Number of trainable parameters: MODEL 1", num_params)
         #model = load_dict_inf(args, model) # loading using pre-trained model (as in network_inf.py)
-        load_dict_finetuner(args, model)
-        print("MODEL2:")
+        
+        # prints which parameters are being loaded - not the fc layer..
+        # returns model... i tvivl om der skal være = tegn.
+        model = load_dict_finetuner(args, model)
+        print("MODEL2:", model)
+        # Print number of parameters
+        num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        print("Number of trainable parameters: MODEL 2", num_params)
         #model = torch.nn.DataParallel(model).cuda()
         model = torch.nn.DataParallel(model) # if no gpu
 
+        ##### HERTIL
+        
         print("MODEL3:")
         # for name, param in model.named_parameters():
         #     cprint(' : layer name and parameter size - {} - {}'.format(name, param.size()), 'green')
@@ -238,7 +249,7 @@ def main_worker(args):
 
         cprint('=> building the dataloader ...', 'green')
         train_loader = dataloader.train_loader(args)
-        print("TRAIN LOADER????", train_loader)
+        print("TRAIN LOADER????", train_loader, "ARGS: are workers and batch size and train list"),
 
         cprint('=> building the criterion ...', 'green')
         criterion = magface.MagLoss(
@@ -254,8 +265,11 @@ def main_worker(args):
             current_lr = utils.adjust_learning_rate(optimizer, epoch, args)
 
             # train for one epoch
-            #co2_emission, acc1, acc5, loss = do_train(train_loader, model, criterion, optimizer, epoch, args)
-            do_train(train_loader, model, criterion, optimizer, epoch, args)
+            co2_emission, top1, top5, losses_id = do_train(train_loader, model, criterion, optimizer, epoch, args)
+            #do_train(train_loader, model, criterion, optimizer, epoch, args)
+                    
+            print("LOSS ID:", losses_id)
+
 
             # save pth
             if epoch % args.pth_save_epoch == 0:
@@ -273,7 +287,7 @@ def main_worker(args):
                 ))
                 cprint(' : save pth for epoch {}'.format(epoch + 1))
                 # log metrics to wandb
-                wandb.log({"CO2 emission (in Kg)": co2_emission, "acc1": acc1, "acc5": acc5,"loss": loss})
+                wandb.log({"CO2 emission (in Kg)": co2_emission, "acc1": top1.avg, "acc5": top5.avg,"losses_id": losses_id.avg})
     else:
         print("args.pretrained is False")  # Add this line for debugging
 
@@ -303,6 +317,7 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
         progress_template,
         prefix="Epoch: [{}]".format(epoch))
     end = time.time()
+    print("LEN TRAIN LOADER:", len(train_loader))
 
     # update lr
     learning_rate.update(current_lr)
@@ -314,11 +329,15 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
         global iters
         iters += 1
         
+        
         input = input.to('cpu', non_blocking=True) #or cuda
         target = target.to('cpu', non_blocking=True) #or cuda
 
         #input = input.cuda(non_blocking=True)
         #target = target.cuda(non_blocking=True)
+        
+        print("Input batch size:", input.size())
+        print("Input batch size:", target.size())
 
         # compute output
         output, x_norm = model(input, target)
@@ -362,7 +381,7 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
                 np.savez('{}/vis/epoch_{}_iter{}'.format(args.pth_save_fold, epoch, i),
                          x_norm, logit, cos_theta)
     emissions = tracker.stop()
-    #return emissions, acc1, acc5, loss
+    return emissions, top1, top5, losses_id
 
 
 def debug_info(x_norm, l_a, u_a, l_margin, u_margin):
