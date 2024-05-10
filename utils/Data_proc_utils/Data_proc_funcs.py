@@ -29,7 +29,7 @@ def balance_child_data(y_df, print_stats=False, random_state=42):
     # (obs be aware that each id have images in different age groups). I.e. The minority class will also have other ids in other age groups.
     # Therefore we sample based on number of images per age group.
 
-    age_labels = ['0-3', '4-6', '7-9', '10-12', '13-15', '16-18']
+    age_labels = ['1-3', '4-6', '7-9', '10-12', '13-15']
 
     # Take minority age group BASED ON N_IMAGES, and make dataframe
     min_agegroup = y_df.groupby('children_agegroup').image_name.count().sort_values(ascending=False).idxmin()
