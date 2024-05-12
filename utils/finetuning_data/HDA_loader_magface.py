@@ -43,8 +43,8 @@ if __name__ == "__main__":
         
     # With help from franck hda synth loader
     data_root_folder = '../../data/'
-    main_dataset_folder = data_root_folder +"raw/HDA"
-    output_folder = data_root_folder + "raw_full/HDA_aligned_resized"
+    main_dataset_folder = data_root_folder +"data_full/HDA_database"
+    output_folder = data_root_folder + "data_full/HDA_processed_local"
     imgs_output_folder = output_folder + '/images'
     rest_path = '/probes/images'
     image_size=112
@@ -52,12 +52,12 @@ if __name__ == "__main__":
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(imgs_output_folder, exist_ok=True)
 
-    with open(os.path.join(data_root_folder, 'fine_tune_train_list.list'), 'w') as train_list_file:
+    with open(os.path.join(data_root_folder, 'fine_tune_train_list_TEST_local.list'), 'w') as train_list_file:
         for age_group in range(5):
             id_counter = 0
             # Create output directory for the current age group   
             age_group_folder = os.path.join(main_dataset_folder, f'age_group_{age_group}' + rest_path)
-            all_images = sorted([image for image in os.listdir(age_group_folder) if image.endswith('.png')]) #Jpg images are bad image quality
+            all_images = sorted([image for image in os.listdir(age_group_folder) if image.endswith('.png') or image.endswith('.jpg')]) #Jpg images are bad image quality
             num_images = len(all_images)    
             print("Number of images in original directory age_group_{}:".format(age_group), num_images)
                         
@@ -80,7 +80,7 @@ if __name__ == "__main__":
             print("\n*** {id_counter} images were preprocessed and saved in new directory age_group_{ag} :) ***".format(id_counter=id_counter, ag=age_group))
             
     # Check number of ids in list 
-    list_folder = "../../data/fine_tune_train.list"
+    list_folder = "../../data/fine_tune_train_TEST.list"
     change_id_incremental(list_folder) #OBS lidt i tvivl om de skal være sorteret så alle 0'ere er  samlet, men Francks er ligesom vores..
     with open(list_folder, 'r') as f:
         lines = f.readlines()
