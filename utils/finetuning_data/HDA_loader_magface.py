@@ -52,8 +52,8 @@ if __name__ == "__main__":
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(imgs_output_folder, exist_ok=True)
 
-    with open(os.path.join(data_root_folder, 'fine_tune_train_list_TEST_local.list'), 'w') as train_list_file:
-        for age_group in range(5):
+    with open(os.path.join(output_folder, 'fine_tune_train_list_TEST_local_real.list'), 'w') as train_list_file:
+        for age_group in range(1):
             id_counter = 0
             # Create output directory for the current age group   
             age_group_folder = os.path.join(main_dataset_folder, f'age_group_{age_group}' + rest_path)
@@ -66,12 +66,16 @@ if __name__ == "__main__":
                 try: 
                     input_image_path = os.path.join(age_group_folder, img)
                     cv_image = cv2.imread(input_image_path)
+                    print("CV")
                     # Use MagFace function for alignment (utils.face_align.py)
                     landmarks_np = extract_landmarks(input_image_path)
+                    print("landmarks_np")
                     aligned_resized_image = face_align.norm_crop(cv_image, landmarks_np, image_size, mode='arcface') 
+                    print("aligned")
                     output_image_path = os.path.join(imgs_output_folder, os.path.basename(img))
                     cv2.imwrite(output_image_path, aligned_resized_image)
-                    train_list_file.write(f'{input_image_path} 0 {img.split("_")[0]}\n') #corresponding to id. list format required by magface. First id should be 0. 
+                    output_image_path_write = os.path.abspath(imgs_output_folder, img)
+                    train_list_file.write(f'{output_image_path_write} 0 {id_counter}') # before: {img.split("_")[0]}\n') #corresponding to id. list format required by magface. First id should be 0. 
                 except:
                     print("Error processing image, possibly due to low image quality:", img)
                 pass
@@ -80,7 +84,7 @@ if __name__ == "__main__":
             print("\n*** {id_counter} images were preprocessed and saved in new directory age_group_{ag} :) ***".format(id_counter=id_counter, ag=age_group))
             
     # Check number of ids in list 
-    list_folder = "../../data/fine_tune_train_TEST.list"
+    list_folder = "../../data/fine_tune_train_TEST_local_real.list"
     change_id_incremental(list_folder) #OBS lidt i tvivl om de skal være sorteret så alle 0'ere er  samlet, men Francks er ligesom vores..
     with open(list_folder, 'r') as f:
         lines = f.readlines()

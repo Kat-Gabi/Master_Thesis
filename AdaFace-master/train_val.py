@@ -85,66 +85,66 @@ class Trainer(LightningModule):
     def training_epoch_end(self, outputs):
         return None
 
-    def validation_step(self, batch, batch_idx):
-        images, labels, dataname, image_index = batch
-        embeddings, norms = self.model(images)
+    # def validation_step(self, batch, batch_idx):
+    #     images, labels, dataname, image_index = batch
+    #     embeddings, norms = self.model(images)
 
-        fliped_images = torch.flip(images, dims=[3])
-        flipped_embeddings, flipped_norms = self.model(fliped_images)
-        stacked_embeddings = torch.stack([embeddings, flipped_embeddings], dim=0)
-        stacked_norms = torch.stack([norms, flipped_norms], dim=0)
-        embeddings, norms = utils.fuse_features_with_norm(stacked_embeddings, stacked_norms)
+    #     fliped_images = torch.flip(images, dims=[3])
+    #     flipped_embeddings, flipped_norms = self.model(fliped_images)
+    #     stacked_embeddings = torch.stack([embeddings, flipped_embeddings], dim=0)
+    #     stacked_norms = torch.stack([norms, flipped_norms], dim=0)
+    #     embeddings, norms = utils.fuse_features_with_norm(stacked_embeddings, stacked_norms)
 
-        if self.hparams.distributed_backend == 'ddp':
-            # to save gpu memory
-            return {
-                'output': embeddings.to('cpu'),
-                'norm': norms.to('cpu'),
-                'target': labels.to('cpu'),
-                'dataname': dataname.to('cpu'),
-                'image_index': image_index.to('cpu')
-            }
-        else:
-            # dp requires the tensor to be cuda
-            return {
-                'output': embeddings,
-                'norm': norms,
-                'target': labels,
-                'dataname': dataname,
-                'image_index': image_index
-            }
+    #     if self.hparams.distributed_backend == 'ddp':
+    #         # to save gpu memory
+    #         return {
+    #             'output': embeddings.to('cpu'),
+    #             'norm': norms.to('cpu'),
+    #             'target': labels.to('cpu'),
+    #             'dataname': dataname.to('cpu'),
+    #             'image_index': image_index.to('cpu')
+    #         }
+    #     else:
+    #         # dp requires the tensor to be cuda
+    #         return {
+    #             'output': embeddings,
+    #             'norm': norms,
+    #             'target': labels,
+    #             'dataname': dataname,
+    #             'image_index': image_index
+    #         }
 
-    def validation_epoch_end(self, outputs):
+    # def validation_epoch_end(self, outputs):
 
-        all_output_tensor, all_norm_tensor, all_target_tensor, all_dataname_tensor = self.gather_outputs(outputs)
+    #     all_output_tensor, all_norm_tensor, all_target_tensor, all_dataname_tensor = self.gather_outputs(outputs)
 
-        dataname_to_idx = {"agedb_30": 0, "cfp_fp": 1, "lfw": 2, "cplfw": 3, "calfw": 4}
-        idx_to_dataname = {val: key for key, val in dataname_to_idx.items()}
-        val_logs = {}
-        for dataname_idx in all_dataname_tensor.unique():
-            dataname = idx_to_dataname[dataname_idx.item()]
-            # per dataset evaluation
-            embeddings = all_output_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
-            labels = all_target_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
-            issame = labels[0::2]
-            tpr, fpr, accuracy, best_thresholds = evaluate_utils.evaluate(embeddings, issame, nrof_folds=10)
-            acc, best_threshold = accuracy.mean(), best_thresholds.mean()
+    #     dataname_to_idx = {"agedb_30": 0, "cfp_fp": 1, "lfw": 2, "cplfw": 3, "calfw": 4}
+    #     idx_to_dataname = {val: key for key, val in dataname_to_idx.items()}
+    #     val_logs = {}
+    #     for dataname_idx in all_dataname_tensor.unique():
+    #         dataname = idx_to_dataname[dataname_idx.item()]
+    #         # per dataset evaluation
+    #         embeddings = all_output_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
+    #         labels = all_target_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
+    #         issame = labels[0::2]
+    #         tpr, fpr, accuracy, best_thresholds = evaluate_utils.evaluate(embeddings, issame, nrof_folds=10)
+    #         acc, best_threshold = accuracy.mean(), best_thresholds.mean()
 
-            num_val_samples = len(embeddings)
-            val_logs[f'{dataname}_val_acc'] = acc
-            val_logs[f'{dataname}_best_threshold'] = best_threshold
-            val_logs[f'{dataname}_num_val_samples'] = num_val_samples
+    #         num_val_samples = len(embeddings)
+    #         val_logs[f'{dataname}_val_acc'] = acc
+    #         val_logs[f'{dataname}_best_threshold'] = best_threshold
+    #         val_logs[f'{dataname}_num_val_samples'] = num_val_samples
 
-        val_logs['val_acc'] = np.mean([
-            val_logs[f'{dataname}_val_acc'] for dataname in dataname_to_idx.keys() if f'{dataname}_val_acc' in val_logs
-        ])
-        val_logs['epoch'] = self.current_epoch
+    #     val_logs['val_acc'] = np.mean([
+    #         val_logs[f'{dataname}_val_acc'] for dataname in dataname_to_idx.keys() if f'{dataname}_val_acc' in val_logs
+    #     ])
+    #     val_logs['epoch'] = self.current_epoch
 
-        for k, v in val_logs.items():
-            # self.log(name=k, value=v, rank_zero_only=True)
-            self.log(name=k, value=v)
+    #     for k, v in val_logs.items():
+    #         # self.log(name=k, value=v, rank_zero_only=True)
+    #         self.log(name=k, value=v)
 
-        return None
+    #     return None
 
     def test_step(self, batch, batch_idx):
         return self.validation_step(batch, batch_idx)
