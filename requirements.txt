@@ -15,6 +15,9 @@ flask
 scikit-learn
 loguru
 
+# AdaFace
+mxnet
+
 # WANDB
 wandb
 codecarbon

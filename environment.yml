@@ -1,0 +1,6 @@
+name: best_master
+channels:
+  - defaults
+dependencies:
+  - mxnet==1.9.1
+  - python==3.10.*
