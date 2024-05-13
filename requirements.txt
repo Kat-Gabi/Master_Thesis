@@ -20,9 +20,10 @@ scikit-learn
 loguru
 
 # AdaFace
-# Run requirements.txt from AdaFace-master
+# From requirements.txt in AdaFace-master
 pytorch_lightning
 bcolz
+mxnet
 pytorch-lightning==1.8.6
 tqdm
 bcolz-zipline
