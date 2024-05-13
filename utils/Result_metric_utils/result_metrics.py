@@ -1,18 +1,18 @@
-
+import numpy as np
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 def GARBE(fnir_c, fnir_a, fpir_c, fpir_a, alpha=0.5):
     """
     Function calculates GARBe score based on ISO standard ISO/IEC DIS 19795-10
     """
-    
+
     FPD = fpir_c/fpir_a
     print("FPD result: ", FPD)
 
 
     FND = fnir_c/fnir_a
     print("FND result: ", FND)
-    
+
     GARBE = alpha * FPD + (1 - alpha) * FND
     print("GARBE result, GARBE close to 1 means more unfair: ", GARBE)
 
@@ -70,12 +70,12 @@ def compute_fnir(enrolled_sim_mat, sim_mat, enrolled_ids, enrolled_num_id, ids, 
     M_d_set = set(enrolled_ids)
     M_d_set_len = len(enrolled_sim_mat)
     neg_ref = 0
-    
+
     # For each id corresponding to the id in the set, check if one of it's corresponding ids are above threshold
-    
+
     # Get enrolled similarity scores
     enrolled_sim_scores = []
-    
+
     ## Iterate over each enrolled reference for transaction i
     for m_i, id_now in enumerate(ids):
         # Check if the identity is enrolled
@@ -84,11 +84,11 @@ def compute_fnir(enrolled_sim_mat, sim_mat, enrolled_ids, enrolled_num_id, ids, 
             mated_sim_scores_slice = sim_mat[m_i] # Row corresponding to the enrolled probe id
             mated_sim_scores_slice_slice = [value for value, keep in zip(mated_sim_scores_slice, mated_ids_exact) if keep] #Only enrolled similarity scores for the same ids corresponding to the probe id
             enrolled_sim_scores.extend(mated_sim_scores_slice_slice)
-    
+
     # Iterate over each enrolled reference for transaction i
     for i in range(M_d_set_len):
-        probe = enrolled_num_id[i] # numerical id by magface, e.g. str value "African_244" becomes num. value 35. 
-        
+        probe = enrolled_num_id[i] # numerical id by magface, e.g. str value "African_244" becomes num. value 35.
+
         # Check if the reference probe id is in negative list/below threshold
         classified_negative_list = enrolled_sim_mat[i] <= thold
         classified_negative_idx = list(np.where(classified_negative_list)[0])  # Get indexes where the score is below threshold
@@ -99,16 +99,16 @@ def compute_fnir(enrolled_sim_mat, sim_mat, enrolled_ids, enrolled_num_id, ids, 
 
     # Calculate FNIR
     fnir = neg_ref / M_d_set_len
-    
+
     enrolled_sim_scores_final = np.array(enrolled_sim_scores)
     enrolled_sim_scores_final = enrolled_sim_scores_final[enrolled_sim_scores_final<0.999]
-    
+
     i = 0
     while len(enrolled_sim_scores_final) > (len(enrolled_sim_scores)-len(enrolled_ids)):
         i += 0.001
         print("NOT SAME LENGTH", len(enrolled_sim_scores_final), len(enrolled_sim_scores)-len(enrolled_ids))
         enrolled_sim_scores_final = enrolled_sim_scores_final[enrolled_sim_scores_final<0.999+i]
-        
+
     return fnir, enrolled_sim_scores_final
 
 
@@ -117,7 +117,7 @@ def compute_fnir(enrolled_sim_mat, sim_mat, enrolled_ids, enrolled_num_id, ids, 
 
 def remove_ones(matrix, reshape=False):
     "Function for removing ones to get similarity scores flattened for plots"
-    
+
     # number of 1s to remove
     n_remove = len(matrix)
     # Flatten the matrix
