@@ -136,8 +136,13 @@ def load_dict_finetuner(args, model):
         _state_dict = clean_dict_finetuner(model, checkpoint['state_dict'])
         print("HERE")
         model_dict = model.state_dict()
+        for name, param in _state_dict.items():
+            model_dict[name].copy_(param.to('cuda'))  # Ensure parameters are on the correct device
         model_dict.update(_state_dict)
         model.load_state_dict(model_dict)
+        
+        #model_dict.update(_state_dict)
+        #model.load_state_dict(model_dict)
         
         # delete to release more space
         del checkpoint
@@ -221,8 +226,8 @@ def main_worker(args):
         # Print number of parameters
         num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
         print("Number of trainable parameters: MODEL 2", num_params)
-        #model = torch.nn.DataParallel(model).cuda()
-        model = torch.nn.DataParallel(model) # if no gpu
+        model = torch.nn.DataParallel(model).cuda()#.to('cpu')#.cuda()
+        #model = torch.nn.DataParallel(model).to(device) # if no gpu
 
         ##### HERTIL
         
@@ -321,7 +326,7 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
 
     # update lr
     learning_rate.update(current_lr)
-    model = model.to('cpu') #or cuda
+    model = model.to('cuda') #.to('cpu') #or cuda
 
     for i, (input, target) in enumerate(train_loader):
         # measure data loading time
@@ -330,8 +335,8 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
         iters += 1
         
         
-        input = input.to('cpu', non_blocking=True) #or cuda
-        target = target.to('cpu', non_blocking=True) #or cuda
+        input = input.cuda(non_blocking=True) #.to('cuda', non_blocking=True) #.cuda(non_blocking=True) #.to('cpu', non_blocking=True) #or cuda
+        target = target.cuda(non_blocking=True) #.to('cuda', non_blocking=True) #.cuda(non_blocking=True) #.to('cpu', non_blocking=True) #or cuda
 
         #input = input.cuda(non_blocking=True)
         #target = target.cuda(non_blocking=True)
