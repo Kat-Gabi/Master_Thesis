@@ -1,3 +1,4 @@
+#python convert.py --rec_path ../data/data_full/HDA_processed_local/images/../data/data_full/HDA_processed_AdaFace/images --make_image_files --make_validation_memfiles
 from pathlib import Path
 import argparse
 import mxnet as mx

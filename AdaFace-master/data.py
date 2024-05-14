@@ -33,21 +33,23 @@ class DataModule(pl.LightningDataModule):
 
 
     def prepare_data(self):
-        # call this once to convert val_data to memfile for saving memory
-        if not os.path.isdir(os.path.join(self.data_root, self.val_data_path, 'agedb_30', 'memfile')):
-            print('making validation data memfile')
-            evaluate_utils.get_val_data(os.path.join(self.data_root, self.val_data_path))
+        "No validation data"
+        print('==> No validation steps, no validation set ---')
+        # # call this once to convert val_data to memfile for saving memory
+        # if not os.path.isdir(os.path.join(self.data_root, self.val_data_path, 'agedb_30', 'memfile')):
+        #     print('making validation data memfile')
+        #     evaluate_utils.get_val_data(os.path.join(self.data_root, self.val_data_path))
 
-        if not os.path.isfile(self.concat_mem_file_name):
-            # create a concat memfile
-            concat = []
-            for key in ['agedb_30', 'cfp_fp', 'lfw', 'cplfw', 'calfw']:
-                np_array, issame = evaluate_utils.get_val_pair(path=os.path.join(self.data_root, self.val_data_path),
-                                                               name=key,
-                                                               use_memfile=False)
-                concat.append(np_array)
-            concat = np.concatenate(concat)
-            evaluate_utils.make_memmap(self.concat_mem_file_name, concat)
+        # if not os.path.isfile(self.concat_mem_file_name):
+        #     # create a concat memfile
+        #     concat = []
+        #     for key in ['agedb_30', 'cfp_fp', 'lfw', 'cplfw', 'calfw']:
+        #         np_array, issame = evaluate_utils.get_val_pair(path=os.path.join(self.data_root, self.val_data_path),
+        #                                                        name=key,
+        #                                                        use_memfile=False)
+        #         concat.append(np_array)
+        #     concat = np.concatenate(concat)
+        #     evaluate_utils.make_memmap(self.concat_mem_file_name, concat)
 
 
     def setup(self, stage=None):
@@ -70,8 +72,8 @@ class DataModule(pl.LightningDataModule):
                     subset_index = [int(i) for i in f.read().split(',')]
                     self.subset_ms1mv2_dataset(subset_index)
 
-            print('creating val dataset')
-            self.val_dataset = val_dataset(self.data_root, self.val_data_path, self.concat_mem_file_name)
+            #print('creating val dataset')
+            #self.val_dataset = val_dataset(self.data_root, self.val_data_path, self.concat_mem_file_name)
 
         # Assign Test split(s) for use in Dataloaders
         if stage == 'test' or stage is None:
