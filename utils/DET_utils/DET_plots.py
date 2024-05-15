@@ -3,8 +3,8 @@ import math
 import operator
 from pathlib import Path
 
-from ipywidgets import fixed, interact
-import ipywidgets as widgets
+# from ipywidgets import fixed, interact
+# import ipywidgets as widgets
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
@@ -21,7 +21,7 @@ from tikzplotlib import save as tikz_save
 
 import logging
 
-from DET_utils.DET import DET
+from DET_utils.DET import *
 
 
 
