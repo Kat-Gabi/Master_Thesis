@@ -6,11 +6,14 @@ def GARBE(fnir_c, fnir_a, fpir_c, fpir_a, alpha=0.5):
     Function calculates GARBe score based on ISO standard ISO/IEC DIS 19795-10
     """
 
-    FPD = fpir_c/fpir_a
+    # FPD = fpir_c/fpir_a
+    FPD = (np.abs(fpir_c -fpir_a)/(2*(2**2)*((fnir_c+fnir_a)/2)))*2
     print("FPD result: ", FPD)
 
 
-    FND = fnir_c/fnir_a
+
+    # FND = fnir_c/fnir_a
+    FND = ((np.abs(fnir_c -fnir_a))/(2*(2**2)*((fnir_c+fnir_a)/2)))*2
     print("FND result: ", FND)
 
     GARBE = alpha * FPD + (1 - alpha) * FND
