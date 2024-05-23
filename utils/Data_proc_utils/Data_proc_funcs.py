@@ -86,6 +86,36 @@ def balance_child_data(y_df, print_stats=False, random_state=42):
 
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+# ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+
+# Balance child data
+# def balance_child_data_can(y_df, print_stats=False, random_state=42):
+def balance_child_data_can(y_df, print_stats=False, random_state=42):
+    """
+    Input: raw df for ylfw and rfw
+    Returns: csvs with equally balanced children and adults
+    Original child_balanced has random state 42
+    """
+
+    # Randomly sample 1000 identities from the entire dataset
+    ylfw_witha_balanced = y_df.sample(n=2000, random_state=random_state)
+
+    if print_stats:
+        # Print the distribution of age groups and other relevant statistics
+        print("Balanced data?:", ylfw_witha_balanced.children_agegroup.value_counts())
+
+    return ylfw_witha_balanced
+
+
+# ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+
+
+
+
 
 # Balance adults data
 def balance_adults_data_enrolled(children_balanced_df_i, a_df, print_stats=False, random_state=42):
