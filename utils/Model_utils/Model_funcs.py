@@ -177,6 +177,43 @@ def load_adaface_vectors(file_path, canonical=False, df_c_can=None):
 #ids_can, num_ids_can, norm_feats_can = load_magface_vectors('../data/feat_children.list', canonical=True, df_c_can=df_c_can)
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+def load_adaface_vectors_adults(file_path, canonical=False, df_c_can=None):
+    """
+    Input: Feature list from adaface (str), eg.: '../saved_predictions/similarity_scores_children_full_baseline1.pt'
+    Output: Normalized Feature vectors, numerical ids e.g. 0 for African_49 id
+    """
+
+    # Load the file
+    data = torch.load(file_path)
+
+    # Adjusted based on assumption that data["file_name"] contains only paths
+    identity_names = [os.path.basename(os.path.dirname(path)) for path in data["file_name"]]
+    image_names = [os.path.splitext(os.path.basename(path))[0] for path in data["file_name"]]
+    norm_feature_vectors = np.array(data["feature_vectors"])  # feature vectors are normalized in adaface
+    num_ids = np.array(data["image_id"])
+
+    file_name = np.array([n for n in data["file_name"]])
+
+    # convert to dict as magface:
+    file_names_vectors_dict = {}
+
+    # Iterate over the names and values
+    for file_name_i, feature_vect in zip(file_name, norm_feature_vectors):
+        # Assign the name as key and the corresponding list of values as value
+        file_names_vectors_dict[file_name_i] = feature_vect
+
+    if canonical:
+        file_name = [file_name[ele] for ele in range(len(file_name)) if file_name[ele].split("/")[-1] in np.array(df_c_can.Filename)]
+        norm_feature_vectors = np.array([file_names_vectors_dict[file_name[ele]] for ele in range(len(file_name))])  # unsorted image quality
+        image_names = [full_name.split("/")[-1][:-4] for full_name in file_name]
+        identity_names = convert_unique_ids(file_name)
+        factors_c, unique_ids = factorize_ids(identity_names)  # Factorized list: [0, 1, 2, 2], Image IDs mapping: {'Indian_682': 0, 'Asian_504': 1,..}
+        num_ids = np.array(factors_c)
+
+    return image_names, identity_names, num_ids, norm_feature_vectors
+
+
+# -----------------------------------------------------------
 
 
 def load_enrolled_adaface_vectors(file_path, enrolled_img_names, canonical=True, df_c_can=None):
