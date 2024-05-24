@@ -33,15 +33,15 @@
 
 mkdir -p hpc_out/$LSB_JOBID
 
-echo "Running the script..."
+#echo "Running the script..."
 module load python3/3.10.13
-module load gcc/11.4.0-binutils-2.40
-# module load cuda/11.7
+#module load gcc/11.4.0-binutils-2.40
+module load cuda/11.7
 
 
 ### Run setup
 # sh setup.sh $run_dir || exit 1
-source best_master/bin/activate
+source /work3/s174139/best_master_remote/bin/activate
 echo $PWD
 
 export TRANSFORMERS_CACHE=/work3/s174139
@@ -51,4 +51,4 @@ export TORCH_HOME=/work3/s174139
 
 ### Run python script
 
-python3 ../run/run_fine_tuner.sh
+../run/run_fine_tuner.sh

@@ -11,7 +11,6 @@ desired_directory = '../MagFace-main'
 print("PATHHHH","/".join(os.path.realpath(__file__).split("/")[0:-2]) )
 sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/MagFace-main")
 
-import sys
 sys.path.append("..")
 from dataloader import dataloader
 from models import magface
@@ -134,7 +133,6 @@ def load_dict_finetuner(args, model):
             checkpoint = torch.load(args.pretrained, map_location=torch.device('cuda'))
         
         _state_dict = clean_dict_finetuner(model, checkpoint['state_dict'])
-        print("HERE")
         model_dict = model.state_dict()
         for name, param in _state_dict.items():
             model_dict[name].copy_(param.to('cuda'))  # Ensure parameters are on the correct device
@@ -168,8 +166,8 @@ def clean_dict_finetuner(model, state_dict):
             _state_dict[new_k] = v
         else:
             print("K? ", new_k)
-            print(v.size())
-            print()
+            #print(v.size())
+            #print()
             #print(k,i, "III, did not happen",v.size(), model.state_dict()[new_k].size(), "\nhvordan ser v ud V", v ) 
         # assert k[0:1] == 'module.features.'
         new_kk = '.'.join(k.split('.')[1:])
@@ -208,30 +206,30 @@ def main(args):
 
 def main_worker(args):
     global best_acc1
-    print("Value of args.pretrained:", args.pretrained)  # Add this line for debugging
+    #print("Value of args.pretrained:", args.pretrained)  # Add this line for debugging
 
     if args.pretrained:
         
         cprint('=> modeling the network ...', 'green')
         model = magface.builder(args)
-        print("MODEL1:", model)
-        num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-        print("Number of trainable parameters: MODEL 1", num_params)
+        #print("MODEL1:", model)
+        #num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        #print("Number of trainable parameters: MODEL 1", num_params)
         #model = load_dict_inf(args, model) # loading using pre-trained model (as in network_inf.py)
         
         # prints which parameters are being loaded - not the fc layer..
         # returns model... i tvivl om der skal være = tegn.
-        model = load_dict_finetuner(args, model)
-        print("MODEL2:", model)
+        load_dict_finetuner(args, model)
+        #print("MODEL2:", model)
         # Print number of parameters
-        num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-        print("Number of trainable parameters: MODEL 2", num_params)
-        model = torch.nn.DataParallel(model).cuda()#.to('cpu')#.cuda()
+        #num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        #print("Number of trainable parameters: MODEL 2", num_params)
+        model = torch.nn.DataParallel(model).cuda() #.to('cpu')#.cuda()
         #model = torch.nn.DataParallel(model).to(device) # if no gpu
 
         ##### HERTIL
         
-        print("MODEL3:")
+        #print("MODEL3:")
         # for name, param in model.named_parameters():
         #     cprint(' : layer name and parameter size - {} - {}'.format(name, param.size()), 'green')
         
@@ -329,6 +327,9 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
     model = model.to('cuda') #.to('cpu') #or cuda
 
     for i, (input, target) in enumerate(train_loader):
+        print("--------TENSOR_SHAPE--------\nInput batch size:", input.size())
+        print("Target batch size:", target.size())
+
         # measure data loading time
         data_time.update(time.time() - end)
         global iters
@@ -336,22 +337,43 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
         
         
         input = input.cuda(non_blocking=True) #.to('cuda', non_blocking=True) #.cuda(non_blocking=True) #.to('cpu', non_blocking=True) #or cuda
-        target = target.cuda(non_blocking=True) #.to('cuda', non_blocking=True) #.cuda(non_blocking=True) #.to('cpu', non_blocking=True) #or cuda
+        target = target.cuda(non_blocking=True)#.to('cuda', non_blocking=True) #.cuda(non_blocking=True) #.to('cpu', non_blocking=True) #or cuda
 
         #input = input.cuda(non_blocking=True)
         #target = target.cuda(non_blocking=True)
         
-        print("Input batch size:", input.size())
-        print("Input batch size:", target.size())
+        print("--------TENSOR_SHAPE--------\nInput batch size:Input batch size:", input.size())
+        print("Target batch size:", target.size())
 
         # compute output
         output, x_norm = model(input, target)
+        
+        ###
+        # Debugging prints
+        print(f"Output shape: {output[0].shape}")
+        print(f"Target shape: {target.shape}, Target min: {target.min()}, Target max: {target.max()}")
+
+        # Ensure all target indices are within the valid range
+        assert target.min() >= 0 and target.max() < output[0].size(1), "Target index out of bounds"
+
+                
+        
+        #print(f"Output shape from model: {output.shape}")
+        print(f"--------TENSOR_SHAPE--------\nx_norm shape from model: {x_norm.shape}")
+        
+        #output_squeezed = [torch.squeeze(tensor, dim=1) for tensor in output]
+        print(f"--------TENSOR_SHAPE--------\noutput shape from model:")
+        for idx, tensor in enumerate(output):
+            print(f"Shape of tensor {idx}: {tensor.shape}")
+              
 
         loss_id, loss_g, one_hot = criterion(output, target, x_norm)
         loss = loss_id + args.lambda_g * loss_g
+        print("AFTER LOSS")
 
         # measure accuracy and record loss
         acc1, acc5 = utils.accuracy(args, output[0], target, topk=(1, 5))
+        print("here")
 
         losses.update(loss.item(), input.size(0))
         top1.update(acc1[0], input.size(0))
@@ -370,6 +392,8 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
         batch_time.update(duration)
         end = time.time()
         throughputs.update(args.batch_size / duration)
+        print("here2")
+
 
         if i % args.print_freq == 0:
             progress.display(i)

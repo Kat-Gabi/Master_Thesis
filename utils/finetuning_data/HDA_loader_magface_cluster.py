@@ -45,7 +45,7 @@ if __name__ == "__main__":
     # With help from franck hda synth loader
     data_root_folder = '../../data/'
     main_dataset_folder = data_root_folder +"data_full/HDA_database"
-    output_folder = data_root_folder + "data_full/HDA_processed_local"
+    output_folder = data_root_folder + "data_full/HDA_processed_cluster_magface"
     imgs_output_folder = output_folder + '/images'
     rest_path = '/probes/images'
     image_size=112
@@ -83,7 +83,7 @@ if __name__ == "__main__":
                     #print("cv2 write")
                     output_image_path_write = os.path.join(imgs_output_folder, img) 
                     train_list_file.write(f'{output_image_path_write} 0 {img.split("_")[0]}\n') #corresponding to id. list format required by magface. First id should be 0. 
-                    print("written!")
+                    #print("written!")
                 except:
                     print("Error processing image, possibly due to low image quality:", img)
                 pass

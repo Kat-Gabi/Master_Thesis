@@ -15,11 +15,49 @@ bool = bool
 import data
 import inspect
 
+import wandb
+
+from pytorch_lightning.callbacks import Callback
+
+class CustomFreezeCallback(Callback):
+    def __init__(self, unfreeze_epoch=18, num_layers_to_unfreeze=9):
+        self.unfreeze_epoch = unfreeze_epoch
+        self.num_layers_to_unfreeze = num_layers_to_unfreeze
+
+
+    def on_train_epoch_start(self, trainer, pl_module):
+        if trainer.current_epoch == self.unfreeze_epoch:
+            print(f"Epoch {trainer.current_epoch}: UNFREEZING ALL LAYERS")
+            
+            # Get all layers
+            layers = list(pl_module.children())
+            # Select the last num_layers_to_unfreeze layers
+            layers_to_unfreeze = layers[-self.num_layers_to_unfreeze:]
+            print(f"Layers to unfreeze {self.num_layers_to_unfreeze}")
+
+            # Set requires_grad = True for the parameters of the selected layers
+            for n_layer, layer in enumerate(layers_to_unfreeze):
+                print(f"UNFROZE LAYER {n_layer}")
+                for param in layer.parameters():
+                    param.requires_grad = True
+            # for param in pl_module.parameters():
+            #     param.requires_grad = True
+
+
 def main(args):
+    # start a new wandb run to track this script
+    wandb.init(
+        # set the wandb project where this run will be logged
+        project="face-rec-models",
+        name="adaface-fine-tuner",
+        config={"lr": args.lr, "epochs": args.epochs}
+    )
 
     hparams = dotdict(vars(args))
 
+    # From train_val.py
     trainer_mod = train_val.Trainer(**hparams)
+    
     data_mod = data.DataModule(**hparams)
 
     if hparams.seed is not None:
@@ -76,14 +114,32 @@ def main(args):
                              accumulate_grad_batches=hparams.accumulate_grad_batches,
                              limit_train_batches=50 if hparams.test_run else 1.0
                              )
-
+    
     if not hparams.evaluate:
-        # train / val
+        # MODEL
+        #print("-------MODEL ARCH-----------")
+        #print(trainer_mod.model)
+    
+        
+        # FINETUNING
+        print('==> FREEZE ALL LAYERS')
+        for param in trainer_mod.parameters():
+            param.requires_grad = False
+
+        # Aktivieren der letzten Schicht
+        print('==> ACTIVATE THE LAST LAYER (head - adaface)')
+        for param in trainer_mod.head.parameters():
+            param.requires_grad = True
+            
         print('start training')
+        # Initialize the tracker
         trainer.fit(trainer_mod, data_mod)
+        
         print('start evaluating')
-        print('evaluating from ', checkpoint_callback.best_model_path)
-        trainer.test(ckpt_path='best', datamodule=data_mod)
+        
+        # No validation
+        #print('evaluating from ', checkpoint_callback.best_model_path)
+        #trainer.test(ckpt_path='best', datamodule=data_mod)
     else:
         # eval only
         print('start evaluating')
@@ -107,5 +163,5 @@ if __name__ == '__main__':
         assert args.resume_from_checkpoint.endswith('.ckpt')
         args.output_dir = os.path.dirname(args.resume_from_checkpoint)
         print('resume from {}'.format(args.output_dir))
-
+        
     main(args)

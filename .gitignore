@@ -175,19 +175,24 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
-AdaFace-master/pretrained/adaface_ir18_casia.ckpt
 models/adaface_ir18_casia.ckpt
-MagFace-main/models/magface_iresnet18_casia_dp.pth
-
-
 
 # Data complete sets
 data/raw_full/
 data/data_full/
 
+# old?
 data/feat_img_adults_full.list
 data/feat_img_children_full.list
 /MagFace-main/run/wandb
-/data/data_full
+
+MagFace-main/models/magface_iresnet18_casia_dp.pth
 /MagFace-main/Master_thesis_data_prep/image_lists
 /MagFace-main/run/test
+/MagFace-main/Master_thesis_data_prep/hpc_out
+/MagFace-main/Master_thesis_data_prep/test
+/MagFace-main/Master_thesis_data_prep/wandb
+
+AdaFace-master/pretrained/adaface_ir18_casia.ckpt
+AdaFace-master/scripts/wandb
+AdaFace-master/scripts/hpc_out

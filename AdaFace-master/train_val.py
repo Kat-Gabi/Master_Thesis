@@ -8,6 +8,8 @@ import head
 import net
 import numpy as np
 import utils
+import wandb
+from codecarbon import EmissionsTracker
 
 
 class Trainer(LightningModule):
@@ -57,6 +59,7 @@ class Trainer(LightningModule):
         if isinstance(scheduler, lr_scheduler._LRScheduler):
             lr = scheduler.get_last_lr()[0]
         else:
+            #lr = 0.01
             lr = scheduler.get_epoch_values(self.current_epoch)[0]
         return lr
 
@@ -71,18 +74,38 @@ class Trainer(LightningModule):
 
 
     def training_step(self, batch, batch_idx):
+        tracker = EmissionsTracker()
+        tracker.start()
         images, labels = batch
 
         cos_thetas, norms, embeddings, labels = self.forward(images, labels)
         loss_train = self.cross_entropy_loss(cos_thetas, labels)
         lr = self.get_current_lr()
+        acc1, acc5 = utils.calculate_accuracy(cos_thetas, labels, topk=(1, 5))
+        co2_emission = tracker.stop()
+
         # log
         self.log('lr', lr, on_step=True, on_epoch=True, logger=True)
         self.log('train_loss', loss_train, on_step=True, on_epoch=True, logger=True)
+        self.log('train_acc1', acc1, on_step=True, on_epoch=True, logger=True, sync_dist=True)
+        self.log('train_acc5', acc5, on_step=True, on_epoch=True, logger=True, sync_dist=True)
 
+        #gabi
+        # Log metrics to wandb
+        wandb.log({'epoch': self.current_epoch,
+            "CO2 emission (in Kg)": co2_emission,
+            "lr": lr,
+            "train_loss": loss_train.item(),
+            "train_acc1": acc1,
+            "train_acc5": acc5
+        })
+            
         return loss_train
 
     def training_epoch_end(self, outputs):
+        lr = self.get_current_lr()
+        print('CURRENT LR: ', lr)
+
         return None
 
     # def validation_step(self, batch, batch_idx):

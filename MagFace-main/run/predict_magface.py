@@ -6,13 +6,17 @@
 import sys
 import os
 
-# Specify the desired directory
-desired_directory = '/work3/s174139/Master_Thesis/MagFace-main' 
 
-# Change the current working directory
-print("PATHHHH","/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/MagFace-main")
-sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/MagFace-main")
 
+# # Specify the desired directory
+# desired_directory = '/work3/s174139/Master_Thesis' #/MagFace-main' 
+
+# # Change the current working directory
+# print("PATHHHH","/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/MagFace-main")
+# sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/MagFace-main")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+print(os.getcwd())
 #import sys
 #sys.path.append("..")
 #sys.path.append("../../")
@@ -36,6 +40,7 @@ import warnings
 import time
 import pprint
 import os
+
 
 
 ## Use gen_features_test.sh to get features from test dataset
@@ -84,19 +89,79 @@ class ImgInfLoader(data.Dataset):
         if not os.path.isfile(img_path):
             raise Exception('{} does not exist'.format(img_path))
             exit(1)
-        img = cv2.imread(img_path) # opens with BRG by default..
-        if img is None:
-            raise Exception('{} is empty'.format(img_path))
-            exit(1)
-        _img = cv2.flip(img, 1)
+            
+        #img = cv2.imread(img_path) # opens with BRG by default..
         
+        img = crop_face_cv2(img_path)
 
         
+        
+        
+        ## CROP IMAGE - takes up too much space
+        # Use MagFace function for alignment (utils.face_align.py)
+        #landmarks_np = extract_landmarks(input_image_path)
+        #landmarks_np = extract_landmarks(img)
+
+        #print("landmark")
+        #aligned_resized_image = face_align.norm_crop(img, landmarks_np, image_size=112, mode='arcface') 
+        #img = aligned_resized_image
+
+        if img is None:
+            print("image is empty..", img_path)
+            
+
+            #raise Exception('{} is empty'.format(img_path))
+        #     #exit(1)
+        img = cv2.imread(img_path)
+        _img = cv2.flip(img, 1)
         
         return [self.transform(img), self.transform(_img)], img_path 
 
+
+        ## OLD which works
+        # if img is None:
+        #     raise Exception('{} is empty'.format(img_path))
+        #     #exit(1)
+        # _img = cv2.flip(img, 1)
+        
+        # return [self.transform(img), self.transform(_img)], img_path 
+
     def __len__(self):
         return len(self.imgs)
+
+# Takes up too much space    
+# def extract_landmarks(image_path):
+#     landmark_values = RetinaFace.detect_faces(image_path)["face_1"]["landmarks"].values()
+#     return np.array([sublist for sublist in landmark_values])
+
+
+def crop_face_cv2(image_path):
+    # Load the image
+    image = cv2.imread(image_path)
+    
+    # Convert the image to grayscale
+    #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Load the pre-trained face detector
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    
+    # Detect faces in the image
+    faces = face_cascade.detectMultiScale(image, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    try:
+        if len(faces) > 0:
+            # Assuming only one face is present, extract the first face
+            (x, y, w, h) = faces[0]
+            
+            # Crop the face from the image
+            face_image = image[y:y+h, x:x+w]
+            
+            return face_image
+    except:
+        print("No face found in the image.")
+        pass
+
+
+
 
 
 def main(args):

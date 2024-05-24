@@ -11,6 +11,10 @@ scikit-image
 opencv-python
 retina-face
 
+#cropping
+dlib
+face_recognition
+
 # FG_NET
 deeplake
 flask
@@ -30,6 +34,7 @@ bcolz-zipline
 prettytable
 menpo
 opencv-python
+numpy==1.23.1
 
 # WANDB
 wandb

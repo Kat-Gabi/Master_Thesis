@@ -47,6 +47,7 @@ def train_loader(args):
     train_trans = transforms.Compose([
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
+        
     ])
     train_dataset = MagTrainDataset(
         args.train_list,

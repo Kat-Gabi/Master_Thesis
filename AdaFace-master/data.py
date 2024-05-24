@@ -79,14 +79,14 @@ class DataModule(pl.LightningDataModule):
         if stage == 'test' or stage is None:
             self.test_dataset = test_dataset(self.data_root, self.val_data_path, self.concat_mem_file_name)
 
-    def train_dataloader(self):
-        return DataLoader(self.train_dataset, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True)
+    def train_dataloader(self): #gabi modification droplast true
+        return DataLoader(self.train_dataset, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True, drop_last=True)
 
     def val_dataloader(self):
         return DataLoader(self.val_dataset, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=False)
 
     def test_dataloader(self):
-        return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=False)
+        return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=False, drop_last=True)
 
     def subset_ms1mv2_dataset(self, subset_index):
         # remove too few example identites

@@ -125,3 +125,21 @@ def get_num_class(hparams):
         raise ValueError('Check your train_data_path', hparams.train_data_path)
 
     return class_num
+
+
+### MAYBE
+def calculate_accuracy(output, labels, topk=(1,)):
+    with torch.no_grad():
+        maxk = max(topk)
+        batch_size = labels.size(0)
+
+        _, pred = output.topk(maxk, 1, True, True)
+        pred = pred.t()
+        correct = pred.eq(labels.view(1, -1).expand_as(pred))
+
+        accuracies = []
+        for k in topk:
+            correct_k = correct[:k].contiguous().view(-1).float().sum(0, keepdim=True)
+            acc = correct_k.mul_(100.0 / batch_size)
+            accuracies.append(acc.item())
+        return accuracies
