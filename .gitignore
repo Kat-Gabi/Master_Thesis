@@ -190,3 +190,7 @@ data/feat_img_children_full.list
 /MagFace-main/run/wandb
 /data/data_full
 /MagFace-main/Master_thesis_data_prep/image_lists
+notebooks/model_results/sim_mat_a_non_enrolled_iterations_all.csv
+notebooks/model_results/sim_mat_a_enrolled_iterations_all.csv
+notebooks/model_results/sim_mat_c_enrolled_iterations_all.csv
+notebooks/model_results/sim_mat_c_non_enrolled_iterations_all.csv
