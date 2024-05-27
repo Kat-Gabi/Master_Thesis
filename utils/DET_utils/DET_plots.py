@@ -106,6 +106,9 @@ def d_prime(distribution1, distribution2):
 
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.patches as mpatches
 
 def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, savename=None):
     linspace_items = 101
@@ -170,7 +173,7 @@ def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, sa
     current_handles, _ = plt.gca().get_legend_handles_labels()
 
     plt.grid(True)
-    plt.legend(loc=legend_loc, bbox_to_anchor=legend_anchor, ncol=legend_cols, fontsize=legend_fontsize, handles=[green_patch, red_patch, shaded_green_patch, shaded_red_patch]+current_handles)
+    plt.legend(loc='upper right', bbox_to_anchor=legend_anchor, ncol=legend_cols, fontsize=legend_fontsize, handles=[green_patch, red_patch, shaded_green_patch, shaded_red_patch]+current_handles)
     plt.xlim(0, 1)
     plt.ylim(0, None)
 
@@ -181,6 +184,7 @@ def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, sa
         plt.close()
     else:
         plt.show()
+
 
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
