@@ -67,7 +67,8 @@ def compute_metrics_ex_1_1(random_states, percentiles, children_all, adults_all,
         num_ids_a_enrolled = num_ids_a[indices_a_enrolled]
 
         for percentile in percentiles:
-            thold = (np.percentile(sim_mat_c, percentile) + np.percentile(sim_mat_a, percentile)) / 2
+            # thold = (np.percentile(sim_mat_c, percentile) + np.percentile(sim_mat_a, percentile)) / 2
+            thold = percentile
 
             # Evaluation metrics
             FNIR_c, sim_mat_c_enrolled = compute_fnir(sim_mat_c_enrolled_0, sim_mat_c, enrolled_identity_names_c, num_ids_c_enrolled, ids_c, thold=thold)
@@ -237,7 +238,8 @@ def compute_metrics_ex_1_2(random_states, percentiles, children_all, adults_all,
         num_ids_a_enrolled = num_ids_a[indices_a_enrolled]
 
         for percentile in percentiles:
-            thold = (np.percentile(sim_mat_c, percentile) + np.percentile(sim_mat_a, percentile)) / 2
+            # thold = (np.percentile(sim_mat_c, percentile) + np.percentile(sim_mat_a, percentile)) / 2
+            thold = percentile
 
             # Evaluation metrics
             FNIR_c, sim_mat_c_enrolled = compute_fnir(sim_mat_c_enrolled_0, sim_mat_c, enrolled_identity_names_c, num_ids_c_enrolled, ids_c, thold=thold)
@@ -278,6 +280,41 @@ def compute_metrics_ex_1_2(random_states, percentiles, children_all, adults_all,
     return df_all_threshold_x
 
 
+# def plot_threshold_metrics_ex_1_2(df_all_threshold_x):
+#     # Set the aesthetics for the plots
+#     sns.set(style="whitegrid")
+
+#     plot_df = df_all_threshold_x.groupby('Threshold').mean()
+
+#     plt.figure(figsize=(14, 7))
+
+#     # Plot FNIR
+#     plt.subplot(1, 2, 1)
+#     plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children')
+#     plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children')
+#     plt.xlabel('Threshold', fontsize=14)
+#     plt.ylabel('FNIR', fontsize=14)
+#     plt.title('FNIR vs Threshold', fontsize=16)
+#     plt.ylim(0.0, 0.125)  # Limit the FNIR y-axis
+#     plt.legend(fontsize=12)
+#     plt.grid(True)
+
+#     # Plot FPIR
+#     plt.subplot(1, 2, 2)
+#     plt.plot(plot_df.index, plot_df['FPIR_c'], 'r-', label='Canonical - children')
+#     plt.plot(plot_df.index, plot_df['FPIR_a'], 'c-', label='Mixed quality - children')
+#     plt.xlabel('Threshold', fontsize=14)
+#     plt.ylabel('FPIR', fontsize=14)
+#     plt.title('FPIR vs Threshold', fontsize=16)
+#     plt.ylim(0.85, 1.0)  # Limit the FPIR y-axis
+#     plt.legend(fontsize=12)
+#     plt.grid(True)
+
+#     plt.tight_layout()
+
+#     # Show the plot
+#     plt.show()
+
 def plot_threshold_metrics_ex_1_2(df_all_threshold_x):
     # Set the aesthetics for the plots
     sns.set(style="whitegrid")
@@ -287,28 +324,57 @@ def plot_threshold_metrics_ex_1_2(df_all_threshold_x):
     plt.figure(figsize=(14, 7))
 
     # Plot FNIR
-    plt.subplot(1, 2, 1)
-    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children')
-    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children')
+    # plt.subplot(1, 2, 1)
+    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children - FNIR')
+    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children - FNIR')
     plt.xlabel('Threshold', fontsize=14)
-    plt.ylabel('FNIR', fontsize=14)
+    plt.ylabel('FNIR and FPIR', fontsize=14)
     plt.title('FNIR vs Threshold', fontsize=16)
-    plt.ylim(0.0, 0.125)  # Limit the FNIR y-axis
-    plt.legend(fontsize=12)
+    # plt.ylim(0.0, 0.125)  # Limit the FNIR y-axis
+    plt.xlim(0.0, 1)
+    plt.legend(fontsize=16)
     plt.grid(True)
 
     # Plot FPIR
-    plt.subplot(1, 2, 2)
-    plt.plot(plot_df.index, plot_df['FPIR_c'], 'r-', label='Canonical - children')
-    plt.plot(plot_df.index, plot_df['FPIR_a'], 'c-', label='Mixed quality - children')
+    # plt.subplot(1, 2, 2)
+    plt.plot(plot_df.index, plot_df['FPIR_c'], 'g-', label='Canonical - children - FPIR')
+    plt.plot(plot_df.index, plot_df['FPIR_a'], 'b-', label='Mixed quality - children - FPIR')
     plt.xlabel('Threshold', fontsize=14)
-    plt.ylabel('FPIR', fontsize=14)
-    plt.title('FPIR vs Threshold', fontsize=16)
-    plt.ylim(0.85, 1.0)  # Limit the FPIR y-axis
-    plt.legend(fontsize=12)
+    plt.ylabel('FPIR and FNIR', fontsize=14)
+    plt.title('FPIR and FNIR vs Threshold', fontsize=16)
+    # plt.ylim(0.85, 1.0)  # Limit the FPIR y-axis
+    plt.xlim(0.0, 1)
+    plt.legend(fontsize=16)
     plt.grid(True)
 
     plt.tight_layout()
 
     # Show the plot
     plt.show()
+# plot_threshold_metrics_ex_1_2(df_all_threshold_x)
+
+
+def plot_threshold_metrics_ex_1_2_zoomed(df_all_threshold_x):
+    # Set the aesthetics for the plots
+    sns.set(style="whitegrid")
+
+    plot_df = df_all_threshold_x.groupby('Threshold').mean()
+
+    plt.figure(figsize=(14, 7))
+    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children - FNIR')
+    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children - FNIR')
+    plt.xlabel('Threshold', fontsize=20)
+    plt.ylabel('FNIR and FPIR', fontsize=20)
+    plt.title('FNIR vs Threshold', fontsize=20)
+    plt.ylim(0.0, 0.07)  # Limit the FNIR y-axis
+    plt.xlim(0.20, 0.3)
+    plt.legend(fontsize=20)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.grid(True)
+
+    plt.tight_layout()
+
+    # Show the plot
+    plt.show()
+# plot_threshold_metrics_ex_1_2_zoomed(df_all_threshold_x)
