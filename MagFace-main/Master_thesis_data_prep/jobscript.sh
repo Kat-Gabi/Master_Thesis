@@ -1,9 +1,9 @@
 #!/bin/sh
 ### General options
 ### ?- specify queue --
-#BSUB -q hpc
+#BSUB -q gpua100
 ### -- set the job Name --
-#BSUB -J testjob
+#BSUB -J testjob_magface
 ### -- ask for number of cores (default: 1) --
 #BSUB -n 4
 ### -- set span if number of cores is more than 1

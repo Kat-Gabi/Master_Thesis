@@ -1,0 +1,78 @@
+/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep
+Starting fine tuner script...
+PATHHHH /work3/s174139/Master_Thesis/MagFace-main
+=> parse the args ...
+wandb: Currently logged in as: gabriella-angela (fair_face_recognition). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.17.0
+wandb: Run data is saved locally in /work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/wandb/run-20240527_152911-c9il76r5
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run magface-fine-tuner
+wandb: ⭐️ View project at https://wandb.ai/fair_face_recognition/face-rec-models
+wandb: 🚀 View run at https://wandb.ai/fair_face_recognition/face-rec-models/runs/c9il76r5
+{'arc_scale': 64,
+ 'arch': 'iresnet18',
+ 'batch_size': 256,
+ 'cpu_mode': '0',
+ 'embedding_size': 512,
+ 'epochs': 2,
+ 'l_a': 10.0,
+ 'l_margin': 0.45,
+ 'lambda_g': 35.0,
+ 'last_fc_size': 823,
+ 'lr': 0.01,
+ 'lr_drop_epoch': [2],
+ 'lr_drop_ratio': 0.1,
+ 'momentum': 0.9,
+ 'pretrained': '../models/magface_iresnet18_casia_dp.pth',
+ 'print_freq': 10,
+ 'pth_save_epoch': 1,
+ 'pth_save_fold': './test/',
+ 'start_epoch': 0,
+ 'train_list': '../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_correct_index_tester.list',
+ 'u_a': 110.0,
+ 'u_margin': 0.8,
+ 'vis_mag': 1,
+ 'weight_decay': 0.0005,
+ 'workers': 4}
+min lambda g is 22.586666666666673, currrent lambda is 35.0
+=> torch version : 2.2.1+cu121
+=> ngpus : 1
+=> modeling the network ...
+=> loading pth from ../models/magface_iresnet18_casia_dp.pth ...
+cpu!!!
+K?  features.weight
+new KK 2 fc.weight
+=> fc.weight not loaded! Model params: 188, loaded params: 187
+=> FREEZING ALL LAYERS EXCEPT fc ...
+NAME FC? module.fc.weight
+=> building the optimizer ...
+SGD (
+Parameter Group 0
+    dampening: 0
+    differentiable: False
+    foreach: None
+    lr: 0.01
+    maximize: False
+    momentum: 0.9
+    nesterov: False
+    weight_decay: 0.0005
+)
+=> building the dataloader ...
+Traceback (most recent call last):
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 436, in <module>
+    main(args)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 204, in main
+    main_worker(args)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 254, in main_worker
+    train_loader = dataloader.train_loader(args)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../dataloader/dataloader.py", line 52, in train_loader
+    train_dataset = MagTrainDataset(
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../dataloader/dataloader.py", line 21, in __init__
+    self.init()
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../dataloader/dataloader.py", line 32, in init
+    self.targets.append(int(data[2]))
+IndexError: list index out of range
+wandb: - 0.005 MB of 0.005 MB uploadedwandb: \ 0.005 MB of 0.010 MB uploadedwandb: | 0.010 MB of 0.010 MB uploadedwandb: 🚀 View run magface-fine-tuner at: https://wandb.ai/fair_face_recognition/face-rec-models/runs/c9il76r5
+wandb: ⭐️ View project at: https://wandb.ai/fair_face_recognition/face-rec-models
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20240527_152911-c9il76r5/logs

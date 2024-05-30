@@ -1,0 +1,131 @@
+/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep
+Starting fine tuner script...
+PATHHHH /work3/s174139/Master_Thesis/MagFace-main
+=> parse the args ...
+wandb: Currently logged in as: gabriella-angela (fair_face_recognition). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.17.0
+wandb: Run data is saved locally in /work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/wandb/run-20240524_174526-8fus7rd8
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run magface-fine-tuner
+wandb: ⭐️ View project at https://wandb.ai/fair_face_recognition/face-rec-models
+wandb: 🚀 View run at https://wandb.ai/fair_face_recognition/face-rec-models/runs/8fus7rd8
+{'arc_scale': 64,
+ 'arch': 'iresnet18',
+ 'batch_size': 256,
+ 'cpu_mode': '0',
+ 'embedding_size': 512,
+ 'epochs': 2,
+ 'l_a': 10.0,
+ 'l_margin': 0.45,
+ 'lambda_g': 35.0,
+ 'last_fc_size': 1652,
+ 'lr': 0.1,
+ 'lr_drop_epoch': [2],
+ 'lr_drop_ratio': 0.1,
+ 'momentum': 0.9,
+ 'pretrained': '../models/magface_iresnet18_casia_dp.pth',
+ 'print_freq': 10,
+ 'pth_save_epoch': 1,
+ 'pth_save_fold': './test/',
+ 'start_epoch': 0,
+ 'train_list': '../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_correct_index_tester.list',
+ 'u_a': 110.0,
+ 'u_margin': 0.8,
+ 'vis_mag': 1,
+ 'weight_decay': 0.0005,
+ 'workers': 4}
+min lambda g is 22.586666666666673, currrent lambda is 35.0
+=> torch version : 2.2.1+cu121
+=> ngpus : 1
+=> modeling the network ...
+=> loading pth from ../models/magface_iresnet18_casia_dp.pth ...
+cpu!!!
+K?  features.weight
+new KK 2 fc.weight
+=> fc.weight not loaded! Model params: 188, loaded params: 187
+=> FREEZING ALL LAYERS EXCEPT fc ...
+NAME FC? module.fc.weight
+=> building the optimizer ...
+SGD (
+Parameter Group 0
+    dampening: 0
+    differentiable: False
+    foreach: None
+    lr: 0.1
+    maximize: False
+    momentum: 0.9
+    nesterov: False
+    weight_decay: 0.0005
+)
+=> building the dataloader ...
+TRAIN LOADER???? <torch.utils.data.dataloader.DataLoader object at 0x7fb586c5ba60> ARGS: are workers and batch size and train list
+=> building the criterion ...
+=> starting training engine ...
+[codecarbon WARNING @ 17:45:37] Invalid gpu_ids format. Expected a string or a list of ints.
+[codecarbon INFO @ 17:45:37] [setup] RAM Tracking...
+[codecarbon INFO @ 17:45:37] [setup] GPU Tracking...
+[codecarbon INFO @ 17:45:37] Tracking Nvidia GPU via pynvml
+[codecarbon INFO @ 17:45:37] [setup] CPU Tracking...
+[codecarbon WARNING @ 17:45:37] No CPU tracking mode found. Falling back on CPU constant mode.
+[codecarbon WARNING @ 17:45:39] We saw that you have a Intel(R) Xeon(R) Gold 6326 CPU @ 2.90GHz but we don't know it. Please contact us.
+[codecarbon INFO @ 17:45:39] CPU Model on constant consumption mode: Intel(R) Xeon(R) Gold 6326 CPU @ 2.90GHz
+[codecarbon INFO @ 17:45:39] >>> Tracker's metadata:
+[codecarbon INFO @ 17:45:39]   Platform system: Linux-5.4.273-1.el7.elrepo.x86_64-x86_64-with-glibc2.17
+[codecarbon INFO @ 17:45:39]   Python version: 3.10.13
+[codecarbon INFO @ 17:45:39]   CodeCarbon version: 2.4.1
+[codecarbon INFO @ 17:45:39]   Available RAM : 1007.365 GB
+[codecarbon INFO @ 17:45:39]   CPU count: 32
+[codecarbon INFO @ 17:45:39]   CPU model: Intel(R) Xeon(R) Gold 6326 CPU @ 2.90GHz
+[codecarbon INFO @ 17:45:39]   GPU count: 1
+[codecarbon INFO @ 17:45:39]   GPU model: 1 x NVIDIA A100 80GB PCIe
+LEN TRAIN LOADER: 116
+[ WARN:0@78.030] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/6540838_13_F_white_17.jpg'): can't open/read file: check file path/integrity
+[ WARN:0@78.178] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/9002384_13_F_white_12.png'): can't open/read file: check file path/integrity
+[ WARN:0@78.178] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/8550162_15_M_black_9.png'): can't open/read file: check file path/integrity
+[ WARN:0@78.211] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/9753361_14_F_asian_10.png'): can't open/read file: check file path/integrity
+Traceback (most recent call last):
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 436, in <module>
+    main(args)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 204, in main
+    main_worker(args)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 271, in main_worker
+    co2_emission, top1, top5, losses_id = do_train(train_loader, model, criterion, optimizer, epoch, args)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 329, in do_train
+    for i, (input, target) in enumerate(train_loader):
+  File "/work3/s174139/best_master_remote/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "/work3/s174139/best_master_remote/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1346, in _next_data
+    return self._process_data(data)
+  File "/work3/s174139/best_master_remote/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1372, in _process_data
+    data.reraise()
+  File "/work3/s174139/best_master_remote/lib/python3.10/site-packages/torch/_utils.py", line 722, in reraise
+    raise exception
+AttributeError: Caught AttributeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/work3/s174139/best_master_remote/lib/python3.10/site-packages/torch/utils/data/_utils/worker.py", line 308, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/work3/s174139/best_master_remote/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 51, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/work3/s174139/best_master_remote/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 51, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../dataloader/dataloader.py", line 39, in __getitem__
+    img = self.transform(img)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../utils/cv2_trans.py", line 43, in __call__
+    img = t(img)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../utils/cv2_trans.py", line 285, in __call__
+    return F.hflip(img)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../utils/cv2_funcs.py", line 180, in hflip
+    if not _is_numpy_image(img):
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../utils/cv2_funcs.py", line 41, in _is_numpy_image
+    return img.ndim in {2, 3}
+AttributeError: 'NoneType' object has no attribute 'ndim'
+
+[ WARN:0@78.289] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/632935_15_F_indian_15.png'): can't open/read file: check file path/integrity
+[ WARN:0@78.296] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/9173298_15_M_middle-eastern_12.png'): can't open/read file: check file path/integrity
+[ WARN:0@78.306] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/7120259_13_F_white_12.png'): can't open/read file: check file path/integrity
+[ WARN:0@78.343] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/6573950_14_F_black_4.png'): can't open/read file: check file path/integrity
+[ WARN:0@78.368] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/7549837_15_F_indian_17.jpg'): can't open/read file: check file path/integrity
+wandb: - 0.005 MB of 0.005 MB uploadedwandb: \ 0.005 MB of 0.005 MB uploadedwandb: | 0.005 MB of 0.005 MB uploadedwandb: / 0.009 MB of 0.017 MB uploaded (0.002 MB deduped)wandb: - 0.017 MB of 0.017 MB uploaded (0.002 MB deduped)wandb: 🚀 View run magface-fine-tuner at: https://wandb.ai/fair_face_recognition/face-rec-models/runs/8fus7rd8
+wandb: ⭐️ View project at: https://wandb.ai/fair_face_recognition/face-rec-models
+wandb: Synced 5 W&B file(s), 0 media file(s), 2 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20240524_174526-8fus7rd8/logs

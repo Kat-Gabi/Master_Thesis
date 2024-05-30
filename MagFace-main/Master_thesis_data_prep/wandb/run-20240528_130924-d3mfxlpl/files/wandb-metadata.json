@@ -1,0 +1,259 @@
+{
+    "os": "Linux-5.4.273-1.el7.elrepo.x86_64-x86_64-with-glibc2.17",
+    "python": "3.10.13",
+    "heartbeatAt": "2024-05-28T11:09:26.046181",
+    "startedAt": "2024-05-28T11:09:24.157538",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--arch",
+        "iresnet18",
+        "--train_list",
+        "../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_correct_index_tester.list",
+        "--pretrained",
+        "../models/magface_iresnet18_casia_dp.pth",
+        "--cpu_mode",
+        "0",
+        "--workers",
+        "4",
+        "--epochs",
+        "2",
+        "--start-epoch",
+        "0",
+        "--batch-size",
+        "256",
+        "--embedding-size",
+        "512",
+        "--last-fc-size",
+        "823",
+        "--arc-scale",
+        "64",
+        "--learning-rate",
+        "0.01",
+        "--momentum",
+        "0.9",
+        "--weight-decay",
+        "5e-4",
+        "--lr-drop-epoch",
+        "2",
+        "--lr-drop-ratio",
+        "0.1",
+        "--print-freq",
+        "10",
+        "--pth-save-fold",
+        "./test/",
+        "--pth-save-epoch",
+        "1",
+        "--l_a",
+        "10",
+        "--u_a",
+        "110",
+        "--l_margin",
+        "0.45",
+        "--u_margin",
+        "0.8",
+        "--lambda_g",
+        "35",
+        "--vis_mag",
+        "1"
+    ],
+    "state": "running",
+    "program": "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py",
+    "codePathLocal": null,
+    "codePath": "MagFace-main/run/fine_tuner.py",
+    "git": {
+        "remote": "git@github.com:Kat-Gabi/Master_Thesis.git",
+        "commit": "6a7709ab6a35d918dd05e1969398eca0ceb222a9"
+    },
+    "email": "s174139@student.dtu.dk",
+    "root": "/work3/s174139/Master_Thesis",
+    "host": "n-62-18-10",
+    "username": "s174139",
+    "executable": "/work3/s174139/best_master_remote/bin/python",
+    "cpu_count": 32,
+    "cpu_count_logical": 32,
+    "cpu_freq": {
+        "current": 1088.252125,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 800.446,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 1007.54,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2552.071,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 850.379,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2768.929,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 911.591,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2893.013,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 1578.416,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 3045.565,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.749,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.415,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.462,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.768,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.676,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.389,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 801.111,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.806,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.69,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.811,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.7,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.542,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.745,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.706,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.65,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.59,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 801.093,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.545,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.749,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.764,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.577,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.991,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 800.589,
+            "min": 0.0,
+            "max": 0.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 71.9168586730957,
+            "used": 5.437427520751953
+        }
+    },
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA A100 80GB PCIe",
+            "memory_total": 85899345920
+        }
+    ],
+    "memory": {
+        "total": 1007.3646507263184
+    }
+}

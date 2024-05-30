@@ -1,0 +1,141 @@
+/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep
+Starting fine tuner script...
+PATHHHH /work3/s174139/Master_Thesis/MagFace-main
+=> parse the args ...
+wandb: Currently logged in as: gabriella-angela (fair_face_recognition). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.17.0
+wandb: Run data is saved locally in /work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/wandb/run-20240529_161538-m3nus61s
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run magface-fine-tuner
+wandb: ⭐️ View project at https://wandb.ai/fair_face_recognition/face-rec-models
+wandb: 🚀 View run at https://wandb.ai/fair_face_recognition/face-rec-models/runs/m3nus61s
+{'arc_scale': 64,
+ 'arch': 'iresnet18',
+ 'batch_size': 256,
+ 'cpu_mode': '0',
+ 'embedding_size': 512,
+ 'epochs': 2,
+ 'l_a': 10.0,
+ 'l_margin': 0.45,
+ 'lambda_g': 35.0,
+ 'last_fc_size': 823,
+ 'lr': 0.01,
+ 'lr_drop_epoch': [2],
+ 'lr_drop_ratio': 0.1,
+ 'momentum': 0.9,
+ 'pretrained': '../models/magface_iresnet18_casia_dp.pth',
+ 'print_freq': 10,
+ 'pth_save_epoch': 1,
+ 'pth_save_fold': './test/',
+ 'start_epoch': 0,
+ 'train_list': '../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_correct_index_tester.list',
+ 'u_a': 110.0,
+ 'u_margin': 0.8,
+ 'vis_mag': 1,
+ 'weight_decay': 0.0005,
+ 'workers': 4}
+min lambda g is 22.586666666666673, currrent lambda is 35.0
+=> torch version : 2.2.1+cu121
+=> ngpus : 1
+=> modeling the network ...
+=> loading pth from ../models/magface_iresnet18_casia_dp.pth ...
+cpu!!!
+K?  features.weight
+new KK 2 fc.weight
+=> fc.weight not loaded! Model params: 188, loaded params: 187
+=> FREEZING ALL LAYERS EXCEPT fc ...
+NAME FC? module.fc.weight
+=> building the optimizer ...
+SGD (
+Parameter Group 0
+    dampening: 0
+    differentiable: False
+    foreach: None
+    lr: 0.01
+    maximize: False
+    momentum: 0.9
+    nesterov: False
+    weight_decay: 0.0005
+)
+=> building the dataloader ...
+TRAIN LOADER???? <torch.utils.data.dataloader.DataLoader object at 0x7fd3b8d4ba00> ARGS: are workers and batch size and train list
+=> building the criterion ...
+=> starting training engine ...
+[codecarbon WARNING @ 16:15:49] Invalid gpu_ids format. Expected a string or a list of ints.
+[codecarbon INFO @ 16:15:49] [setup] RAM Tracking...
+[codecarbon INFO @ 16:15:49] [setup] GPU Tracking...
+[codecarbon INFO @ 16:15:49] Tracking Nvidia GPU via pynvml
+[codecarbon INFO @ 16:15:49] [setup] CPU Tracking...
+[codecarbon WARNING @ 16:15:49] No CPU tracking mode found. Falling back on CPU constant mode.
+[codecarbon WARNING @ 16:15:50] We saw that you have a Intel(R) Xeon(R) Gold 6326 CPU @ 2.90GHz but we don't know it. Please contact us.
+[codecarbon INFO @ 16:15:50] CPU Model on constant consumption mode: Intel(R) Xeon(R) Gold 6326 CPU @ 2.90GHz
+[codecarbon INFO @ 16:15:50] >>> Tracker's metadata:
+[codecarbon INFO @ 16:15:50]   Platform system: Linux-5.4.273-1.el7.elrepo.x86_64-x86_64-with-glibc2.17
+[codecarbon INFO @ 16:15:50]   Python version: 3.10.13
+[codecarbon INFO @ 16:15:50]   CodeCarbon version: 2.4.1
+[codecarbon INFO @ 16:15:50]   Available RAM : 1007.365 GB
+[codecarbon INFO @ 16:15:50]   CPU count: 32
+[codecarbon INFO @ 16:15:50]   CPU model: Intel(R) Xeon(R) Gold 6326 CPU @ 2.90GHz
+[codecarbon INFO @ 16:15:50]   GPU count: 1
+[codecarbon INFO @ 16:15:50]   GPU model: 1 x NVIDIA A100 80GB PCIe
+LEN TRAIN LOADER: 57
+[ WARN:0@71.159] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/5283682_15_F_indian_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/5283682_15_F_indian_17.jpg could not be loaded.
+[ WARN:0@71.469] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/3719947_15_F_black_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/3719947_15_F_black_17.jpg could not be loaded.
+[ WARN:0@71.745] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/1188388_13_M_middle-eastern_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/1188388_13_M_middle-eastern_17.jpg could not be loaded.
+[ WARN:0@72.043] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/5476473_13_F_white_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/5476473_13_F_white_17.jpg could not be loaded.
+[ WARN:0@72.467] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/2694092_13_F_indian_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/2694092_13_F_indian_17.jpg could not be loaded.
+[ WARN:0@72.504] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/1476401_15_F_middle-eastern_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/1476401_15_F_middle-eastern_17.jpg could not be loaded.
+--------TENSOR_SHAPE--------
+Input batch size: torch.Size([256, 3, 112, 112])
+Target batch size: tensor(819)
+--------TENSOR_SHAPE--------
+Input batch size:Input batch size: torch.Size([256, 3, 112, 112])
+Target batch size: torch.Size([256])
+[ WARN:0@74.872] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/3260830_15_M_white_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/3260830_15_M_white_17.jpg could not be loaded.
+[ WARN:0@75.549] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/157805_13_F_indian_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/157805_13_F_indian_17.jpg could not be loaded.
+[ WARN:0@75.847] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/3012994_14_F_middle-eastern_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/3012994_14_F_middle-eastern_17.jpg could not be loaded.
+[ WARN:0@77.263] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/5376689_13_F_indian_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/5376689_13_F_indian_17.jpg could not be loaded.
+[ WARN:0@77.378] global loadsave.cpp:248 findDecoder imread_('../../data/data_full/HDA_processed_cluster_magface/images/4946490_15_M_black_17.jpg'): can't open/read file: check file path/integrity
+Warning: Image at path ../../data/data_full/HDA_processed_cluster_magface/images/4946490_15_M_black_17.jpg could not be loaded.
+Output shape: torch.Size([256, 823])
+[codecarbon INFO @ 16:16:09] Energy consumed for RAM : 0.001574 kWh. RAM Power : 377.76174545288086 W
+[codecarbon INFO @ 16:16:09] Energy consumed for all GPUs : 0.000258 kWh. Total GPU Power : 61.860052223959336 W
+[codecarbon INFO @ 16:16:09] Energy consumed for all CPUs : 0.000177 kWh. Total CPU Power : 42.5 W
+[codecarbon INFO @ 16:16:09] 0.002010 kWh of electricity used since the beginning.
+Target shape: torch.Size([256]), Target min: 2, Target max: 819, Output[0] size: 823
+--------TENSOR_SHAPE--------
+x_norm shape from model: torch.Size([256, 1])
+--------TENSOR_SHAPE--------
+output shape from model:
+Shape of tensor 0: torch.Size([256, 823])
+Shape of tensor 1: torch.Size([256, 823])
+Traceback (most recent call last):
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 436, in <module>
+    main(args)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 204, in main
+    main_worker(args)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 271, in main_worker
+    co2_emission, top1, top5, losses_id = do_train(train_loader, model, criterion, optimizer, epoch, args)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py", line 370, in do_train
+    loss_id, loss_g, one_hot = criterion(output, target, x_norm)
+  File "/work3/s174139/best_master_remote/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/work3/s174139/best_master_remote/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../models/magface.py", line 131, in forward
+    assert target.min() >= 0 and target.max() < output.size(1), "Target index out of bounds MagLoss"
+UnboundLocalError: local variable 'output' referenced before assignment
+wandb: - 0.005 MB of 0.005 MB uploadedwandb: \ 0.005 MB of 0.013 MB uploadedwandb: | 0.008 MB of 0.013 MB uploadedwandb: 🚀 View run magface-fine-tuner at: https://wandb.ai/fair_face_recognition/face-rec-models/runs/m3nus61s
+wandb: ⭐️ View project at: https://wandb.ai/fair_face_recognition/face-rec-models
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20240529_161538-m3nus61s/logs

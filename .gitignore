@@ -189,9 +189,11 @@ data/feat_img_children_full.list
 MagFace-main/models/magface_iresnet18_casia_dp.pth
 /MagFace-main/Master_thesis_data_prep/image_lists
 /MagFace-main/run/test
-/MagFace-main/Master_thesis_data_prep/hpc_out
-/MagFace-main/Master_thesis_data_prep/test
-/MagFace-main/Master_thesis_data_prep/wandb
+
+# Uncomment after magface testing 
+#/MagFace-main/Master_thesis_data_prep/hpc_out
+#/MagFace-main/Master_thesis_data_prep/test
+#/MagFace-main/Master_thesis_data_prep/wandb
 
 AdaFace-master/pretrained/adaface_ir18_casia.ckpt
 AdaFace-master/scripts/wandb
