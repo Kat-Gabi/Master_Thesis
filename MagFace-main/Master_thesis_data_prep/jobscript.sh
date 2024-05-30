@@ -1,7 +1,7 @@
 #!/bin/sh
 ### General options
 ### ?- specify queue --
-#BSUB -q gpua100
+#BSUB -q hpc
 ### -- set the job Name --
 #BSUB -J testjob
 ### -- ask for number of cores (default: 1) --

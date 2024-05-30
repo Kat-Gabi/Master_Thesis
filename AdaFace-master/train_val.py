@@ -36,32 +36,84 @@ class Trainer(LightningModule):
             ckpt = torch.load(self.hparams.start_from_model_statedict)
             self.model.load_state_dict({key.replace('model.', ''):val
                                         for key,val in ckpt['state_dict'].items() if 'model.' in key})
-
+            
+        # Configure optimizers and schedulers
+        optimizers, schedulers = self.configure_optimizers()
+        self.optimizer = optimizers[0]
+        self.scheduler = schedulers[0] if schedulers else None
+        
+        
     def get_current_lr(self):
         scheduler = None
+        
+        # Try to retrieve the scheduler from PyTorch Lightning's internal configuration
         if scheduler is None:
             try:
-                # pytorch lightning >= 1.8
+                # For PyTorch Lightning >= 1.8
                 scheduler = self.trainer.lr_scheduler_configs[0].scheduler
-            except:
-                pass
+                print("First scheduler: ", scheduler)
+            except Exception as e:
+                print(f"Error retrieving scheduler for PyTorch Lightning >= 1.8: {e}")
 
         if scheduler is None:
-            # pytorch lightning <=1.7
             try:
+                # For PyTorch Lightning <= 1.7
                 scheduler = self.trainer.lr_schedulers[0]['scheduler']
-            except:
-                pass
+                print("Second scheduler: ", scheduler)
+            except Exception as e:
+                print(f"Error retrieving scheduler for PyTorch Lightning <= 1.7: {e}")
 
         if scheduler is None:
-            raise ValueError('lr calculation not successful')
+            raise ValueError('Learning rate scheduler retrieval was not successful')
 
-        if isinstance(scheduler, lr_scheduler._LRScheduler):
-            lr = scheduler.get_last_lr()[0]
-        else:
-            #lr = 0.01
-            lr = scheduler.get_epoch_values(self.current_epoch)[0]
+        # Retrieve the current learning rate from the scheduler
+        try:
+            if isinstance(scheduler, lr_scheduler._LRScheduler):
+                lr = scheduler.get_last_lr()[0]
+                print("Third LR scheduler: ", lr)
+            elif hasattr(scheduler, 'get_last_lr'): #NOGET MED DET HER VIRKER OG OVENSTÅENDE GØR IKKE
+                lr = scheduler.get_last_lr()[0]
+                print("FOURTH Scheduler has get_last_lr(), LR:", lr)
+            else:
+                # If the scheduler does not provide get_last_lr(), fallback to the optimizer's current learning rate
+                lr = scheduler.get_epoch_values(self.current_epoch)[0]
+                #lr = self.optimizer.param_groups[0]['lr']
+                print("FIFTH LR scheduler: ", lr)
+        except Exception as e:
+            print(f"Error retrieving learning rate from scheduler or optimizer: {e}")
+            #lr = 0.01  # Default fallback learning rate
+            #print("Fifth LR scheduler: ", lr)
+            pass
+
         return lr
+
+
+    # def get_current_lr(self):
+    #     scheduler = None
+    #     if scheduler is None:
+    #         try:
+    #             # pytorch lightning >= 1.8
+    #             scheduler = self.trainer.lr_scheduler_configs[0].scheduler
+    #         except:
+    #             pass
+
+    #     if scheduler is None:
+    #         # pytorch lightning <=1.7
+    #         try:
+    #             scheduler = self.trainer.lr_schedulers[0]['scheduler']
+    #         except:
+    #             pass
+
+    #     if scheduler is None:
+    #         raise ValueError('lr calculation not successful')
+
+    #     if isinstance(scheduler, lr_scheduler._LRScheduler):
+    #         lr = scheduler.get_last_lr()[0]
+    #     else:
+    #         #lr = 0.01
+    #         #lr = scheduler.get_epoch_values(self.current_epoch)[0]
+    #         lr = self.optimizer.param_groups[0]['lr']
+    #     return lr
 
 
     def forward(self, images, labels):
@@ -74,6 +126,7 @@ class Trainer(LightningModule):
 
 
     def training_step(self, batch, batch_idx):
+
         tracker = EmissionsTracker()
         tracker.start()
         images, labels = batch
@@ -81,6 +134,7 @@ class Trainer(LightningModule):
         cos_thetas, norms, embeddings, labels = self.forward(images, labels)
         loss_train = self.cross_entropy_loss(cos_thetas, labels)
         lr = self.get_current_lr()
+        print("LEARNING RATE", lr)
         acc1, acc5 = utils.calculate_accuracy(cos_thetas, labels, topk=(1, 5))
         co2_emission = tracker.stop()
 
@@ -94,7 +148,7 @@ class Trainer(LightningModule):
         # Log metrics to wandb
         wandb.log({'epoch': self.current_epoch,
             "CO2 emission (in Kg)": co2_emission,
-            "lr": lr,
+            "lr": self.get_current_lr(),
             "train_loss": loss_train.item(),
             "train_acc1": acc1,
             "train_acc5": acc5
@@ -202,6 +256,13 @@ class Trainer(LightningModule):
         for k, v in test_logs.items():
             # self.log(name=k, value=v, rank_zero_only=True)
             self.log(name=k, value=v)
+            
+        # for k, v in test_logs.items(): #######GABCHEKC
+        #     # self.log(name=k, value=v, rank_zero_only=True)
+        #     if 'num_test_samples' in k or k == 'epoch':
+        #         v = float(v)
+        #     self.log(name=k, value=v, sync_dist=True)
+
 
         return None
 
@@ -252,6 +313,15 @@ class Trainer(LightningModule):
         scheduler = lr_scheduler.MultiStepLR(optimizer,
                                              milestones=self.hparams.lr_milestones,
                                              gamma=self.hparams.lr_gamma)
+        
+        # Check if the scheduler has a method 'get_last_lr()'
+        if hasattr(scheduler, 'get_last_lr'):
+            print("HAS SCH")
+            lr = scheduler.get_last_lr()[0]
+            print("LR SCH", lr)
+        else:
+            print("Does not have")
+            
 
         return [optimizer], [scheduler]
 

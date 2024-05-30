@@ -50,7 +50,7 @@ def main(args):
         # set the wandb project where this run will be logged
         project="face-rec-models",
         name="adaface-fine-tuner",
-        config={"lr": args.lr, "epochs": args.epochs}
+        config={"epochs": args.epochs}
     )
 
     hparams = dotdict(vars(args))
@@ -92,7 +92,7 @@ def main(args):
                              strategy=hparams.distributed_backend,
                              precision=16 if hparams.use_16bit else 32,
                              fast_dev_run=hparams.fast_dev_run,
-                             callbacks=[checkpoint_callback],
+                             callbacks=[checkpoint_callback, CustomFreezeCallback(unfreeze_epoch=hparams.lr_milestones[0])],
                              #num_sanity_val_steps=16 if hparams.batch_size > 63 else 100,
                              #val_check_interval=1.0 if hparams.epochs > 4 else 0.1,
                              accumulate_grad_batches=hparams.accumulate_grad_batches,
@@ -108,7 +108,7 @@ def main(args):
                              accelerator=hparams.distributed_backend,
                              precision=16 if hparams.use_16bit else 32,
                              fast_dev_run=hparams.fast_dev_run,
-                             callbacks=[checkpoint_callback],
+                             callbacks=[checkpoint_callback, CustomFreezeCallback(unfreeze_epoch=hparams.lr_milestones[0])],
                              #num_sanity_val_steps=16 if hparams.batch_size > 63 else 100,
                              #val_check_interval=1.0 if hparams.epochs > 4 else 0.1,
                              accumulate_grad_batches=hparams.accumulate_grad_batches,

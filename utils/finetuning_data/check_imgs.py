@@ -30,7 +30,7 @@ def change_id_incremental(file_path):
 
 if __name__ == "__main__":
 
-    list_folder = "../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_more_hda_magface.list"
+    list_folder = "/work3/s174139/Master_Thesis/data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_correct_index_tester.list"
     #change_id_incremental(list_folder) #OBS lidt i tvivl om de skal være sorteret så alle 0'ere er  samlet, men Francks er ligesom vores..
     with open(list_folder, 'r') as f:
         lines = f.readlines()

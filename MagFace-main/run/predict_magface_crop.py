@@ -106,6 +106,7 @@ class ImgInfLoader(data.Dataset):
         #aligned_resized_image = face_align.norm_crop(img, landmarks_np, image_size=112, mode='arcface') 
         #img = aligned_resized_image
 
+        # If image is none, just pass the normal image. 
         if img is None:
             print("image is empty..", img_path)
             

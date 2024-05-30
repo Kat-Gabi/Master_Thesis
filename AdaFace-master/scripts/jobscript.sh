@@ -11,7 +11,7 @@
 ### -- Select the resources: 1 gpu in exclusive process mode --
 #BSUB -gpu "num=1:mode=exclusive_process"
 ### -- set walltime limit: hh:mm --  maximum 24 hours for GPU-queues right now
-#BSUB -W 12:00
+#BSUB -W 20:00
 ### request x GB of system-memory
 #BSUB -R "rusage[mem=5GB]"
 ### -- set the email address --
@@ -24,8 +24,8 @@
 #BSUB -N
 ### -- Specify the output and error file. %J is the job-id --
 ### -- -o and -e mean append, -oo and -eo mean overwrite --
-#BSUB -o hpc_out/%J/pipe_out.out
-#BSUB -e hpc_out/%J/pipe_err.err
+#BSUB -o hpc_out/%J/pipe_out_all.out
+#BSUB -e hpc_out/%J/pipe_err_all.err
 # -- end of LSF options --
 
 ### Load modules

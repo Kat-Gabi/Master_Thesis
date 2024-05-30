@@ -19,12 +19,13 @@ def main():
     output_folder = '../../data/data_full/HDA_processed_AdaFace/imgs'
     rest_path = '/probes/images'
 
-    for age_group in range(5): #normally 5
+    for age_group in range(5): #normally range(5)
+        # 2 has run. Run 0, 1,3, and 4. 
         
         print("age group ", age_group)
         skipped_images_count = 0
         id_counter = 0
-        age_group_folder = os.path.join(main_dataset_folder, f'age_group_{2}' + rest_path)
+        age_group_folder = os.path.join(main_dataset_folder, f'age_group_{age_group}'+ rest_path)
         all_images = sorted([image for image in os.listdir(age_group_folder) if image.endswith('.png') or image.endswith('.jpg')]) #Jpg images are bad image quality
    
         # Iterate over each image path

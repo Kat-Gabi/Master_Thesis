@@ -25,7 +25,7 @@ loguru
 
 # AdaFace
 # From requirements.txt in AdaFace-master
-pytorch_lightning
+#pytorch_lightning
 bcolz
 mxnet
 pytorch-lightning==1.8.6

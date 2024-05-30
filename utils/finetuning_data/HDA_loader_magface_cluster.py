@@ -51,48 +51,85 @@ if __name__ == "__main__":
     image_size=112
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(imgs_output_folder, exist_ok=True)
+    # Initialize a dictionary to keep track of the unique IDs and their corresponding integers
+    id_map = {}
+    current_id = 0
 
-    with open(os.path.join(data_root_folder, 'fine_tune_train_list_TEST.list'), 'w') as train_list_file:
+
+    with open(os.path.join(output_folder, 'fine_tune_train_list_magface_correct_index_tester.list'), 'w') as train_list_file:
         for age_group in range(1): #normally 5
-            id_counter = 0
+            im_counter = 0
             # Create output directory for the current age group   
             age_group_folder = os.path.join(main_dataset_folder, f'age_group_{age_group}' + rest_path)
             all_images = sorted([image for image in os.listdir(age_group_folder) if image.endswith('.png') or image.endswith('.jpg')]) #Jpg images are bad image quality
-            num_images = len(all_images)    
-            print("Number of images in original directory age_group_{}:".format(age_group), num_images)
+            #num_images = len(all_images)    
+            #print("Number of images in original directory age_group_{}:".format(age_group), num_images)
                         
             # Iterate over each image path
             for img in all_images:
                 try: 
+                        
+                    # Extract the original ID from the image filename
+                    original_id = img.split("_")[0]
+                    
+                    # Check if this ID has been seen before
+                    if original_id not in id_map:
+                        id_map[original_id] = current_id
+                        current_id += 1
+                    
+                    # Get the unique integer ID for the current original ID
+                    incrementally_integer_id = id_map[original_id]
+                        
+                    
+                    
                     input_image_path = os.path.join(age_group_folder, img)
                     #print("INPUT", input_image_path)
                     cv_image = cv2.imread(input_image_path)
                     #print("CV")
+                    
+                    # Check if the image was loaded correctly
+                    if cv_image is None:
+                        raise ValueError(f"Image at path {input_image_path} could not be loaded.  Consider REMOVING from final LIST")
+                
 
                     # Use MagFace function for alignment (utils.face_align.py)
                     #landmarks_np = extract_landmarks(input_image_path)
                     landmarks_np = extract_landmarks(cv_image)
+                    
+                    if landmarks_np is None:
+                        raise ValueError(f"Landmarks could not be extracted for image {input_image_path}. Consider REMOVING from final LIST")
+                
 
                     #print("landmark")
                     aligned_resized_image = face_align.norm_crop(cv_image, landmarks_np, image_size, mode='arcface') 
                     #print("aligned")
+                    
+                    if aligned_resized_image is None:
+                        raise ValueError(f"Image at path {input_image_path} could not be aligned and resized. Consider REMOVING from final LIST")
+                
 
                     output_image_path = os.path.join(imgs_output_folder, os.path.basename(img))
                     #print("output")
-                    cv2.imwrite(output_image_path, aligned_resized_image)
+                    cv_image_written = cv2.imwrite(output_image_path, aligned_resized_image)
                     #print("cv2 write")
+                    
+                                    
+                    if not cv_image_written:
+                        raise ValueError(f"Image at path {output_image_path} could not be written. Consider REMOVING from final LIST")
+                
+
                     output_image_path_write = os.path.join(imgs_output_folder, img) 
-                    train_list_file.write(f'{output_image_path_write} 0 {img.split("_")[0]}\n') #corresponding to id. list format required by magface. First id should be 0. 
+                    train_list_file.write(f'{output_image_path_write} 0 {incrementally_integer_id}\n') #corresponding to id. list format required by magface. First id should be 0. 
                     #print("written!")
                 except:
                     print("Error processing image, possibly due to low image quality:", img)
                 pass
-                id_counter += 1
+                im_counter += 1
 
-            print("\n*** {id_counter} images were preprocessed and saved in new directory age_group_{ag} :) ***".format(id_counter=id_counter, ag=age_group))
+            print("\n*** {im_counter} images were preprocessed and saved in new directory age_group_{ag} :) ***".format(im_counter=im_counter, ag=age_group))
             
     # Check number of ids in list 
-    list_folder = "../../data/data_full/HDA_processed_local/fine_tune_train_list_TEST.list"
+    list_folder = "../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_correct_index_tester.list"
     change_id_incremental(list_folder) #OBS lidt i tvivl om de skal være sorteret så alle 0'ere er  samlet, men Francks er ligesom vores..
     with open(list_folder, 'r') as f:
         lines = f.readlines()

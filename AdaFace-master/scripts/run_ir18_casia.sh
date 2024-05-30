@@ -14,7 +14,7 @@ python ../main_master.py \
     --arch ir_18 \
     --batch_size 256 \
     --num_workers 8 \
-    --epochs 26 \
+    --epochs 30 \
     --lr_milestones 18,22,26 \
     --lr 0.01 \
     --head adaface \

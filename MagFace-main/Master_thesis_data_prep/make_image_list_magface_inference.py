@@ -27,10 +27,9 @@ def main(folder_path, balanced_csv_path, output_name):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Creates a list of image paths in .file format") #description of parser
-    parser.add_argument("folder_path", type=str, help="Path to the folder containing image files or folders with image files.") # pass eg /work3/s174139/Master_Thesis/data/data_full/RFW/data
+    parser.add_argument("folder_path", type=str, help="Path to the folder containing image files or folders with image files.") # pass eg /work3/s174139/Master_Thesis/data/data_full/adults_filtered_bibel_cropped_resized_retina #/work3/s174139/Master_Thesis/data/data_full/RFW/data
     parser.add_argument("balanced_csv_path", type=str, help="Path to the csv containing the balanced dataset.") # pass eg  /work3/s174139/Master_Thesis/data/image_info_csvs/final_filtered_adults_df_BIBEL.csv
     parser.add_argument("output_name", type=str, help="Name of output file for run of balanced data.") # pass eg adults_bibel
 
     args = parser.parse_args() #save the arguments with name folde the added argument to access
     main(args.folder_path, args.balanced_csv_path, args.output_name)
-

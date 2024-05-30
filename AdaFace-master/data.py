@@ -33,7 +33,7 @@ class DataModule(pl.LightningDataModule):
 
 
     def prepare_data(self):
-        "No validation data"
+        #"No validation data"
         print('==> No validation steps, no validation set ---')
         # # call this once to convert val_data to memfile for saving memory
         # if not os.path.isdir(os.path.join(self.data_root, self.val_data_path, 'agedb_30', 'memfile')):
@@ -82,8 +82,8 @@ class DataModule(pl.LightningDataModule):
     def train_dataloader(self): #gabi modification droplast true
         return DataLoader(self.train_dataset, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True, drop_last=True)
 
-    def val_dataloader(self):
-        return DataLoader(self.val_dataset, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=False)
+    # def val_dataloader(self):
+    #     return DataLoader(self.val_dataset, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=False)
 
     def test_dataloader(self):
         return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=False, drop_last=True)
