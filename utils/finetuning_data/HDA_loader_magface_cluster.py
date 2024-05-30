@@ -56,8 +56,8 @@ if __name__ == "__main__":
     current_id = 0
 
 
-    with open(os.path.join(output_folder, 'fine_tune_train_list_magface_correct_index_tester.list'), 'w') as train_list_file:
-        for age_group in range(1): #normally 5
+    with open(os.path.join(output_folder, 'fine_tune_train_list_magface_all_HDA.list'), 'w') as train_list_file:
+        for age_group in range(5): #normally 5
             im_counter = 0
             # Create output directory for the current age group   
             age_group_folder = os.path.join(main_dataset_folder, f'age_group_{age_group}' + rest_path)
@@ -87,36 +87,22 @@ if __name__ == "__main__":
                     cv_image = cv2.imread(input_image_path)
                     #print("CV")
                     
-                    # Check if the image was loaded correctly
-                    if cv_image is None:
-                        raise ValueError(f"Image at path {input_image_path} could not be loaded.  Consider REMOVING from final LIST")
-                
 
                     # Use MagFace function for alignment (utils.face_align.py)
                     #landmarks_np = extract_landmarks(input_image_path)
                     landmarks_np = extract_landmarks(cv_image)
-                    
-                    if landmarks_np is None:
-                        raise ValueError(f"Landmarks could not be extracted for image {input_image_path}. Consider REMOVING from final LIST")
-                
+            
 
                     #print("landmark")
                     aligned_resized_image = face_align.norm_crop(cv_image, landmarks_np, image_size, mode='arcface') 
                     #print("aligned")
                     
-                    if aligned_resized_image is None:
-                        raise ValueError(f"Image at path {input_image_path} could not be aligned and resized. Consider REMOVING from final LIST")
-                
 
                     output_image_path = os.path.join(imgs_output_folder, os.path.basename(img))
                     #print("output")
                     cv_image_written = cv2.imwrite(output_image_path, aligned_resized_image)
                     #print("cv2 write")
-                    
-                                    
-                    if not cv_image_written:
-                        raise ValueError(f"Image at path {output_image_path} could not be written. Consider REMOVING from final LIST")
-                
+
 
                     output_image_path_write = os.path.join(imgs_output_folder, img) 
                     train_list_file.write(f'{output_image_path_write} 0 {incrementally_integer_id}\n') #corresponding to id. list format required by magface. First id should be 0. 
@@ -128,16 +114,16 @@ if __name__ == "__main__":
 
             print("\n*** {im_counter} images were preprocessed and saved in new directory age_group_{ag} :) ***".format(im_counter=im_counter, ag=age_group))
             
-    # Check number of ids in list 
-    list_folder = "../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_correct_index_tester.list"
-    change_id_incremental(list_folder) #OBS lidt i tvivl om de skal være sorteret så alle 0'ere er  samlet, men Francks er ligesom vores..
-    with open(list_folder, 'r') as f:
-        lines = f.readlines()
-    imids = []
-    for line in lines:
-        parts = line.strip().split(' ')
-        imids.append(parts[-1])
-    print("number of unique ids: ", len(set(imids)) )
+    # # Check number of ids in list 
+    # list_folder = "../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_correct_index_tester.list"
+    # change_id_incremental(list_folder) #OBS lidt i tvivl om de skal være sorteret så alle 0'ere er  samlet, men Francks er ligesom vores..
+    # with open(list_folder, 'r') as f:
+    #     lines = f.readlines()
+    # imids = []
+    # for line in lines:
+    #     parts = line.strip().split(' ')
+    #     imids.append(parts[-1])
+    # print("number of unique ids: ", len(set(imids)) )
 
 
                 

@@ -30,15 +30,15 @@ class MagTrainDataset(data.Dataset):
                 data = line.strip().split(' ')
                 self.im_names.append(data[0])
                 self.targets.append(int(data[2]))
-        # Check for the range and unique target values
-        unique_targets = set(self.targets)
-        print(f"Number of unique targets: {len(unique_targets)}")
-        print(f"Max target value: {max(unique_targets)}")
-        print(f"Min target value: {min(unique_targets)}")
 
     def __getitem__(self, index):
         im_name = self.im_names[index]
         target = self.targets[index]
+        # Check for the range and unique target values
+        #unique_targets = set(self.targets)
+        #print(f"Number of unique targets: {len(unique_targets)}")
+        #print(f"Max target value: {max(unique_targets)}")
+        #print(f"Min target value: {min(unique_targets)}")
         #print("TARGETS!!", target)
         img = cv2.imread(im_name)
         
@@ -51,7 +51,7 @@ class MagTrainDataset(data.Dataset):
 
         if self.transform:
             img = self.transform(img)
-        
+        #print("TARGET RETURNED", target)
         return img, target
         ## ----
 

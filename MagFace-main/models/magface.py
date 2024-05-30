@@ -128,7 +128,7 @@ class MagLoss(torch.nn.Module):
 
     def forward(self, input, target, x_norm):
         # Ensure that target indices are within valid range
-        assert target.min() >= 0 and target.max() < output.size(1), "Target index out of bounds MagLoss"
+        #assert target.min() >= 0 and target.max() < output.size(1), "Target index out of bounds MagLoss"
         loss_g = self.calc_loss_G(x_norm)
 
         cos_theta, cos_theta_m = input

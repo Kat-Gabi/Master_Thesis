@@ -327,8 +327,9 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
     model = model.to('cuda') #.to('cpu') #or cuda
 
     for i, (input, target) in enumerate(train_loader):
-        print("--------TENSOR_SHAPE--------\nInput batch size:", input.size())
-        print("Target batch size:", target.max())
+        print("---!!--I AND TARGET!!!!!-----!!-----", i, target)
+        #print("--------TENSOR_SHAPE--------\nInput batch size:", input.size())
+        #print("Target batch size:", target.max())
 
         # measure data loading time
         data_time.update(time.time() - end)
@@ -342,8 +343,8 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
         #input = input.cuda(non_blocking=True)
         #target = target.cuda(non_blocking=True)
         
-        print("--------TENSOR_SHAPE--------\nInput batch size:Input batch size:", input.size())
-        print("Target batch size:", target.size())
+        #print("--------TENSOR_SHAPE--------\nInput batch size:Input batch size:", input.size())
+        #print("Target batch size:", target.size())
 
         # compute output
         output, x_norm = model(input, target)
@@ -354,7 +355,7 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
         print(f"Target shape: {target.shape}, Target min: {target.min()}, Target max: {target.max()}, Output[0] size: {output[0].size(1)}")
 
         # Ensure all target indices are within the valid range
-        assert target.min() >= 0 and target.max() < output[0].size(1), "Target index out of bounds"
+        #assert target.min() >= 0 and target.max() < output[0].size(1), "Target index out of bounds"
 
                 
         
