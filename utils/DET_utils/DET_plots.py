@@ -62,22 +62,32 @@ def descriptive_statistics(mated_scores, nonmated_scores):
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-def plot_histogram(mated_scores, nonmated_scores, normalise=True, savename=None):
+
+
+def plot_histogram(mated_scores, nonmated_scores, normalise=True, savename=None, title="Histogram"):
     def normalise_scores(distribution):
         return np.ones_like(distribution) / len(distribution)
-    plt.figure(figsize=figure_size)
+
+    mated_mean = np.mean(mated_scores)
+
+    plt.figure(figsize=(10, 6))  # Replace 'figure_size' with a specific size if not defined
+
     if normalise:
-        plt.hist(mated_scores, bins=50, weights=normalise_scores(mated_scores), color=mated_colour, alpha=0.5, label=mated_label)
-        plt.hist(nonmated_scores, bins=30, weights=normalise_scores(nonmated_scores), color=nonmated_colour, alpha=0.5, label=nonmated_label)
-        xlabel = "Probability Density"
+        plt.hist(mated_scores, bins=50, weights=normalise_scores(mated_scores), color='green', alpha=0.5, label='Mated Scores')  # Replace 'mated_label' with 'Mated Scores'
+        plt.hist(nonmated_scores, bins=30, weights=normalise_scores(nonmated_scores), color='red', alpha=0.5, label='Non-mated Scores')  # Replace 'nonmated_label' with 'Non-mated Scores'
+        ylabel = "Probability Density"
     else:
-        plt.hist(mated_scores, bins=50, color=mated_colour, alpha=0.5, label=mated_label)
-        plt.hist(nonmated_scores, bins=30, color=nonmated_colour, alpha=0.5, label=nonmated_label)
-        xlabel = "Count"
-    plt.xlabel("Comparison Score", size=label_fontsize)
-    plt.ylabel(xlabel, size=label_fontsize)
+        plt.hist(mated_scores, bins=50, color='green', alpha=0.5, label='Mated Scores')
+        plt.hist(nonmated_scores, bins=30, color='red', alpha=0.5, label='Non-mated Scores')
+        ylabel = "Count"
+
+    plt.axvline(mated_mean, color='darkgreen', linestyle='--', linewidth=2, label=f'Mated Mean: {mated_mean:.2f}')
+
+    plt.xlabel("Comparison Score", size=16)
+    plt.ylabel(ylabel, size=16)
+    plt.title(title, size=20)
     plt.grid(True)
-    plt.legend(loc=legend_loc, bbox_to_anchor=legend_anchor, ncol=legend_cols, fontsize=legend_fontsize)
+    plt.legend(loc='upper right', bbox_to_anchor=(1, 1), ncol=1, fontsize=14)  # Adjust legend parameters as needed
 
     if savename is not None:
         plt.savefig(savename, bbox_inches="tight")
@@ -86,6 +96,7 @@ def plot_histogram(mated_scores, nonmated_scores, normalise=True, savename=None)
         plt.close()
     else:
         plt.show()
+
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
@@ -106,9 +117,16 @@ def d_prime(distribution1, distribution2):
 
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-import matplotlib.pyplot as plt
-import numpy as np
-import matplotlib.patches as mpatches
+figure_size = (12,7)
+alpha_shade = 0.25
+alpha_fill = 1.0
+linewidth = 2
+legend_loc = "upper left"
+legend_anchor = (1.0, 1.02)
+legend_cols = 1
+legend_fontsize = 18
+label_fontsize = 18
+tick_fontsize = 18
 
 def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, savename=None):
     linspace_items = 101
@@ -163,7 +181,7 @@ def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, sa
     if nonmated_fill is not None:
         plt.fill_between(nonmated_fill, nonmated_kde(nonmated_fill), alpha=alpha_fill, color=nonmated_colour)
 
-    plt.axvline(threshold, linewidth=linewidth, linestyle=threshold_style, color=threshold_colour, label="Decision threshold")
+    plt.axvline(threshold, linewidth=linewidth, linestyle=threshold_style, color=threshold_colour, label="Decision th")
 
     plt.legend(loc=0)
     red_patch = mpatches.Patch(color=nonmated_colour, alpha=alpha_fill, label='False positives')
@@ -174,8 +192,10 @@ def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, sa
 
     plt.grid(True)
     plt.legend(loc='upper right', bbox_to_anchor=legend_anchor, ncol=legend_cols, fontsize=legend_fontsize, handles=[green_patch, red_patch, shaded_green_patch, shaded_red_patch]+current_handles)
-    plt.xlim(0, 1)
+    plt.xlim(-0.1, 1)
     plt.ylim(0, None)
+    plt.xticks(fontsize=tick_fontsize)
+    plt.yticks(fontsize=tick_fontsize)
 
     if savename is not None:
         plt.savefig(savename, bbox_inches="tight")
@@ -184,6 +204,7 @@ def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, sa
         plt.close()
     else:
         plt.show()
+
 
 
 

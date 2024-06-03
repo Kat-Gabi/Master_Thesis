@@ -151,7 +151,7 @@ def plot_threshold_metrics_ex_1_1(df_all_threshold_x):
 # plot_threshold_metrics(df_all_threshold_x)
 
 
-def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x):
+def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title):
     # Set the aesthetics for the plots
     sns.set(style="whitegrid")
 
@@ -177,7 +177,7 @@ def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x):
     plt.plot(plot_df.index, plot_df['FPIR_a'], 'b-', label='Adults - FPIR')
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
-    plt.title('FPIR and FNIR vs Threshold - MagFace', fontsize=16)
+    plt.title(f'FPIR and FNIR vs Threshold - {title}', fontsize=16)
     # plt.ylim(0.85, 1.0)  # Limit the FPIR y-axis
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
