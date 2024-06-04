@@ -204,7 +204,7 @@ def balance_child_data_can(y_df, print_stats=False, random_state=42):
     Original child_balanced has random state 42
     """
 
-    # Randomly sample 1000 identities from the entire dataset
+    # Randomly sample 2000 identities from the entire dataset
     ylfw_witha_balanced = y_df.sample(n=2000, random_state=random_state)
 
     if print_stats:
