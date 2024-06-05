@@ -73,8 +73,8 @@ def plot_histogram(mated_scores, nonmated_scores, normalise=True, savename=None,
     plt.figure(figsize=(10, 6))  # Replace 'figure_size' with a specific size if not defined
 
     if normalise:
-        plt.hist(mated_scores, bins=50, weights=normalise_scores(mated_scores), color='green', alpha=0.5, label='Mated Scores')  # Replace 'mated_label' with 'Mated Scores'
-        plt.hist(nonmated_scores, bins=30, weights=normalise_scores(nonmated_scores), color='red', alpha=0.5, label='Non-mated Scores')  # Replace 'nonmated_label' with 'Non-mated Scores'
+        plt.hist(mated_scores, bins=50, weights=normalise_scores(mated_scores), color='green', alpha=0.5, label='Mated Scores')
+        plt.hist(nonmated_scores, bins=30, weights=normalise_scores(nonmated_scores), color='red', alpha=0.5, label='Non-mated Scores')
         ylabel = "Probability Density"
     else:
         plt.hist(mated_scores, bins=50, color='green', alpha=0.5, label='Mated Scores')

@@ -118,8 +118,8 @@ def plot_threshold_metrics_ex_1_1(df_all_threshold_x):
 
     # Plot FNIR
     plt.subplot(1, 2, 1)
-    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Children', linewidth=2)
-    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Adults', linewidth=2)
+    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Children', linewidth=3)
+    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Adults', linewidth=3)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR', fontsize=14)
     plt.title('FNIR vs Threshold', fontsize=16)
@@ -129,8 +129,8 @@ def plot_threshold_metrics_ex_1_1(df_all_threshold_x):
 
     # Plot FPIR
     plt.subplot(1, 2, 2)
-    plt.plot(plot_df.index, plot_df['FPIR_c'], 'r-', label='Children', linewidth=2)
-    plt.plot(plot_df.index, plot_df['FPIR_a'], 'c-', label='Adults', linewidth=2)
+    plt.plot(plot_df.index, plot_df['FPIR_c'], 'r-', label='Children', linewidth=3)
+    plt.plot(plot_df.index, plot_df['FPIR_a'], 'c-', label='Adults', linewidth=3)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR', fontsize=14)
     plt.title('FPIR vs Threshold', fontsize=16)
@@ -161,8 +161,8 @@ def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title):
 
     # Plot FNIR
     # plt.subplot(1, 2, 1)
-    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Children - FNIR')
-    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Adults - FNIR')
+    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Children - FNIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Adults - FNIR',linewidth=3.0)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
     plt.title('FNIR vs Threshold', fontsize=16)
@@ -173,8 +173,8 @@ def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title):
 
     # Plot FPIR
     # plt.subplot(1, 2, 2)
-    plt.plot(plot_df.index, plot_df['FPIR_c'], 'g-', label='Children - FPIR')
-    plt.plot(plot_df.index, plot_df['FPIR_a'], 'b-', label='Adults - FPIR')
+    plt.plot(plot_df.index, plot_df['FPIR_c'], 'g-', label='Children - FPIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FPIR_a'], 'b-', label='Adults - FPIR',linewidth=3.0)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
     plt.title(f'FPIR and FNIR vs Threshold - {title}', fontsize=16)
@@ -332,8 +332,8 @@ def plot_threshold_metrics_ex_1_2(df_all_threshold_x):
 
     # Plot FNIR
     # plt.subplot(1, 2, 1)
-    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children - FNIR')
-    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children - FNIR')
+    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children - FNIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children - FNIR',linewidth=3.0)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
     plt.title('FNIR vs Threshold', fontsize=16)
@@ -344,8 +344,8 @@ def plot_threshold_metrics_ex_1_2(df_all_threshold_x):
 
     # Plot FPIR
     # plt.subplot(1, 2, 2)
-    plt.plot(plot_df.index, plot_df['FPIR_c'], 'g-', label='Canonical - children - FPIR')
-    plt.plot(plot_df.index, plot_df['FPIR_a'], 'b-', label='Mixed quality - children - FPIR')
+    plt.plot(plot_df.index, plot_df['FPIR_c'], 'g-', label='Canonical - children - FPIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FPIR_a'], 'b-', label='Mixed quality - children - FPIR',linewidth=3.0)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
     plt.title('FPIR and FNIR vs Threshold', fontsize=16)
@@ -369,8 +369,8 @@ def plot_threshold_metrics_ex_1_2_zoomed(df_all_threshold_x):
     plot_df = df_all_threshold_x.groupby('Threshold').mean()
 
     plt.figure(figsize=(14, 7))
-    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children - FNIR')
-    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children - FNIR')
+    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children - FNIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children - FNIR',linewidth=3.0)
     plt.xlabel('Threshold', fontsize=20)
     plt.ylabel('FNIR and FPIR', fontsize=20)
     plt.title('FNIR vs Threshold', fontsize=20)
@@ -385,4 +385,180 @@ def plot_threshold_metrics_ex_1_2_zoomed(df_all_threshold_x):
 
     # Show the plot
     plt.show()
-# plot_threshold_metrics_ex_1_2_zoomed(df_all_threshold_x)
+
+
+
+# -------------------------------------------------
+# Experiment 2.3
+
+import numpy as np
+import pandas as pd
+
+def compute_metrics_ex_2_3(random_states, percentiles, children_all, adults_all, image_names_c, image_names_a, sim_mat_c, sim_mat_a, num_ids_c, num_ids_a, ids_c, ids_a, balance_child_data, balance_adults_data_enrolled, compute_fnir, compute_fpir, GARBE, age_1, age_2):
+    FNIR_c_list = []
+    FNIR_a_list = []
+    FPIR_c_list = []
+    FPIR_a_list = []
+    FPD_list = []
+    FND_list = []
+    GARBE_list = []
+    threshold_list = []
+
+    for random_state_i in random_states:
+
+        ### Load children and adults balanced data ###
+        data_1 = balance_child_data_2_3(children_all, print_stats=False, random_state=random_state_i, age=age_1)
+        data_2 = balance_child_data_2_3(children_all, print_stats=False, random_state=random_state_i, age=age_2)
+
+        c_mates = data_1.groupby("identity_name").agg({'identity_name': ['count']})
+        enrolled_identity_names_c = c_mates[c_mates[('identity_name', 'count')] > 1].index
+        enrolled_image_names_c = list(data_1[data_1["identity_name"].isin(enrolled_identity_names_c)].image_name)
+        non_enrolled_identity_names_c = c_mates[c_mates[('identity_name', 'count')] == 1].index
+        non_enrolled_image_names_c = list(data_1[data_1["identity_name"].isin(non_enrolled_identity_names_c)].image_name)
+        all_reference_image_names_c = list(data_1.image_name)
+
+        a_mates = data_2.groupby("identity_name").agg({'identity_name': ['count']})
+        enrolled_identity_names_a = a_mates[a_mates[('identity_name', 'count')] > 1].index
+        enrolled_image_names_a = list(data_2[data_2["identity_name"].isin(enrolled_identity_names_a)].image_name)
+        non_enrolled_identity_names_a = a_mates[a_mates[('identity_name', 'count')] == 1].index
+        non_enrolled_image_names_a = list(data_2[data_2["identity_name"].isin(non_enrolled_identity_names_a)].image_name)
+        all_reference_image_names_a = list(data_2.image_name)
+
+        # Similarity matrices for ids in reference database
+        indices_c_all_reference = [image_names_c.index(name) for name in all_reference_image_names_c]
+        indices_a_all_reference = [image_names_a.index(name) for name in all_reference_image_names_a]
+
+        # Extract corresponding columns from the similarity matrix
+        sim_mat_c_reference_cols = sim_mat_c[:, indices_c_all_reference]
+        sim_mat_a_reference_cols = sim_mat_a[:, indices_a_all_reference]
+
+        # Extract corresponding rows from the numerical ids
+        num_ids_c_reference = num_ids_c[indices_c_all_reference]
+        num_ids_a_reference = num_ids_a[indices_a_all_reference]
+
+        # Similarity matrices for non-enrolled ids
+        indices_c_non_enrolled = [image_names_c.index(name) for name in non_enrolled_image_names_c]
+        indices_a_non_enrolled = [image_names_a.index(name) for name in non_enrolled_image_names_a]
+
+        sim_mat_c_non_enrolled_0 = sim_mat_c_reference_cols[indices_c_non_enrolled]
+        sim_mat_a_non_enrolled_0 = sim_mat_a_reference_cols[indices_a_non_enrolled]
+
+        num_ids_c_non_enrolled = num_ids_c[indices_c_non_enrolled]
+        num_ids_a_non_enrolled = num_ids_a[indices_a_non_enrolled]
+
+        # Similarity matrices for enrolled ids
+        indices_c_enrolled = [image_names_c.index(name) for name in enrolled_image_names_c]
+        indices_a_enrolled = [image_names_a.index(name) for name in enrolled_image_names_a]
+
+        sim_mat_c_enrolled_0 = sim_mat_c[np.ix_(indices_c_enrolled, indices_c_enrolled)]
+        sim_mat_a_enrolled_0 = sim_mat_a[np.ix_(indices_a_enrolled, indices_a_enrolled)]
+
+        num_ids_c_enrolled = num_ids_c[indices_c_enrolled]
+        num_ids_a_enrolled = num_ids_a[indices_a_enrolled]
+
+        for percentile in percentiles:
+            # thold = (np.percentile(sim_mat_c, percentile) + np.percentile(sim_mat_a, percentile)) / 2
+            thold = percentile
+
+            # Evaluation metrics
+            FNIR_c, sim_mat_c_enrolled = compute_fnir(sim_mat_c_enrolled_0, sim_mat_c, enrolled_identity_names_c, num_ids_c_enrolled, ids_c, thold=thold)
+            FNIR_a, sim_mat_a_enrolled = compute_fnir(sim_mat_a_enrolled_0, sim_mat_a, enrolled_identity_names_a, num_ids_a_enrolled, ids_a, thold=thold)
+
+            FPIR_c = compute_fpir(sim_mat_c_non_enrolled_0, num_ids_c_non_enrolled, num_ids_c_reference, thold=thold)
+            FPIR_a = compute_fpir(sim_mat_a_non_enrolled_0, num_ids_a_non_enrolled, num_ids_a_reference, thold=thold)
+
+            alpha_garbe = 0.25
+            FPD_i, FND_i, GARBE_i = GARBE(FNIR_c, FNIR_a, FPIR_c, FPIR_a, alpha=alpha_garbe)
+
+            FNIR_c_list.append(FNIR_c)
+            FNIR_a_list.append(FNIR_a)
+            FPIR_c_list.append(FPIR_c)
+            FPIR_a_list.append(FPIR_a)
+            FPD_list.append(FPD_i)
+            FND_list.append(FND_i)
+            GARBE_list.append(GARBE_i)
+            threshold_list.append(thold)
+
+            print(f"Done for random_state: {random_state_i}, percentile: {percentile}")
+
+    data = {
+        'Iteration': np.repeat(random_states, len(percentiles)),
+        'Percentile': percentiles * len(random_states),
+        'FNIR_c': FNIR_c_list,
+        'FNIR_a': FNIR_a_list,
+        'FPIR_c': FPIR_c_list,
+        'FPIR_a': FPIR_a_list,
+        'FPD': FPD_list,
+        'FND': FND_list,
+        'GARBE': GARBE_list,
+        'Threshold': threshold_list
+    }
+
+    df_all_threshold_x = pd.DataFrame(data)
+
+    return df_all_threshold_x
+
+
+
+
+
+def plot_threshold_metrics_ex_2_3(df_all_threshold_x, df_all_threshold_x_1, df_all_threshold_x_2):
+    # Set the aesthetics for the plots
+    sns.set(style="whitegrid")
+
+    plot_df = df_all_threshold_x.groupby('Threshold').mean()
+    plot_df_1 = df_all_threshold_x_1.groupby('Threshold').mean()
+    plot_df_2 = df_all_threshold_x_2.groupby('Threshold').mean()
+
+
+
+    plt.figure(figsize=(14, 7))
+
+    # Plot FNIR
+    # plt.subplot(1, 2, 1)
+    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='1-3 years - FNIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FNIR_a'], 'y-', label='4-6 years - FNIR',linewidth=3.0)
+    plt.plot(plot_df_1.index, plot_df_1['FNIR_c'], 'g-', label='7-9 years - FNIR',linewidth=3.0)
+    plt.plot(plot_df_1.index, plot_df_1['FNIR_a'], 'b-', label='10-12 years - FNIR',linewidth=3.0)
+    plt.plot(plot_df_2.index, plot_df_2['FNIR_c'], 'k-', label='13-15 years - FNIR',linewidth=3.0)
+
+    plt.xlabel('Threshold', fontsize=14)
+    plt.ylabel('FNIR and FPIR', fontsize=14)
+    plt.title('FNIR vs Threshold', fontsize=16)
+    # plt.ylim(0.0, 0.125)  # Limit the FNIR y-axis
+    plt.xlim(0.0, 1)
+    plt.legend(fontsize=16)
+    plt.grid(True)
+
+    # Plot FPIR
+    # plt.subplot(1, 2, 2)
+    plt.plot(plot_df.index, plot_df['FPIR_c'], 'r--', label='1-3 years - FPIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FPIR_a'], 'y--', label='4-6 years - FPIR',linewidth=3.0)
+    plt.plot(plot_df_1.index, plot_df_1['FPIR_c'], 'g--', label='7-9 years - FPIR',linewidth=3.0)
+    plt.plot(plot_df_1.index, plot_df_1['FPIR_a'], 'b--', label='10-12 years - FPIR',linewidth=3.0)
+    plt.plot(plot_df_2.index, plot_df_2['FPIR_c'], 'k--', label='13-15 years - FPIR',linewidth=3.0)
+
+    plt.xlabel('Threshold', fontsize=14)
+    plt.ylabel('FPIR and FNIR', fontsize=14)
+    plt.title('FPIR and FNIR vs Threshold', fontsize=16)
+    # plt.ylim(0.85, 1.0)  # Limit the FPIR y-axis
+    plt.xlim(0.0, 1)
+    plt.legend(fontsize=16)
+    plt.grid(True)
+
+
+    plt.tight_layout()
+
+    # Show the plot
+    plt.show()
+
+def balance_child_data_2_3(y_df, print_stats=False, random_state=42, age = '1-3'):
+    """
+    Input: raw df for children
+    Returns: balanced csvs for different age groups of children
+    """
+    # Randomly sample 100 from each age group
+    data = y_df[y_df['children_agegroup'] == age].sample(n=400, random_state=random_state, replace = True)
+
+
+    return data
