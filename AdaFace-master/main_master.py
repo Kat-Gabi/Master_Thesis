@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 import torch.nn.parallel
 import torch.utils.data
 import torch.utils.data.distributed
@@ -19,29 +20,89 @@ import wandb
 
 from pytorch_lightning.callbacks import Callback
 
+
 class CustomFreezeCallback(Callback):
-    def __init__(self, unfreeze_epoch=18, num_layers_to_unfreeze=9):
+    def __init__(self, unfreeze_epoch=12, num_layers_to_unfreeze=9):
         self.unfreeze_epoch = unfreeze_epoch
         self.num_layers_to_unfreeze = num_layers_to_unfreeze
 
-
     def on_train_epoch_start(self, trainer, pl_module):
         if trainer.current_epoch == self.unfreeze_epoch:
-            print(f"Epoch {trainer.current_epoch}: UNFREEZING ALL LAYERS")
-            
-            # Get all layers
-            layers = list(pl_module.children())
-            # Select the last num_layers_to_unfreeze layers
-            layers_to_unfreeze = layers[-self.num_layers_to_unfreeze:]
-            print(f"Layers to unfreeze {self.num_layers_to_unfreeze}")
+            print(f"Epoch {trainer.current_epoch}: UNFREEZING LAYERS")
 
-            # Set requires_grad = True for the parameters of the selected layers
-            for n_layer, layer in enumerate(layers_to_unfreeze):
-                print(f"UNFROZE LAYER {n_layer}")
+            # Find all res_layer Conv2d layers
+            conv_layers = []
+            for name, module in pl_module.named_modules():
+                if isinstance(module, nn.Conv2d) and 'res_layer' in name:
+                    conv_layers.append((name, module))
+            
+            # Select the last num_layers_to_unfreeze conv layers
+            layers_to_unfreeze = conv_layers[-self.num_layers_to_unfreeze:]
+            print(f"Layers to unfreeze ({self.num_layers_to_unfreeze}):")
+            for name, _ in layers_to_unfreeze:
+                print(name)
+
+            # Unfreeze selected layers
+            for name, layer in layers_to_unfreeze:
                 for param in layer.parameters():
                     param.requires_grad = True
-            # for param in pl_module.parameters():
-            #     param.requires_grad = True
+                print(f"Unfroze layer: {name}")
+
+
+# class CustomFreezeCallback(Callback):
+#     def __init__(self, unfreeze_epoch=2, num_layers_to_unfreeze=9):
+#         self.unfreeze_epoch = unfreeze_epoch
+#         self.num_layers_to_unfreeze = num_layers_to_unfreeze
+
+#     def on_train_epoch_start(self, trainer, pl_module):
+#         if trainer.current_epoch == self.unfreeze_epoch:
+#             print(f"Epoch {trainer.current_epoch}: UNFREEZING LAYERS")
+            
+#             # Get all layers in the model
+#             all_layers = list(pl_module.named_modules())
+#             print(f"Total layers in the model: {len(all_layers)}")
+#             print("ALL LAYERS", all_layers)
+
+#             # Select the last num_layers_to_unfreeze layers
+#             layers_to_unfreeze = all_layers[-self.num_layers_to_unfreeze:]
+#             print(f"Layers to unfreeze ({self.num_layers_to_unfreeze}):")
+#             for name, _ in layers_to_unfreeze:
+#                 print("NAME LAYER",name)
+
+#             # Set requires_grad = True for the parameters of the selected layers
+#             for name, layer in layers_to_unfreeze:
+#                 for param in layer.parameters():
+#                     param.requires_grad = True
+#                 print(f"Unfroze layer: {name}")
+
+#Kinda worked
+# class CustomFreezeCallback(Callback):
+#     def __init__(self, unfreeze_epoch=2, num_layers_to_unfreeze=9):
+#         self.unfreeze_epoch = unfreeze_epoch
+#         self.num_layers_to_unfreeze = num_layers_to_unfreeze
+
+
+#     def on_train_epoch_start(self, trainer, pl_module):
+#         if trainer.current_epoch == self.unfreeze_epoch:
+#             print(f"Epoch {trainer.current_epoch}: UNFREEZING LAYERS")
+            
+#             # Get all layers
+#             layers = list(pl_module.children())
+#             print("ALL LAYERS", layers)
+#             # Select the last num_layers_to_unfreeze layers
+#             layers_to_unfreeze = layers[-self.num_layers_to_unfreeze:]
+#             print(f"Layers to unfreeze {self.num_layers_to_unfreeze}")
+#             print("UNFREEZED LAYERS", layers_to_unfreeze)
+
+#             # Set requires_grad = True for the parameters of the selected layers
+#             for n_layer, layer in enumerate(layers_to_unfreeze):
+#                 print(f"UNFROZE LAYER {n_layer}")
+#                 print("THE LAYER", layer)
+#                 for param in layer.parameters():
+#                     print("PARAM", param)
+#                     param.requires_grad = True
+#             # for param in pl_module.parameters():
+#             #     param.requires_grad = True
 
 
 def main(args):

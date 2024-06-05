@@ -7,7 +7,7 @@
 
 python ../main_master.py \
     --data_root ../../data/data_full/ \
-    --train_data_path HDA_processed_AdaFace/ \
+    --train_data_path GanDiffFace_processed_AdaFace/ \
     --prefix ir18_casia_adaface \
     --gpus 1 \
     --use_16bit \
@@ -15,7 +15,7 @@ python ../main_master.py \
     --batch_size 256 \
     --num_workers 8 \
     --epochs 30 \
-    --lr_milestones 18,22,26 \
+    --lr_milestones 12,18,26 \
     --lr 0.01 \
     --head adaface \
     --m 0.4 \

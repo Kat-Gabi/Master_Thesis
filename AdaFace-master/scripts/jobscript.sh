@@ -3,7 +3,7 @@
 ### ?- specify queue --
 #BSUB -q gpua100
 ### -- set the job Name --
-#BSUB -J testjob
+#BSUB -J testjob_adaface_gandiff
 ### -- ask for number of cores (default: 1) --
 #BSUB -n 4
 ### -- set span if number of cores is more than 1
@@ -24,8 +24,8 @@
 #BSUB -N
 ### -- Specify the output and error file. %J is the job-id --
 ### -- -o and -e mean append, -oo and -eo mean overwrite --
-#BSUB -o hpc_out/%J/pipe_out_all.out
-#BSUB -e hpc_out/%J/pipe_err_all.err
+#BSUB -o hpc_out_gandiff/%J/pipe_out_9_frozen.out
+#BSUB -e hpc_out_gandiff/%J/pipe_err_9_frozen.err
 # -- end of LSF options --
 
 ### Load modules

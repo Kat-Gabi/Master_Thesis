@@ -21,9 +21,9 @@ lg=35
 
 # settings
 MODEL_ARC=iresnet18
-OUTPUT=./test/
+OUTPUT=./test_finetuning/
 PRETRAINED_MODEL=../models/magface_iresnet18_casia_dp.pth
-TRAIN_LIST=../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_correct_index_tester.list
+TRAIN_LIST= ../../data/data_full/GanDiffFace_processed_cluster_magface/fine_tune_train_list_magface_all_GanDiffFace.list #../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_all_HDA.list
 
 
 # Check if pretrained model file exists
@@ -49,19 +49,19 @@ python -u ../run/fine_tuner.py \
     --train_list ${TRAIN_LIST} \
     --pretrained ${PRETRAINED_MODEL} \
     --cpu_mode 0 \
-    --workers 4 \
-    --epochs 2 \
+    --workers 8 \
+    --epochs 30 \
     --start-epoch 0 \
     --batch-size 256 \
     --embedding-size 512 \
-    --last-fc-size 823 \
+    --last-fc-size 1652 \
     --arc-scale 64 \
     --learning-rate 0.01 \
     --momentum 0.9 \
     --weight-decay 5e-4 \
-    --lr-drop-epoch 2 \
+    --lr-drop-epoch 12 18 26 \
     --lr-drop-ratio 0.1 \
-    --print-freq 10 \
+    --print-freq 100 \
     --pth-save-fold ${OUTPUT} \
     --pth-save-epoch 1 \
     --l_a ${la} \

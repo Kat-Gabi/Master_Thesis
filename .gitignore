@@ -184,22 +184,21 @@ data/data_full/
 # old?
 data/feat_img_adults_full.list
 data/feat_img_children_full.list
-/MagFace-main/run/wandb
+MagFace-main/run/wandb
 
 MagFace-main/models/magface_iresnet18_casia_dp.pth
-/MagFace-main/Master_thesis_data_prep/image_lists
-/MagFace-main/run/test
+MagFace-main/Master_thesis_data_prep/image_lists
+MagFace-main/run/test
 
 # Uncomment after magface testing 
-#/MagFace-main/Master_thesis_data_prep/hpc_out
-/MagFace-main/Master_thesis_data_prep/test/00001.pth
-/MagFace-main/Master_thesis_data_prep/test/00002.pth
-/MagFace-main/Master_thesis_data_prep/test/00003.pth
-/MagFace-main/Master_thesis_data_prep/test/00004.pth
-/MagFace-main/Master_thesis_data_prep/test/00005.pth
+MagFace-main/Master_thesis_data_prep/test
+MagFace-main/Master_thesis_data_prep/hpc_out
+MagFace-main/Master_thesis_data_prep/wandb
 
-#/MagFace-main/Master_thesis_data_prep/wandb
 
+MagFace-main/Master_thesis_data_prep/test_finetuning
 AdaFace-master/pretrained/adaface_ir18_casia.ckpt
 AdaFace-master/scripts/wandb
 AdaFace-master/scripts/hpc_out
+utils/finetuning_data/hpc_out
+utils/finetuning_data/screenlog.0

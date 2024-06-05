@@ -186,6 +186,31 @@ def clean_dict_finetuner(model, state_dict):
             num_model, num_ckpt))
     return _state_dict
 
+def unfreeze_last_layers_by_type(model, num_layers_to_unfreeze):
+    # Identify layers to unfreeze (Conv2d and Linear layers)
+    layers_to_unfreeze = []
+    layer_types = (torch.nn.Conv2d, torch.nn.Linear)
+    
+    # List of layers to exclude from unfreezing
+    exclude_layers = ['module.features.layer3.0.downsample.0', 'module.features.layer4.0.downsample.0']
+    
+    # Get all layers
+    for name, module in model.named_modules():
+        if isinstance(module, layer_types) and name not in exclude_layers:
+            layers_to_unfreeze.append(name)
+    
+    # Determine the last num_layers_to_unfreeze layers
+    layers_to_unfreeze = layers_to_unfreeze[-num_layers_to_unfreeze:]
+    print(f"Layers to unfreeze: {layers_to_unfreeze}")
+    
+    # Unfreeze the selected layers
+    for name, param in model.named_parameters():
+        layer_name = name.rsplit('.', 1)[0]
+        if layer_name in layers_to_unfreeze:
+            param.requires_grad = True
+            print(f"Unfroze layer: {layer_name}")
+
+
 
 def main(args):
     "from trainer.py"
@@ -266,6 +291,16 @@ def main_worker(args):
 
             global current_lr
             current_lr = utils.adjust_learning_rate(optimizer, epoch, args)
+            
+            # UNFREEZING LAST 9 LAYERS
+            # In your training loop or wherever you handle the epoch logic
+            if epoch == args.lr_drop_epoch[0]:
+                # Unfreeze the last num_layers_to_unfreeze unique layers
+                unfreeze_last_layers_by_type(model, num_layers_to_unfreeze=9)
+
+                # Reinitialize the optimizer with the updated parameters
+                optimizer = torch.optim.SGD(model.parameters(), current_lr, momentum=args.momentum, weight_decay=args.weight_decay)
+                cprint('=> UNFREEZING SELECTED LAYERS...', 'green')
 
             # train for one epoch
             co2_emission, top1, top5, losses_id = do_train(train_loader, model, criterion, optimizer, epoch, args)
@@ -290,7 +325,7 @@ def main_worker(args):
                 ))
                 cprint(' : save pth for epoch {}'.format(epoch + 1))
                 # log metrics to wandb
-                wandb.log({"CO2 emission (in Kg)": co2_emission, "acc1": top1.avg, "acc5": top5.avg,"losses_id": losses_id.avg})
+                wandb.log({"epochs": epoch ,"CO2 emission (in Kg)": co2_emission, "acc1": top1.avg, "acc5": top5.avg,"losses_id": losses_id.avg})
     else:
         print("args.pretrained is False")  # Add this line for debugging
 

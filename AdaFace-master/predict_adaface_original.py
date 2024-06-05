@@ -52,7 +52,7 @@ if __name__ == '__main__':
         ToInputTransform()
         ])
 
-    test_image_path = '/work3/s174139/Master_Thesis/data/data_full/adults_filtered_bibel_cropped_resized_retina' #/work3/s174139/Master_Thesis/AdaFace-master/face_alignment/test_images'
+    test_image_path = '/work3/s174139/Master_Thesis/data/data_full/children_filtered_bibel_FINAL_INFERENCE' #/work3/s174139/Master_Thesis/AdaFace-master/face_alignment/test_images'
     
     dataset = datasets.ImageFolder(test_image_path, transform=transform)
     
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     print(len(data_dict["feature_vectors"]))
 
     # Save the dictionary
-    torch.save(data_dict, '/work3/s174139/Master_Thesis/data/data_full/feature_vectors/adaface_feature_vectors/similarity_scores_adults_bibel_cropped_resized_retina_baseline1.pt')
+    torch.save(data_dict, '/work3/s174139/Master_Thesis/data/data_full/feature_vectors/adaface_feature_vectors/similarity_scores_children_filtered_bibel_FINAL_INFERENCE_baseline1.pt')
 
     
     

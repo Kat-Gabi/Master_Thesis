@@ -13,10 +13,12 @@ import numpy as np
 import sys
 sys.path.append('../../MagFace-main/utils/')
 import face_align
+import torch
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def extract_landmarks(image_path):
     landmark_values = RetinaFace.detect_faces(image_path)["face_1"]["landmarks"].values()
-    print("yes")
+    #print("yes")
     return np.array([sublist for sublist in landmark_values])
 
 def change_id_incremental(file_path):
@@ -62,8 +64,8 @@ if __name__ == "__main__":
             # Create output directory for the current age group   
             age_group_folder = os.path.join(main_dataset_folder, f'age_group_{age_group}' + rest_path)
             all_images = sorted([image for image in os.listdir(age_group_folder) if image.endswith('.png') or image.endswith('.jpg')]) #Jpg images are bad image quality
-            #num_images = len(all_images)    
-            #print("Number of images in original directory age_group_{}:".format(age_group), num_images)
+            num_images = len(all_images)    
+            print("Number of images in original directory age_group_{}:".format(age_group), num_images)
                         
             # Iterate over each image path
             for img in all_images:
@@ -93,20 +95,20 @@ if __name__ == "__main__":
                     landmarks_np = extract_landmarks(cv_image)
             
 
-                    #print("landmark")
+                    print("landmark")
                     aligned_resized_image = face_align.norm_crop(cv_image, landmarks_np, image_size, mode='arcface') 
-                    #print("aligned")
+                    print("aligned")
                     
 
                     output_image_path = os.path.join(imgs_output_folder, os.path.basename(img))
-                    #print("output")
+                    print("output")
                     cv_image_written = cv2.imwrite(output_image_path, aligned_resized_image)
-                    #print("cv2 write")
+                    print("cv2 write")
 
 
                     output_image_path_write = os.path.join(imgs_output_folder, img) 
                     train_list_file.write(f'{output_image_path_write} 0 {incrementally_integer_id}\n') #corresponding to id. list format required by magface. First id should be 0. 
-                    #print("written!")
+                    print("written!")
                 except:
                     print("Error processing image, possibly due to low image quality:", img)
                 pass

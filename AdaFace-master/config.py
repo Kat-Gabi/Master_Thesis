@@ -42,7 +42,7 @@ def get_args():
 
     # set working dir
     current_time = strftime("%m-%d_0", gmtime())
-    args.output_dir = os.path.join('experiments', args.prefix + "_" + current_time)
+    args.output_dir = os.path.join('experiments_gandiff', args.prefix + "_" + current_time)
     if os.path.isdir(args.output_dir):
         while True:
             cur_exp_number = int(args.output_dir[-2:].replace('_', ""))
