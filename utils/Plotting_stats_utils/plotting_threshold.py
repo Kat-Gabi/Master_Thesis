@@ -173,8 +173,8 @@ def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title):
 
     # Plot FPIR
     # plt.subplot(1, 2, 2)
-    plt.plot(plot_df.index, plot_df['FPIR_c'], 'g-', label='Children - FPIR',linewidth=3.0)
-    plt.plot(plot_df.index, plot_df['FPIR_a'], 'b-', label='Adults - FPIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FPIR_c'], 'r--', label='Children - FPIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FPIR_a'], 'c--', label='Adults - FPIR',linewidth=3.0)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
     plt.title(f'FPIR and FNIR vs Threshold - {title}', fontsize=16)
