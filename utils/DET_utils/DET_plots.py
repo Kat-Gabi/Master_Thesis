@@ -64,7 +64,7 @@ def descriptive_statistics(mated_scores, nonmated_scores):
 
 
 
-def plot_histogram(mated_scores, nonmated_scores, normalise=True, savename=None, title="Histogram"):
+def plot_histogram(mated_scores, nonmated_scores, normalise=True, savename=None, title="Histogram", save_fig_path = save_fig_path):
     def normalise_scores(distribution):
         return np.ones_like(distribution) / len(distribution)
 
@@ -88,6 +88,8 @@ def plot_histogram(mated_scores, nonmated_scores, normalise=True, savename=None,
     plt.title(title, size=20)
     plt.grid(True)
     plt.legend(loc='upper right', bbox_to_anchor=(1, 1), ncol=1, fontsize=14)  # Adjust legend parameters as needed
+
+    plt.savefig(f'{save_fig_path}_{title}_comp.png')
 
     if savename is not None:
         plt.savefig(savename, bbox_inches="tight")
@@ -128,7 +130,7 @@ legend_fontsize = 18
 label_fontsize = 18
 tick_fontsize = 18
 
-def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, savename=None):
+def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, savename=None, save_fig_path=save_fig_path):
     linspace_items = 101
     mated_kde, mated_pos, mated_min, mated_max = get_kde(mated_scores, linspace_items)
     nonmated_kde, nonmated_pos, nonmated_min, nonmated_max = get_kde(nonmated_scores, linspace_items)
@@ -197,6 +199,8 @@ def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, sa
     plt.xticks(fontsize=tick_fontsize)
     plt.yticks(fontsize=tick_fontsize)
 
+    plt.savefig(f'{save_fig_path}_{title}_FN_FP.png')
+
     if savename is not None:
         plt.savefig(savename, bbox_inches="tight")
         plt.cla()
@@ -258,3 +262,67 @@ def adjust_scores_for_DET(scores_array, scores_type):
         return -scores_array
     else:
         raise ValueError(f"Unknown type of comparison scores: {scores_type}")
+
+
+# ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+def DET_plotting_1_1(title = 'Canonical vs Mixed-quality - AdaFace ex. 2.2', save_fig_path = save_fig_path):
+    figure_size = (12,7)
+    alpha_shade = 0.25
+    alpha_fill = 1.0
+    linewidth = 2
+    legend_loc = "upper left"
+    legend_anchor = (1.0, 1.02)
+    legend_cols = 1
+    legend_fontsize = 18
+    label_fontsize = 18
+    tick_fontsize = 18
+    system_name1 = 'Adults'
+    system_name2 = 'Children'
+
+    det = DET(biometric_evaluation_type='identification', abbreviate_axes=True, plot_eer_line=True, plot_title=title)
+    det.x_limits = np.array([1e-5, .8])
+    det.y_limits = np.array([1e-5, .8])
+    det.x_ticks = np.array([1e-4, 1e-3, 1e-2, 5e-2, 20e-2, 40e-2, 80e-2])
+    det.x_ticklabels = np.array(['0.01','0.1', '1', '5', '20', '40', '80'])
+    det.y_ticks = np.array([1e-4, 1e-3, 1e-2, 5e-2, 20e-2, 40e-2, 80e-2])
+    det.y_ticklabels = np.array(['0.01','0.1', '1', '5', '20', '40', '80'])
+    det.create_figure()
+    det.plot(tar=adjust_scores_for_DET(mated_scores1, scores_type1), non=adjust_scores_for_DET(nonmated_scores1, scores_type1), label=system_name1)
+    det.plot(tar=adjust_scores_for_DET(mated_scores2, scores_type2), non=adjust_scores_for_DET(nonmated_scores2, scores_type2), label=system_name2)
+    det.legend_on(loc="upper right")
+    det.xticks(fontsize=tick_fontsize)
+    det.yticks(fontsize=tick_fontsize)
+    det.savefig(f'{save_fig_path}DET.png')
+
+# ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+def DET_plotting_1_2(title = 'Canonical vs Mixed-quality - AdaFace', save_fig_path = save_fig_path):
+    figure_size = (12,7)
+    alpha_shade = 0.25
+    alpha_fill = 1.0
+    linewidth = 2
+    legend_loc = "upper left"
+    legend_anchor = (1.0, 1.02)
+    legend_cols = 1
+    legend_fontsize = 18
+    label_fontsize = 18
+    tick_fontsize = 18
+    system_name1 = 'Mixed quality - children'
+    system_name2 = 'Canonical - children'
+
+    det = DET(biometric_evaluation_type='identification', abbreviate_axes=True, plot_eer_line=True, plot_title="Children vs adults - AdaFace")
+    det.x_limits = np.array([1e-5, .8])
+    det.y_limits = np.array([1e-5, .8])
+    det.x_ticks = np.array([1e-4, 1e-3, 1e-2, 5e-2, 20e-2, 40e-2, 80e-2])
+    det.x_ticklabels = np.array(['0.01','0.1', '1', '5', '20', '40', '80'])
+    det.y_ticks = np.array([1e-4, 1e-3, 1e-2, 5e-2, 20e-2, 40e-2, 80e-2])
+    det.y_ticklabels = np.array(['0.01','0.1', '1', '5', '20', '40', '80'])
+    det.create_figure()
+    det.plot(tar=adjust_scores_for_DET(mated_scores1, scores_type1), non=adjust_scores_for_DET(nonmated_scores1, scores_type1), label=system_name1)
+    det.plot(tar=adjust_scores_for_DET(mated_scores2, scores_type2), non=adjust_scores_for_DET(nonmated_scores2, scores_type2), label=system_name2)
+    det.legend_on(loc="upper right")
+    det.show()
+    det.savefig(f'{save_fig_path}DET.png')

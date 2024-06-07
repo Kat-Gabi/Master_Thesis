@@ -3,6 +3,27 @@ import pandas as pd
 
 
 
+def generate_latex_table(df):
+    latex_code = "\\begin{table}\n"
+    latex_code += "\\caption{Descriptive Statistics} \n"
+    latex_code += "\\label{table:descriptive_stats} \n"
+    latex_code += "\\begin{tabular}{ccccccccc} \n"
+    latex_code += "\\toprule\n"
+    latex_code += "\\textbf{{Iter.}} & $FNIR_c$ & $FNIR_a$ & $FPIR_c$ & $FPIR_a$ & $FPD$ & $FND$ & $GARBE$ & $T$ \\\\\n"
+    latex_code += "\\midrule\n"
+
+    for idx, row in df.iterrows():
+        row_data = " & ".join(row.values)
+        latex_code += f"\\textbf{{{idx}}} & {row_data} \\\\\n"
+
+    latex_code += "\\bottomrule\n"
+    latex_code += "\\end{tabular} \n"
+    latex_code += "\\end{table}\n"
+
+    return latex_code
+
+
+
 def evaluate_metrics_ex_1_1(random_states, children_all, adults_all, image_names_c, image_names_a, sim_mat_c, sim_mat_a, num_ids_c, num_ids_a, ids_c, ids_a, balance_child_data, balance_adults_data_enrolled, compute_fnir, compute_fpir, GARBE, remove_ones, threshold_number, alpha_garbe=0.25):
     sim_mat_dict_all = {}
     FNIR_c_list = []

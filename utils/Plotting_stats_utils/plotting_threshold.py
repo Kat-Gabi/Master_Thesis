@@ -114,7 +114,7 @@ def plot_threshold_metrics_ex_1_1(df_all_threshold_x):
 
     plot_df = df_all_threshold_x.groupby('Threshold').mean()
 
-    plt.figure(figsize=(14, 7))
+    plt.figure(figsize=(12, 7))
 
     # Plot FNIR
     plt.subplot(1, 2, 1)
@@ -151,18 +151,17 @@ def plot_threshold_metrics_ex_1_1(df_all_threshold_x):
 # plot_threshold_metrics(df_all_threshold_x)
 
 
-def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title):
+def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title, save_fig_path):
     # Set the aesthetics for the plots
     sns.set(style="whitegrid")
 
     plot_df = df_all_threshold_x.groupby('Threshold').mean()
 
-    plt.figure(figsize=(14, 7))
+    plt.figure(figsize=(12, 7))
 
     # Plot FNIR
-    # plt.subplot(1, 2, 1)
-    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Children - FNIR',linewidth=3.0)
-    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Adults - FNIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FNIR_c'], color='#88E288', linestyle = '-', label='Children - FNIR', linewidth=2.7)
+    plt.plot(plot_df.index, plot_df['FNIR_a'], color = '#95DFFF', linestyle = '-', label='Adults - FNIR',linewidth=2.7)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
     plt.title('FNIR vs Threshold', fontsize=16)
@@ -172,9 +171,8 @@ def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title):
     plt.grid(True)
 
     # Plot FPIR
-    # plt.subplot(1, 2, 2)
-    plt.plot(plot_df.index, plot_df['FPIR_c'], 'r--', label='Children - FPIR',linewidth=3.0)
-    plt.plot(plot_df.index, plot_df['FPIR_a'], 'c--', label='Adults - FPIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FPIR_c'], color='#88E288', linestyle = '--', label='Children - FPIR',linewidth=2.7)
+    plt.plot(plot_df.index, plot_df['FPIR_a'], color = '#95DFFF', linestyle = '--', label='Adults - FPIR',linewidth=2.7)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
     plt.title(f'FPIR and FNIR vs Threshold - {title}', fontsize=16)
@@ -185,9 +183,10 @@ def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title):
 
     plt.tight_layout()
 
+    plt.savefig(f'{save_fig_path}TH.png')
+
     # Show the plot
     plt.show()
-
 
 
 
@@ -322,18 +321,18 @@ def compute_metrics_ex_1_2(random_states, percentiles, children_all, adults_all,
 
 
 
-def plot_threshold_metrics_ex_1_2(df_all_threshold_x):
+def plot_threshold_metrics_ex_1_2(df_all_threshold_x, save_fig_path):
     # Set the aesthetics for the plots
     sns.set(style="whitegrid")
 
     plot_df = df_all_threshold_x.groupby('Threshold').mean()
 
-    plt.figure(figsize=(14, 7))
+    plt.figure(figsize=(12, 7))
 
     # Plot FNIR
     # plt.subplot(1, 2, 1)
-    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children - FNIR',linewidth=3.0)
-    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children - FNIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FNIR_c'], color='#FBC02D', linestyle = '-', label='Canonical - children - FNIR',linewidth=2.7)
+    plt.plot(plot_df.index, plot_df['FNIR_a'], color='#88E288', linestyle = '-',label='Mixed quality - children - FNIR',linewidth=2.7)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
     plt.title('FNIR vs Threshold', fontsize=16)
@@ -344,8 +343,8 @@ def plot_threshold_metrics_ex_1_2(df_all_threshold_x):
 
     # Plot FPIR
     # plt.subplot(1, 2, 2)
-    plt.plot(plot_df.index, plot_df['FPIR_c'], 'g-', label='Canonical - children - FPIR',linewidth=3.0)
-    plt.plot(plot_df.index, plot_df['FPIR_a'], 'b-', label='Mixed quality - children - FPIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FPIR_c'], color='#FBC02D', linestyle = '--', label='Canonical - children - FPIR',linewidth=2.7)
+    plt.plot(plot_df.index, plot_df['FPIR_a'], color='#88E288', linestyle = '--', label='Mixed quality - children - FPIR',linewidth=2.7)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
     plt.title('FPIR and FNIR vs Threshold', fontsize=16)
@@ -355,6 +354,8 @@ def plot_threshold_metrics_ex_1_2(df_all_threshold_x):
     plt.grid(True)
 
     plt.tight_layout()
+    plt.savefig(f'{save_fig_path}TH.png')
+
 
     # Show the plot
     plt.show()
@@ -368,9 +369,9 @@ def plot_threshold_metrics_ex_1_2_zoomed(df_all_threshold_x):
 
     plot_df = df_all_threshold_x.groupby('Threshold').mean()
 
-    plt.figure(figsize=(14, 7))
-    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children - FNIR',linewidth=3.0)
-    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children - FNIR',linewidth=3.0)
+    plt.figure(figsize=(12, 7))
+    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='Canonical - children - FNIR',linewidth=2.7)
+    plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children - FNIR',linewidth=2.7)
     plt.xlabel('Threshold', fontsize=20)
     plt.ylabel('FNIR and FPIR', fontsize=20)
     plt.title('FNIR vs Threshold', fontsize=20)
@@ -502,7 +503,7 @@ def compute_metrics_ex_2_3(random_states, percentiles, children_all, adults_all,
 
 
 
-def plot_threshold_metrics_ex_2_3(df_all_threshold_x, df_all_threshold_x_1, df_all_threshold_x_2):
+def plot_threshold_metrics_ex_2_3(df_all_threshold_x, df_all_threshold_x_1, df_all_threshold_x_2, save_fig_path):
     # Set the aesthetics for the plots
     sns.set(style="whitegrid")
 
@@ -512,15 +513,15 @@ def plot_threshold_metrics_ex_2_3(df_all_threshold_x, df_all_threshold_x_1, df_a
 
 
 
-    plt.figure(figsize=(14, 7))
+    plt.figure(figsize=(12, 7))
 
     # Plot FNIR
     # plt.subplot(1, 2, 1)
-    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='1-3 years - FNIR',linewidth=3.0)
-    plt.plot(plot_df.index, plot_df['FNIR_a'], 'y-', label='4-6 years - FNIR',linewidth=3.0)
-    plt.plot(plot_df_1.index, plot_df_1['FNIR_c'], 'g-', label='7-9 years - FNIR',linewidth=3.0)
-    plt.plot(plot_df_1.index, plot_df_1['FNIR_a'], 'b-', label='10-12 years - FNIR',linewidth=3.0)
-    plt.plot(plot_df_2.index, plot_df_2['FNIR_c'], 'k-', label='13-15 years - FNIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FNIR_c'], 'r-', label='1-3 years - FNIR',linewidth=2.7)
+    plt.plot(plot_df.index, plot_df['FNIR_a'], 'y-', label='4-6 years - FNIR',linewidth=2.7)
+    plt.plot(plot_df_1.index, plot_df_1['FNIR_c'], 'g-', label='7-9 years - FNIR',linewidth=2.7)
+    plt.plot(plot_df_1.index, plot_df_1['FNIR_a'], 'b-', label='10-12 years - FNIR',linewidth=2.7)
+    plt.plot(plot_df_2.index, plot_df_2['FNIR_c'], 'k-', label='13-15 years - FNIR',linewidth=2.7)
 
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
@@ -532,11 +533,11 @@ def plot_threshold_metrics_ex_2_3(df_all_threshold_x, df_all_threshold_x_1, df_a
 
     # Plot FPIR
     # plt.subplot(1, 2, 2)
-    plt.plot(plot_df.index, plot_df['FPIR_c'], 'r--', label='1-3 years - FPIR',linewidth=3.0)
-    plt.plot(plot_df.index, plot_df['FPIR_a'], 'y--', label='4-6 years - FPIR',linewidth=3.0)
-    plt.plot(plot_df_1.index, plot_df_1['FPIR_c'], 'g--', label='7-9 years - FPIR',linewidth=3.0)
-    plt.plot(plot_df_1.index, plot_df_1['FPIR_a'], 'b--', label='10-12 years - FPIR',linewidth=3.0)
-    plt.plot(plot_df_2.index, plot_df_2['FPIR_c'], 'k--', label='13-15 years - FPIR',linewidth=3.0)
+    plt.plot(plot_df.index, plot_df['FPIR_c'], 'r--', label='1-3 years - FPIR',linewidth=2.7)
+    plt.plot(plot_df.index, plot_df['FPIR_a'], 'y--', label='4-6 years - FPIR',linewidth=2.7)
+    plt.plot(plot_df_1.index, plot_df_1['FPIR_c'], 'g--', label='7-9 years - FPIR',linewidth=2.7)
+    plt.plot(plot_df_1.index, plot_df_1['FPIR_a'], 'b--', label='10-12 years - FPIR',linewidth=2.7)
+    plt.plot(plot_df_2.index, plot_df_2['FPIR_c'], 'k--', label='13-15 years - FPIR',linewidth=2.7)
 
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
@@ -548,6 +549,8 @@ def plot_threshold_metrics_ex_2_3(df_all_threshold_x, df_all_threshold_x_1, df_a
 
 
     plt.tight_layout()
+    plt.savefig(f'{save_fig_path}TH.png')
+
 
     # Show the plot
     plt.show()
