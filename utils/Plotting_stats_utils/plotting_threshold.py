@@ -190,6 +190,57 @@ def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title, save_fig_p
 
 
 
+
+
+def plot_threshold_metrics_ex_1_1_together_w_conf(df_all_threshold_x, title, save_fig_path):
+    # Set the aesthetics for the plots
+    sns.set(style="whitegrid")
+
+    plot_df_mean = df_all_threshold_x.groupby('Threshold').mean()
+    plot_df_std = df_all_threshold_x.groupby('Threshold').std()
+    count = df_all_threshold_x.groupby('Threshold').size().values
+
+    # Calculate the 95% confidence intervals
+    ci_factor = 1.96
+    plot_df_ci = plot_df_std / np.sqrt(count[:, None]) * ci_factor
+
+    plt.figure(figsize=(12, 7))
+
+    # Plot FNIR with confidence intervals
+    plt.plot(plot_df_mean.index, plot_df_mean['FNIR_c'], color='#88E288', linestyle='-', label='Children - FNIR', linewidth=2.7)
+    plt.fill_between(plot_df_mean.index, plot_df_mean['FNIR_c'] - plot_df_ci['FNIR_c'], plot_df_mean['FNIR_c'] + plot_df_ci['FNIR_c'], color='#88E288', alpha=0.2)
+    plt.plot(plot_df_mean.index, plot_df_mean['FNIR_a'], color='#95DFFF', linestyle='-', label='Adults - FNIR', linewidth=2.7)
+    plt.fill_between(plot_df_mean.index, plot_df_mean['FNIR_a'] - plot_df_ci['FNIR_a'], plot_df_mean['FNIR_a'] + plot_df_ci['FNIR_a'], color='#95DFFF', alpha=0.2)
+
+    plt.xlabel('Threshold', fontsize=14)
+    plt.ylabel('FNIR and FPIR', fontsize=14)
+    plt.title('FNIR vs Threshold', fontsize=16)
+    plt.xlim(0.0, 1)
+    plt.legend(fontsize=16)
+    plt.grid(True)
+
+    # Plot FPIR with confidence intervals
+    plt.plot(plot_df_mean.index, plot_df_mean['FPIR_c'], color='#88E288', linestyle='--', label='Children - FPIR', linewidth=2.7)
+    plt.fill_between(plot_df_mean.index, plot_df_mean['FPIR_c'] - plot_df_ci['FPIR_c'], plot_df_mean['FPIR_c'] + plot_df_ci['FPIR_c'], color='#88E288', alpha=0.2)
+    plt.plot(plot_df_mean.index, plot_df_mean['FPIR_a'], color='#95DFFF', linestyle='--', label='Adults - FPIR', linewidth=2.7)
+    plt.fill_between(plot_df_mean.index, plot_df_mean['FPIR_a'] - plot_df_ci['FPIR_a'], plot_df_mean['FPIR_a'] + plot_df_ci['FPIR_a'], color='#95DFFF', alpha=0.2)
+
+    plt.xlabel('Threshold', fontsize=14)
+    plt.ylabel('FPIR and FNIR', fontsize=14)
+    plt.title(f'FPIR and FNIR vs Threshold - {title}', fontsize=16)
+    plt.xlim(0.0, 1)
+    plt.legend(fontsize=16)
+    plt.grid(True)
+
+    plt.tight_layout()
+
+    plt.savefig(f'{save_fig_path}TH.png')
+
+    # Show the plot
+    plt.show()
+
+
+
 # -----------------------------------------------------------------------------------
 # Hereunder is the experiment 1.2
 
@@ -360,6 +411,55 @@ def plot_threshold_metrics_ex_1_2(df_all_threshold_x, save_fig_path):
     # Show the plot
     plt.show()
 # plot_threshold_metrics_ex_1_2(df_all_threshold_x)
+
+
+
+def plot_threshold_metrics_ex_1_2_w_conf(df_all_threshold_x, save_fig_path):
+    # Set the aesthetics for the plots
+    sns.set(style="whitegrid")
+
+    plot_df_mean = df_all_threshold_x.groupby('Threshold').mean()
+    plot_df_std = df_all_threshold_x.groupby('Threshold').std()
+    count = df_all_threshold_x.groupby('Threshold').size().values
+
+    # Calculate the 95% confidence intervals
+    ci_factor = 1.96
+    plot_df_ci = plot_df_std / np.sqrt(count[:, None]) * ci_factor
+
+    plt.figure(figsize=(12, 7))
+
+    # Plot FNIR with confidence intervals
+    plt.plot(plot_df_mean.index, plot_df_mean['FNIR_c'], color='#FBC02D', linestyle='-', label='Canonical - children - FNIR', linewidth=2.7)
+    plt.fill_between(plot_df_mean.index, plot_df_mean['FNIR_c'] - plot_df_ci['FNIR_c'], plot_df_mean['FNIR_c'] + plot_df_ci['FNIR_c'], color='#FBC02D', alpha=0.2)
+    plt.plot(plot_df_mean.index, plot_df_mean['FNIR_a'], color='#88E288', linestyle='-', label='Mixed quality - children - FNIR', linewidth=2.7)
+    plt.fill_between(plot_df_mean.index, plot_df_mean['FNIR_a'] - plot_df_ci['FNIR_a'], plot_df_mean['FNIR_a'] + plot_df_ci['FNIR_a'], color='#88E288', alpha=0.2)
+
+    plt.xlabel('Threshold', fontsize=14)
+    plt.ylabel('FNIR and FPIR', fontsize=14)
+    plt.title('FNIR vs Threshold', fontsize=16)
+    plt.xlim(0.0, 1)
+    plt.legend(fontsize=16)
+    plt.grid(True)
+
+    # Plot FPIR with confidence intervals
+    plt.plot(plot_df_mean.index, plot_df_mean['FPIR_c'], color='#FBC02D', linestyle='--', label='Canonical - children - FPIR', linewidth=2.7)
+    plt.fill_between(plot_df_mean.index, plot_df_mean['FPIR_c'] - plot_df_ci['FPIR_c'], plot_df_mean['FPIR_c'] + plot_df_ci['FPIR_c'], color='#FBC02D', alpha=0.2)
+    plt.plot(plot_df_mean.index, plot_df_mean['FPIR_a'], color='#88E288', linestyle='--', label='Mixed quality - children - FPIR', linewidth=2.7)
+    plt.fill_between(plot_df_mean.index, plot_df_mean['FPIR_a'] - plot_df_ci['FPIR_a'], plot_df_mean['FPIR_a'] + plot_df_ci['FPIR_a'], color='#88E288', alpha=0.2)
+
+    plt.xlabel('Threshold', fontsize=14)
+    plt.ylabel('FPIR and FNIR', fontsize=14)
+    plt.title('FPIR and FNIR vs Threshold', fontsize=16)
+    plt.xlim(0.0, 1)
+    plt.legend(fontsize=16)
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.savefig(f'{save_fig_path}TH.png')
+
+    # Show the plot
+    plt.show()
+
 
 
 
@@ -554,6 +654,86 @@ def plot_threshold_metrics_ex_2_3(df_all_threshold_x, df_all_threshold_x_1, df_a
 
     # Show the plot
     plt.show()
+
+
+
+def plot_threshold_metrics_ex_2_3_w_conf(df_all_threshold_x, df_all_threshold_x_1, df_all_threshold_x_2, save_fig_path):
+    # Set the aesthetics for the plots
+    sns.set(style="whitegrid")
+
+    def calculate_ci(df, column):
+        """Calculate the 95% confidence interval for a column in the DataFrame."""
+        mean = df[column].mean()
+        std = df[column].std()
+        count = df[column].count()
+        ci = 1.96 * (std / count**0.5)
+        return mean, ci
+
+    # Prepare the data with confidence intervals
+    plot_df = df_all_threshold_x.groupby('Threshold').agg(['mean', 'std'])
+    plot_df_1 = df_all_threshold_x_1.groupby('Threshold').agg(['mean', 'std'])
+    plot_df_2 = df_all_threshold_x_2.groupby('Threshold').agg(['mean', 'std'])
+
+    plt.figure(figsize=(12, 7))
+
+    # Plot FNIR with confidence intervals
+    plt.plot(plot_df.index, plot_df['FNIR_c']['mean'], 'r-', label='1-3 years - FNIR', linewidth=2.7)
+    plt.fill_between(plot_df.index, plot_df['FNIR_c']['mean'] - 1.96 * plot_df['FNIR_c']['std'] / plot_df['FNIR_c']['mean'].count()**0.5,
+                     plot_df['FNIR_c']['mean'] + 1.96 * plot_df['FNIR_c']['std'] / plot_df['FNIR_c']['mean'].count()**0.5, color='r', alpha=0.2)
+    plt.plot(plot_df.index, plot_df['FNIR_a']['mean'], 'y-', label='4-6 years - FNIR', linewidth=2.7)
+    plt.fill_between(plot_df.index, plot_df['FNIR_a']['mean'] - 1.96 * plot_df['FNIR_a']['std'] / plot_df['FNIR_a']['mean'].count()**0.5,
+                     plot_df['FNIR_a']['mean'] + 1.96 * plot_df['FNIR_a']['std'] / plot_df['FNIR_a']['mean'].count()**0.5, color='y', alpha=0.2)
+    plt.plot(plot_df_1.index, plot_df_1['FNIR_c']['mean'], 'g-', label='7-9 years - FNIR', linewidth=2.7)
+    plt.fill_between(plot_df_1.index, plot_df_1['FNIR_c']['mean'] - 1.96 * plot_df_1['FNIR_c']['std'] / plot_df_1['FNIR_c']['mean'].count()**0.5,
+                     plot_df_1['FNIR_c']['mean'] + 1.96 * plot_df_1['FNIR_c']['std'] / plot_df_1['FNIR_c']['mean'].count()**0.5, color='g', alpha=0.2)
+    plt.plot(plot_df_1.index, plot_df_1['FNIR_a']['mean'], 'b-', label='10-12 years - FNIR', linewidth=2.7)
+    plt.fill_between(plot_df_1.index, plot_df_1['FNIR_a']['mean'] - 1.96 * plot_df_1['FNIR_a']['std'] / plot_df_1['FNIR_a']['mean'].count()**0.5,
+                     plot_df_1['FNIR_a']['mean'] + 1.96 * plot_df_1['FNIR_a']['std'] / plot_df_1['FNIR_a']['mean'].count()**0.5, color='b', alpha=0.2)
+    plt.plot(plot_df_2.index, plot_df_2['FNIR_c']['mean'], 'k-', label='13-15 years - FNIR', linewidth=2.7)
+    plt.fill_between(plot_df_2.index, plot_df_2['FNIR_c']['mean'] - 1.96 * plot_df_2['FNIR_c']['std'] / plot_df_2['FNIR_c']['mean'].count()**0.5,
+                     plot_df_2['FNIR_c']['mean'] + 1.96 * plot_df_2['FNIR_c']['std'] / plot_df_2['FNIR_c']['mean'].count()**0.5, color='k', alpha=0.2)
+
+    plt.xlabel('Threshold', fontsize=14)
+    plt.ylabel('FNIR and FPIR', fontsize=14)
+    plt.title('FNIR vs Threshold', fontsize=16)
+    plt.xlim(0.0, 1)
+    plt.legend(fontsize=16)
+    plt.grid(True)
+
+    # Plot FPIR with confidence intervals
+    plt.plot(plot_df.index, plot_df['FPIR_c']['mean'], 'r--', label='1-3 years - FPIR', linewidth=2.7)
+    plt.fill_between(plot_df.index, plot_df['FPIR_c']['mean'] - 1.96 * plot_df['FPIR_c']['std'] / plot_df['FPIR_c']['mean'].count()**0.5,
+                     plot_df['FPIR_c']['mean'] + 1.96 * plot_df['FPIR_c']['std'] / plot_df['FPIR_c']['mean'].count()**0.5, color='r', alpha=0.2)
+    plt.plot(plot_df.index, plot_df['FPIR_a']['mean'], 'y--', label='4-6 years - FPIR', linewidth=2.7)
+    plt.fill_between(plot_df.index, plot_df['FPIR_a']['mean'] - 1.96 * plot_df['FPIR_a']['std'] / plot_df['FPIR_a']['mean'].count()**0.5,
+                     plot_df['FPIR_a']['mean'] + 1.96 * plot_df['FPIR_a']['std'] / plot_df['FPIR_a']['mean'].count()**0.5, color='y', alpha=0.2)
+    plt.plot(plot_df_1.index, plot_df_1['FPIR_c']['mean'], 'g--', label='7-9 years - FPIR', linewidth=2.7)
+    plt.fill_between(plot_df_1.index, plot_df_1['FPIR_c']['mean'] - 1.96 * plot_df_1['FPIR_c']['std'] / plot_df_1['FPIR_c']['mean'].count()**0.5,
+                     plot_df_1['FPIR_c']['mean'] + 1.96 * plot_df_1['FPIR_c']['std'] / plot_df_1['FPIR_c']['mean'].count()**0.5, color='g', alpha=0.2)
+    plt.plot(plot_df_1.index, plot_df_1['FPIR_a']['mean'], 'b--', label='10-12 years - FPIR', linewidth=2.7)
+    plt.fill_between(plot_df_1.index, plot_df_1['FPIR_a']['mean'] - 1.96 * plot_df_1['FPIR_a']['std'] / plot_df_1['FPIR_a']['mean'].count()**0.5,
+                     plot_df_1['FPIR_a']['mean'] + 1.96 * plot_df_1['FPIR_a']['std'] / plot_df_1['FPIR_a']['mean'].count()**0.5, color='b', alpha=0.2)
+    plt.plot(plot_df_2.index, plot_df_2['FPIR_c']['mean'], 'k--', label='13-15 years - FPIR', linewidth=2.7)
+    plt.fill_between(plot_df_2.index, plot_df_2['FPIR_c']['mean'] - 1.96 * plot_df_2['FPIR_c']['std'] / plot_df_2['FPIR_c']['mean'].count()**0.5,
+                     plot_df_2['FPIR_c']['mean'] + 1.96 * plot_df_2['FPIR_c']['std'] / plot_df_2['FPIR_c']['mean'].count()**0.5, color='k', alpha=0.2)
+
+    plt.xlabel('Threshold', fontsize=14)
+    plt.ylabel('FPIR and FNIR', fontsize=14)
+    plt.title('FPIR and FNIR vs Threshold', fontsize=16)
+    plt.xlim(0.0, 1)
+    plt.legend(fontsize=16)
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.savefig(f'{save_fig_path}TH.png')
+
+    # Show the plot
+    plt.show()
+
+
+
+
+
 
 def balance_child_data_2_3(y_df, print_stats=False, random_state=42, age = '1-3'):
     """
