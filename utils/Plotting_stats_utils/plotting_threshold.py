@@ -122,7 +122,7 @@ def plot_threshold_metrics_ex_1_1(df_all_threshold_x):
     plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Adults', linewidth=3)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR', fontsize=14)
-    plt.title('FNIR vs Threshold', fontsize=16)
+    # plt.title('FNIR vs Threshold', fontsize=16)
     plt.ylim(0.0, 0.125)  # Limit the FNIR y-axis
     plt.legend(fontsize=12)
     plt.grid(True)
@@ -133,7 +133,7 @@ def plot_threshold_metrics_ex_1_1(df_all_threshold_x):
     plt.plot(plot_df.index, plot_df['FPIR_a'], 'c-', label='Adults', linewidth=3)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR', fontsize=14)
-    plt.title('FPIR vs Threshold', fontsize=16)
+    # plt.title('FPIR vs Threshold', fontsize=16)
     plt.ylim(0.85, 1.0)  # Limit the FPIR y-axis
     plt.legend(fontsize=12)
     plt.grid(True)
@@ -142,13 +142,6 @@ def plot_threshold_metrics_ex_1_1(df_all_threshold_x):
 
     # Show the plot
     plt.show()
-# # Example usage:
-# random_states = [1, 2, 3]
-# percentiles = [74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98]
-
-# df_all_threshold_x = compute_metrics(random_states, percentiles, children_all, adults_all, image_names_c, image_names_a, sim_mat_c, sim_mat_a, num_ids_c, num_ids_a, ids_c, ids_a, balance_child_data, balance_adults_data_enrolled, compute_fnir, compute_fpir, GARBE)
-
-# plot_threshold_metrics(df_all_threshold_x)
 
 
 def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title, save_fig_path):
@@ -164,7 +157,7 @@ def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title, save_fig_p
     plt.plot(plot_df.index, plot_df['FNIR_a'], color = '#95DFFF', linestyle = '-', label='Adults - FNIR',linewidth=2.7)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
-    plt.title('FNIR vs Threshold', fontsize=16)
+    # plt.title('FNIR vs Threshold', fontsize=16)
     # plt.ylim(0.0, 0.125)  # Limit the FNIR y-axis
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
@@ -175,7 +168,7 @@ def plot_threshold_metrics_ex_1_1_together(df_all_threshold_x, title, save_fig_p
     plt.plot(plot_df.index, plot_df['FPIR_a'], color = '#95DFFF', linestyle = '--', label='Adults - FPIR',linewidth=2.7)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
-    plt.title(f'FPIR and FNIR vs Threshold - {title}', fontsize=16)
+    # plt.title(f'FPIR and FNIR vs Threshold - {title}', fontsize=16)
     # plt.ylim(0.85, 1.0)  # Limit the FPIR y-axis
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
@@ -214,7 +207,7 @@ def plot_threshold_metrics_ex_1_1_together_w_conf(df_all_threshold_x, title, sav
 
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
-    plt.title('FNIR vs Threshold', fontsize=16)
+    # plt.title('FNIR vs Threshold', fontsize=16)
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
     plt.grid(True)
@@ -227,7 +220,7 @@ def plot_threshold_metrics_ex_1_1_together_w_conf(df_all_threshold_x, title, sav
 
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
-    plt.title(f'FPIR and FNIR vs Threshold - {title}', fontsize=16)
+    # plt.title(f'FPIR and FNIR vs Threshold - {title}', fontsize=16)
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
     plt.grid(True)
@@ -386,7 +379,7 @@ def plot_threshold_metrics_ex_1_2(df_all_threshold_x, save_fig_path):
     plt.plot(plot_df.index, plot_df['FNIR_a'], color='#88E288', linestyle = '-',label='Mixed quality - children - FNIR',linewidth=2.7)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
-    plt.title('FNIR vs Threshold', fontsize=16)
+    # plt.title('FNIR vs Threshold', fontsize=16)
     # plt.ylim(0.0, 0.125)  # Limit the FNIR y-axis
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
@@ -398,7 +391,7 @@ def plot_threshold_metrics_ex_1_2(df_all_threshold_x, save_fig_path):
     plt.plot(plot_df.index, plot_df['FPIR_a'], color='#88E288', linestyle = '--', label='Mixed quality - children - FPIR',linewidth=2.7)
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
-    plt.title('FPIR and FNIR vs Threshold', fontsize=16)
+    # plt.title('FPIR and FNIR vs Threshold', fontsize=16)
     # plt.ylim(0.85, 1.0)  # Limit the FPIR y-axis
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
@@ -436,7 +429,7 @@ def plot_threshold_metrics_ex_1_2_w_conf(df_all_threshold_x, title,save_fig_path
 
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
-    plt.title('FNIR vs Threshold', fontsize=16)
+    # plt.title('FNIR vs Threshold', fontsize=16)
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
     plt.grid(True)
@@ -449,7 +442,7 @@ def plot_threshold_metrics_ex_1_2_w_conf(df_all_threshold_x, title,save_fig_path
 
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
-    plt.title('FPIR and FNIR vs Threshold', fontsize=16)
+    # plt.title('FPIR and FNIR vs Threshold', fontsize=16)
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
     plt.grid(True)
@@ -474,7 +467,7 @@ def plot_threshold_metrics_ex_1_2_zoomed(df_all_threshold_x):
     plt.plot(plot_df.index, plot_df['FNIR_a'], 'c-', label='Mixed quality - children - FNIR',linewidth=2.7)
     plt.xlabel('Threshold', fontsize=20)
     plt.ylabel('FNIR and FPIR', fontsize=20)
-    plt.title('FNIR vs Threshold', fontsize=20)
+    # plt.title('FNIR vs Threshold', fontsize=20)
     plt.ylim(0.0, 0.07)  # Limit the FNIR y-axis
     plt.xlim(0.20, 0.3)
     plt.legend(fontsize=20)
@@ -625,7 +618,7 @@ def plot_threshold_metrics_ex_2_3(df_all_threshold_x, df_all_threshold_x_1, df_a
 
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
-    plt.title('FNIR vs Threshold', fontsize=16)
+    # plt.title('FNIR vs Threshold', fontsize=16)
     # plt.ylim(0.0, 0.125)  # Limit the FNIR y-axis
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
@@ -641,7 +634,7 @@ def plot_threshold_metrics_ex_2_3(df_all_threshold_x, df_all_threshold_x_1, df_a
 
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
-    plt.title('FPIR and FNIR vs Threshold', fontsize=16)
+    # plt.title('FPIR and FNIR vs Threshold', fontsize=16)
     # plt.ylim(0.85, 1.0)  # Limit the FPIR y-axis
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
@@ -695,7 +688,7 @@ def plot_threshold_metrics_ex_2_3_w_conf(df_all_threshold_x, df_all_threshold_x_
 
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FNIR and FPIR', fontsize=14)
-    plt.title('FNIR vs Threshold', fontsize=16)
+    # plt.title('FNIR vs Threshold', fontsize=16)
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
     plt.grid(True)
@@ -719,7 +712,7 @@ def plot_threshold_metrics_ex_2_3_w_conf(df_all_threshold_x, df_all_threshold_x_
 
     plt.xlabel('Threshold', fontsize=14)
     plt.ylabel('FPIR and FNIR', fontsize=14)
-    plt.title('FPIR and FNIR vs Threshold', fontsize=16)
+    # plt.title('FPIR and FNIR vs Threshold', fontsize=16)
     plt.xlim(0.0, 1)
     plt.legend(fontsize=16)
     plt.grid(True)

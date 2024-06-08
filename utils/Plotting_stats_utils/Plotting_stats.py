@@ -35,7 +35,7 @@ def number_of_enrolled_ids_agebin_adults_full(df, title, figsize=(10, 6)):
     plt.figure(figsize=figsize)
     ax = sns.barplot(data=age_enrolled_counts, x='Age Group', y='Count', hue='enrolled', palette=enrolled_palette)
 
-    plt.title(f"Age Group Distribution of Enrolled IDs - {title}")
+    # plt.title(f"Age Group Distribution of Enrolled IDs - {title}")
     plt.xlabel("Age Group")
     plt.ylabel("# Enrolled image IDs")
     plt.xticks(rotation=45)

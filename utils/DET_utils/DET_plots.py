@@ -87,7 +87,7 @@ def plot_histogram(mated_scores, nonmated_scores, normalise=True, savename=None,
 
     plt.xlabel("Comparison Score", size=16)
     plt.ylabel(ylabel, size=16)
-    plt.title(title, size=20)
+    # plt.title(title, size=20)
     plt.grid(True)
     plt.legend(loc='upper right', bbox_to_anchor=(1, 1), ncol=1, fontsize=14)  # Adjust legend parameters as needed
 
@@ -205,7 +205,7 @@ def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, sa
     plt.xticks(fontsize=tick_fontsize)
     plt.yticks(fontsize=tick_fontsize)
 
-    plt.savefig(f'{save_fig_path}{title}_FN_FP.png')
+    # plt.savefig(f'{save_fig_path}{title}_FN_FP.png')
 
     if savename is not None:
         plt.savefig(savename, bbox_inches="tight")
@@ -288,7 +288,7 @@ def DET_plotting_1_2(mated_scores1, mated_scores2,nonmated_scores1, nonmated_sco
     system_name1 = 'Mixed quality - children'
     system_name2 = 'Canonical - children'
 
-    det = DET(biometric_evaluation_type='identification', abbreviate_axes=True, plot_eer_line=True, plot_title=title)
+    det = DET(biometric_evaluation_type='identification', abbreviate_axes=True, plot_eer_line=True)#, plot_title=title)
     det.x_limits = np.array([1e-5, .8])
     det.y_limits = np.array([1e-5, .8])
     det.x_ticks = np.array([1e-4, 1e-3, 1e-2, 5e-2, 20e-2, 40e-2, 80e-2])
@@ -318,7 +318,7 @@ def DET_plotting_1_1(mated_scores1, mated_scores2,nonmated_scores1, nonmated_sco
     system_name1 = 'Adults'
     system_name2 = 'Children'
 
-    det = DET(biometric_evaluation_type='identification', abbreviate_axes=True, plot_eer_line=True, plot_title=title)
+    det = DET(biometric_evaluation_type='identification', abbreviate_axes=True, plot_eer_line=True)#, plot_title=title)
     det.x_limits = np.array([1e-5, .8])
     det.y_limits = np.array([1e-5, .8])
     det.x_ticks = np.array([1e-4, 1e-3, 1e-2, 5e-2, 20e-2, 40e-2, 80e-2])
@@ -326,9 +326,10 @@ def DET_plotting_1_1(mated_scores1, mated_scores2,nonmated_scores1, nonmated_sco
     det.y_ticks = np.array([1e-4, 1e-3, 1e-2, 5e-2, 20e-2, 40e-2, 80e-2])
     det.y_ticklabels = np.array(['0.01','0.1', '1', '5', '20', '40', '80'])
     det.create_figure()
-    det.plot(tar=adjust_scores_for_DET(mated_scores1, score_type), non=adjust_scores_for_DET(nonmated_scores1, score_type), label=system_name1)
-    det.plot(tar=adjust_scores_for_DET(mated_scores2, score_type), non=adjust_scores_for_DET(nonmated_scores2, score_type), label=system_name2)
+    det.plot(tar=adjust_scores_for_DET(mated_scores1, scores_type1), non=adjust_scores_for_DET(nonmated_scores1, scores_type1), label=system_name1)
+    det.plot(tar=adjust_scores_for_DET(mated_scores2, scores_type2), non=adjust_scores_for_DET(nonmated_scores2, scores_type2), label=system_name2)
     det.legend_on(loc="upper right")
     det.show()
+
 
 # DET_plotting_1_1('Adults vs Children - MagFace ex. 2.2', save_fig_path= save_fig_path)
