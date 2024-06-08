@@ -414,7 +414,7 @@ def plot_threshold_metrics_ex_1_2(df_all_threshold_x, save_fig_path):
 
 
 
-def plot_threshold_metrics_ex_1_2_w_conf(df_all_threshold_x, save_fig_path):
+def plot_threshold_metrics_ex_1_2_w_conf(df_all_threshold_x, title,save_fig_path):
     # Set the aesthetics for the plots
     sns.set(style="whitegrid")
 
