@@ -205,7 +205,7 @@ def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, sa
     plt.xticks(fontsize=tick_fontsize)
     plt.yticks(fontsize=tick_fontsize)
 
-    # plt.savefig(f'{save_fig_path}{title}_FN_FP.png')
+    plt.savefig(f'{save_fig_path}{title}_FN_FP.png')
 
     if savename is not None:
         plt.savefig(savename, bbox_inches="tight")
