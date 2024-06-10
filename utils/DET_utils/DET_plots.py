@@ -93,16 +93,7 @@ def plot_histogram(mated_scores, nonmated_scores, normalise=True, savename=None,
 
     plt.savefig(f'{save_fig_path}{gem_som}.png')
 
-    # plt.cla()
-    # plt.clf()
-    # plt.close()
 
-    # if savename is not None:
-    #     plt.savefig(savename, bbox_inches="tight")
-    #     plt.cla()
-    #     plt.clf()
-    #     plt.close()
-    # else:
     plt.show()
 
 
