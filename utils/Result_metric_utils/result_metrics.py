@@ -6,26 +6,28 @@ def GARBE(fnir_c, fnir_a, fpir_c, fpir_a, alpha=0.5):
     Function calculates GARBe score based on ISO standard ISO/IEC DIS 19795-10
     """
 
-    # FPD = fpir_c/fpir_a
+    "FND and FPD are based on same ISO as above, clause 6.4.2 - the larger error rate should be in the numerators"
+
     largest_error_rate_fpir = max(fpir_c, fpir_a)
-    min_error_rate_fpir = min(fpir_c, fpir_a) + 0.0000000001
+    min_error_rate_fpir = min(fpir_c, fpir_a)
 
 
     FPD = largest_error_rate_fpir/min_error_rate_fpir
+    # FPD = fpir_c/fpir_a
+    # FPD = (np.abs(fpir_c -fpir_a)/(2*(2**2)*((fnir_c+fnir_a)/2)))*2
+    print("NEW FPD result: ", FPD)
 
-    print("FPD result: ", FPD)
 
-
-
-    # FND = fnir_c/fnir_a
     largest_error_rate_fnir = max(fnir_c, fnir_a)
-    min_error_rate_fnir = min(fnir_c, fnir_a)+ 0.0000000001
+    min_error_rate_fnir = min(fnir_c, fnir_a)
 
     FND = largest_error_rate_fnir/min_error_rate_fnir
-    print("FND result: ", FND)
+    #FND = fnir_c/fnir_a
+    # FND = ((np.abs(fnir_c -fnir_a))/(2*(2**2)*((fnir_c+fnir_a)/2)))*2
+    print("NEW FND result: ", FND)
 
     GARBE = alpha * FPD + (1 - alpha) * FND
-    print("GARBE result, GARBE close to 1 means more unfair: ", GARBE)
+    print("NEW GARBE result, GARBE close to 1 means more unfair: ", GARBE)
 
     return FPD, FND, GARBE
 
