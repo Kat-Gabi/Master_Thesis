@@ -127,7 +127,89 @@ legend_fontsize = 18
 label_fontsize = 18
 tick_fontsize = 18
 
-def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, savename=None, save_fig_path='save_fig_path' , title='title'):
+# def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, savename=None, save_fig_path='save_fig_path' , title='title'):
+#     linspace_items = 101
+#     mated_kde, mated_pos, mated_min, mated_max = get_kde(mated_scores, linspace_items)
+#     nonmated_kde, nonmated_pos, nonmated_min, nonmated_max = get_kde(nonmated_scores, linspace_items)
+
+#     plt.figure(figsize=figure_size)
+#     plt.xlabel("Comparison Score", size=label_fontsize)
+#     plt.ylabel("Probability Density", size=label_fontsize)
+
+#     def compute_fills(scores_type, mated_min, mated_max, nonmated_min, nonmated_max, linspace_items):
+#         if scores_type == "similarity":
+#             if mated_min < threshold:
+#                 mated_shade = np.linspace(threshold, mated_max, linspace_items)
+#                 mated_fill = np.linspace(mated_min, threshold, linspace_items)
+#             else:
+#                 mated_shade = np.linspace(mated_min, mated_max, linspace_items)
+#                 mated_fill = None
+#             if nonmated_max > threshold:
+#                 nonmated_shade = np.linspace(nonmated_min, threshold, linspace_items)
+#                 nonmated_fill = np.linspace(threshold, nonmated_max, linspace_items)
+#             else:
+#                 nonmated_shade = np.linspace(nonmated_min, nonmated_max, linspace_items)
+#                 nonmated_fill = None
+#         elif scores_type == "dissimilarity":
+#             if mated_max > threshold:
+#                 mated_shade = np.linspace(mated_min, threshold, linspace_items)
+#                 mated_fill = np.linspace(threshold, mated_max, linspace_items)
+#             else:
+#                 mated_shade = np.linspace(mated_min, mated_max, linspace_items)
+#                 mated_fill = None
+#             if nonmated_min < threshold:
+#                 nonmated_shade = np.linspace(threshold, nonmated_max, linspace_items)
+#                 nonmated_fill = np.linspace(nonmated_min, threshold, linspace_items)
+#             else:
+#                 nonmated_shade = np.linspace(nonmated_min, nonmated_max, linspace_items)
+#                 nonmated_fill = None
+#         else:
+#             raise ValueError(f"Unknown type of comparison scores: {scores_type}")
+#         return mated_shade, mated_fill, nonmated_shade, nonmated_fill
+
+#     plt.plot(mated_pos, mated_kde(mated_pos), linewidth=linewidth, color=mated_colour, label=mated_label)
+#     plt.plot(nonmated_pos, nonmated_kde(nonmated_pos), linewidth=linewidth, color=nonmated_colour, label=nonmated_label)
+
+#     mated_shade, mated_fill, nonmated_shade, nonmated_fill = compute_fills(scores_type, mated_min, mated_max, nonmated_min, nonmated_max, linspace_items)
+
+#     plt.fill_between(mated_shade, mated_kde(mated_shade), alpha=alpha_shade, color=mated_colour)
+#     plt.fill_between(nonmated_shade, nonmated_kde(nonmated_shade), alpha=alpha_shade, color=nonmated_colour)
+
+#     if mated_fill is not None:
+#         plt.fill_between(mated_fill, mated_kde(mated_fill), alpha=alpha_fill, color=mated_colour)
+#     if nonmated_fill is not None:
+#         plt.fill_between(nonmated_fill, nonmated_kde(nonmated_fill), alpha=alpha_fill, color=nonmated_colour)
+
+#     plt.axvline(threshold, linewidth=linewidth, linestyle=threshold_style, color=threshold_colour, label="Decision th")
+
+#     plt.legend(loc=0)
+#     red_patch = mpatches.Patch(color=nonmated_colour, alpha=alpha_fill, label='False positives')
+#     green_patch = mpatches.Patch(color=mated_colour, alpha=alpha_fill, label='False negatives')
+#     shaded_red_patch = mpatches.Patch(color=nonmated_colour, alpha=alpha_shade, label='True negatives')
+#     shaded_green_patch = mpatches.Patch(color=mated_colour, alpha=alpha_shade, label='True positives')
+#     current_handles, _ = plt.gca().get_legend_handles_labels()
+
+#     plt.grid(True)
+#     plt.legend(loc='upper right', bbox_to_anchor=legend_anchor, ncol=legend_cols, fontsize=legend_fontsize, handles=[green_patch, red_patch, shaded_green_patch, shaded_red_patch]+current_handles)
+#     plt.xlim(-0.1, 1)
+#     plt.ylim(0, None)
+#     plt.xticks(fontsize=tick_fontsize)
+#     plt.yticks(fontsize=tick_fontsize)
+
+#     plt.savefig(f'{save_fig_path}{title}_FN_FP.png')
+
+#     if savename is not None:
+#         plt.savefig(savename, bbox_inches="tight")
+#         plt.cla()
+#         plt.clf()
+#         plt.close()
+#     else:
+#         plt.show()
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
+def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, savename=None, save_fig_path='save_fig_path', title='title'):
     linspace_items = 101
     mated_kde, mated_pos, mated_min, mated_max = get_kde(mated_scores, linspace_items)
     nonmated_kde, nonmated_pos, nonmated_min, nonmated_max = get_kde(nonmated_scores, linspace_items)
@@ -205,6 +287,11 @@ def kde_with_threshold(mated_scores, nonmated_scores, scores_type, threshold, sa
         plt.close()
     else:
         plt.show()
+
+    # Calculate and print false negatives percentage
+    false_negatives = np.sum(mated_scores < threshold)
+    false_negatives_percentage = (false_negatives / len(mated_scores)) * 100
+    print(f"False Negatives: {false_negatives_percentage:.2f}%")
 
 
 

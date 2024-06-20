@@ -23,8 +23,44 @@ def generate_latex_table(df):
     return latex_code
 
 
+# def remove_probeid_in_classification(arr, score_arr, probe_id, score_threshold=0.9):
+#     """
+#     Removes probe unique id and any comparison with a score larger than score_threshold in the array
+#     """
+#     filtered_indices = [i for i, v in enumerate(arr) if score_arr[i] <= score_threshold]
+#     return arr[filtered_indices]
 
-def evaluate_metrics_ex_1_1(random_states, children_all, adults_all, image_names_c, image_names_a, sim_mat_c, sim_mat_a, num_ids_c, num_ids_a, ids_c, ids_a, balance_child_data, balance_adults_data_enrolled, compute_fnir, compute_fpir, GARBE, remove_ones, threshold_number, alpha_garbe=0.25):
+
+
+# def compute_fpir_2(non_enrolled_sim_score, num_ids_non_enrolled, num_ids_all, thold=0.5, score_threshold=0.9):
+#     """
+#     FPIR formula from ISO standard ISO/IEC 19795-1:2021
+#     """
+
+#     # U_D: set of non-mated identification transactions with reference database D. I.e. equal to number IDs with no enrolled ids.
+#     U_d_set_len = len(non_enrolled_sim_score)
+#     cand_list_returned = 0
+
+#     for i in range(U_d_set_len):
+#         probe = num_ids_non_enrolled[i] # probe corresponding to the current sample similarity matrix
+
+#         # for the non enrolled probe id, check if any of its similarity scores are above thold
+#         classified_pos_list = non_enrolled_sim_score[i] > 0.32
+#         classified_pos_idx = list(np.where(classified_pos_list)[0]) # get indexes where the score is above threshold
+#         face_idx_pos_class = num_ids_all[classified_pos_idx] # get numerical ids in the positive class
+#         similarity_scores = non_enrolled_sim_score[i][classified_pos_idx] # get similarity scores for the positive class
+#         # remove instance of probe id in classification list
+#         face_idx_pos_class_filtered = remove_probeid_in_classification(face_idx_pos_class, similarity_scores, probe)
+
+#         # if length of candidate list (filtered, i.e. without the probe itself) is greater than 0, count 1
+#         if len(face_idx_pos_class_filtered) > 0:
+#             cand_list_returned += 1
+
+#     fpir = cand_list_returned / 3000210 #U_d_set_len
+
+#     return fpir
+
+def evaluate_metrics_ex_1_1(random_states, children_all, adults_all, image_names_c, image_names_a, sim_mat_c, sim_mat_a, num_ids_c, num_ids_a, ids_c, ids_a, balance_child_data, balance_adults_data_enrolled, compute_fnir, compute_fpir_2, GARBE, remove_ones, threshold_number, alpha_garbe=0.25):
     sim_mat_dict_all = {}
     FNIR_c_list = []
     FNIR_a_list = []
@@ -64,6 +100,9 @@ def evaluate_metrics_ex_1_1(random_states, children_all, adults_all, image_names
         sim_mat_c_reference_cols = sim_mat_c[:, indices_c_all_reference]
         sim_mat_a_reference_cols = sim_mat_a[:, indices_a_all_reference]
 
+        print(f'len(sim_mat_c) {len(sim_mat_c)}')
+        print(f'len(sim_mat_c_reference_cols) {len(sim_mat_c_reference_cols)}')
+
         # Extract corresponding rows from the numerical ids
         num_ids_c_reference = num_ids_c[indices_c_all_reference]
         num_ids_a_reference = num_ids_a[indices_a_all_reference]
@@ -83,6 +122,8 @@ def evaluate_metrics_ex_1_1(random_states, children_all, adults_all, image_names
         indices_a_enrolled = [image_names_a.index(name) for name in enrolled_image_names_a if image_names_a.index(name) < sim_mat_a.shape[0]]
 
         sim_mat_c_enrolled_0 = sim_mat_c[np.ix_(indices_c_enrolled, indices_c_enrolled)]
+        print(f'len(sim_mat_c) {len(sim_mat_c)}')
+        print(f'len(sim_mat_c_enrolled_0) {len(sim_mat_c_enrolled_0)}')
         sim_mat_a_enrolled_0 = sim_mat_a[np.ix_(indices_a_enrolled, indices_a_enrolled)]
 
         num_ids_c_enrolled = num_ids_c[indices_c_enrolled]
@@ -95,8 +136,15 @@ def evaluate_metrics_ex_1_1(random_states, children_all, adults_all, image_names
         FNIR_c, sim_mat_c_enrolled = compute_fnir(sim_mat_c_enrolled_0, sim_mat_c, enrolled_identity_names_c, num_ids_c_enrolled, ids_c, thold=threshold_number)
         FNIR_a, sim_mat_a_enrolled = compute_fnir(sim_mat_a_enrolled_0, sim_mat_a, enrolled_identity_names_a, num_ids_a_enrolled, ids_a, thold=threshold_number)
         # FPIR
-        FPIR_c = compute_fpir(sim_mat_c_non_enrolled_0, num_ids_c_non_enrolled, num_ids_c_reference, thold=threshold_number)
-        FPIR_a = compute_fpir(sim_mat_a_non_enrolled_0, num_ids_a_non_enrolled, num_ids_a_reference, thold=threshold_number)
+
+        print(f'len(children_all){len(children_all)}')
+        print(f'len(sim_mat_c_non_enrolled_0) {len(sim_mat_c_enrolled_0)}')
+        print(f'len(num_ids_c_non_enrolled) {len(num_ids_c_enrolled)}')
+        print(f'len(num_ids_c_reference) {len(num_ids_c_reference)}')
+
+
+        FPIR_c = compute_fpir_2(sim_mat_c_non_enrolled_0, num_ids_c_non_enrolled, num_ids_c_reference, thold=threshold_number)
+        FPIR_a = compute_fpir_2(sim_mat_a_non_enrolled_0, num_ids_a_non_enrolled, num_ids_a_reference, thold=threshold_number)
 
         FPD_i, FND_i, GARBE_i = GARBE(FNIR_c, FNIR_a, FPIR_c, FPIR_a, alpha=alpha_garbe)
 

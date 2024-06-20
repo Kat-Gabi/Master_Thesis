@@ -7,13 +7,21 @@ def GARBE(fnir_c, fnir_a, fpir_c, fpir_a, alpha=0.5):
     """
 
     # FPD = fpir_c/fpir_a
-    FPD = (np.abs(fpir_c -fpir_a)/(2*(2**2)*((fnir_c+fnir_a)/2)))*2
+    largest_error_rate_fpir = max(fpir_c, fpir_a)
+    min_error_rate_fpir = min(fpir_c, fpir_a) + 0.0000000001
+
+
+    FPD = largest_error_rate_fpir/min_error_rate_fpir
+
     print("FPD result: ", FPD)
 
 
 
     # FND = fnir_c/fnir_a
-    FND = ((np.abs(fnir_c -fnir_a))/(2*(2**2)*((fnir_c+fnir_a)/2)))*2
+    largest_error_rate_fnir = max(fnir_c, fnir_a)
+    min_error_rate_fnir = min(fnir_c, fnir_a)+ 0.0000000001
+
+    FND = largest_error_rate_fnir/min_error_rate_fnir
     print("FND result: ", FND)
 
     GARBE = alpha * FPD + (1 - alpha) * FND
@@ -23,12 +31,21 @@ def GARBE(fnir_c, fnir_a, fpir_c, fpir_a, alpha=0.5):
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-def remove_probeid_in_classification(arr, value):
-    "Removes probe unique id in array"
-    for i, v in enumerate(arr):
-        if v == value:
-            return np.delete(arr, i)
-    return arr  # Value not found in the array, return the original array
+# def remove_probeid_in_classification(arr, value):
+#     "Removes probe unique id in array"
+#     for i, v in enumerate(arr):
+#         if v == value:
+#             return np.delete(arr, i)
+#     return arr  # Value not found in the array, return the original array
+
+def remove_probeid_in_classification(arr, score_arr, probe_id, score_threshold = 0.9):
+    """
+    Removes probe unique id and any comparison with a score larger than score_threshold in the array
+    """
+    filtered_indices = [i for i, v in enumerate(arr) if score_arr[i] <= score_threshold]
+    return arr[filtered_indices]
+
+
 
 def compute_fpir(non_enrolled_sim_score, num_ids_non_enrolled, num_ids_all, thold=0.5):
     """
@@ -46,16 +63,19 @@ def compute_fpir(non_enrolled_sim_score, num_ids_non_enrolled, num_ids_all, thol
         classified_pos_list = non_enrolled_sim_score[i] > thold
         classified_pos_idx = list(np.where(classified_pos_list)[0]) # get indexes where the score is above threshold
         face_idx_pos_class = num_ids_all[classified_pos_idx] # get numerical ids in the positive class
+        similarity_scores = non_enrolled_sim_score[i][classified_pos_idx] # get similarity scores for the positive class
         # remove instance of probe id in classification list
-        face_idx_pos_class_filtered = remove_probeid_in_classification(face_idx_pos_class, probe)
+        face_idx_pos_class_filtered = remove_probeid_in_classification(face_idx_pos_class, similarity_scores,probe, 0.9)
 
-        # if length of candidate list (filtered, i.e. without the probe itsef) is greater than 0, count 1
+        # if length of candidate list (filtered, i.e. without the probe itself) is greater than 0, count 1
         if len(face_idx_pos_class_filtered) > 0:
-            cand_list_returned += 1
+            cand_list_returned += len(face_idx_pos_class_filtered)
 
-    fpir = cand_list_returned/U_d_set_len
+            #vi skal have hvor mange transactions der går galt
 
+    fpir = cand_list_returned / ((non_enrolled_sim_score.shape[1]*non_enrolled_sim_score.shape[0])-non_enrolled_sim_score.shape[0])
     return fpir
+
 
 # ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
@@ -97,11 +117,27 @@ def compute_fnir(enrolled_sim_mat, sim_mat, enrolled_ids, enrolled_num_id, ids, 
         classified_negative_idx = list(np.where(classified_negative_list)[0])  # Get indexes where the score is below threshold
         face_idx_neg_class = enrolled_num_id[classified_negative_idx]  # Get numerical ids in the negative class
         # If numerical id in negative list is equal to the probe id, count 1
-        if probe in face_idx_neg_class:
-            neg_ref += 1
+
+        # if probe in face_idx_neg_class:
+        neg_ref += list(face_idx_neg_class).count(probe)/(list(enrolled_num_id).count(probe))
+            # print(probe)
+            # print(face_idx_neg_class)
+
+        # neg_ref += list(face_idx_neg_class).count(probe)
+
+        # print(list(face_idx_neg_class).count(probe))
+            # neg_ref += 1
 
     # Calculate FNIR
-    fnir = neg_ref / M_d_set_len
+    # fnir = neg_ref / M_d_set_len
+
+    fnir = (neg_ref)/M_d_set_len
+
+
+    print(f'enrolled_sim_mat.shape[0]{enrolled_sim_mat.shape[0]}')
+    print(f'enrolled_sim_mat.shape[1]{enrolled_sim_mat.shape[1]}')
+    print(f'M_d_set_len{M_d_set_len}')
+    print(f'neg_ref{neg_ref}')
 
     enrolled_sim_scores_final = np.array(enrolled_sim_scores)
     enrolled_sim_scores_final = enrolled_sim_scores_final[enrolled_sim_scores_final<0.999]

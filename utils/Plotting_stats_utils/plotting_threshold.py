@@ -63,6 +63,9 @@ def compute_metrics_ex_1_1(random_states, percentiles, children_all, adults_all,
         sim_mat_c_enrolled_0 = sim_mat_c[np.ix_(indices_c_enrolled, indices_c_enrolled)]
         sim_mat_a_enrolled_0 = sim_mat_a[np.ix_(indices_a_enrolled, indices_a_enrolled)]
 
+        print(f'len(sim_mat_c) {len(sim_mat_c)}')
+        print(f'len(sim_mat_c_enrolled_0) {len(sim_mat_c_enrolled_0)}')
+
         num_ids_c_enrolled = num_ids_c[indices_c_enrolled]
         num_ids_a_enrolled = num_ids_a[indices_a_enrolled]
 
