@@ -1,6 +1,6 @@
 # Enhancing Face Recognition Models with Synthetic Child Data: A Fairness Assessment
 
-## Project structure (will be updated. Model development is currenty in the fine-tuning branch)
+## Project structure 
 
 The directory structure of the project looks like this:
 
@@ -9,55 +9,45 @@ The directory structure of the project looks like this:
 ├── Makefile             <- Makefile with convenience commands like `make data` or `make train`
 ├── README.md            <- The top-level README for developers using this project.
 ├── data
-│   ├── processed        <- The final, canonical data sets for modeling.
-│   └── raw              <- The original, immutable data dump.
+│   ├── processed/       <- The final, data sets for modeling and testing. (ask authors for access due to storage limitation)
+│   ├── raw/             <- The original, immutable data dump. (ask authors for access due to storage limitation)
+│   └── image_info_csv/  <- Directory with csv files for data analysis
 │
-├── docs                 <- Documentation folder
+├── AdaFace-master       <- Folder with AdaFace requirements as well as fine-tuning scripts and saved models (ask authors for access due to storage limitation)
 │   │
-│   ├── index.md         <- Homepage for your documentation
+│   ├── predict_adaface_fine_tuning.py       <- Fine-tuning script
 │   │
-│   ├── mkdocs.yml       <- Configuration file for mkdocs
+│   ├── scripts/         <- Directory with scripts for setting hyper-parameters and run in cluster
 │   │
-│   └── source/          <- Source directory for documentation files
+│   └── Master_thesis_data_prep/          <- Directory for model-specific data processing
 │
-├── models               <- Trained and serialized models, model predictions, or model summaries
+├── MagFace-main         <- Folder with MagFace requirements as well as fine-tuning scripts and saved models (ask authors for access due to storage limitation)
+│   │
+│   ├── predict_adaface_fine_tuning.py       <- Fine-tuning script
+│   │
+│   ├── run/             <- Directory with scripts for setting hyper-parameters and run in cluster
+│   │
+│   └── Master_thesis_data_prep/          <- Directory for model-specific data processing
 │
-├── notebooks            <- Jupyter notebooks.
+├── figures               <- Saved figures for report
+│
+├── notebooks            <- Jupyter notebooks for different types of analysis
+│
+├── utils                <- Functions (Data processing, plotting, OFIQ, DET etc.) to use inside jupyter notebooks and other scripts
 │
 ├── pyproject.toml       <- Project configuration file
 │
-├── reports              <- Generated analysis as HTML, PDF, LaTeX, etc.
-│   └── figures          <- Generated graphics and figures to be used in reporting
 │
 ├── requirements.txt     <- The requirements file for reproducing the analysis environment
 |
 ├── requirements_dev.txt <- The requirements file for reproducing the analysis environment
 │
-├── tests                <- Test files
 │
-├── master_thesis  <- Source code for use in this project.
-│   │
-│   ├── __init__.py      <- Makes folder a Python module
-│   │
-│   ├── data             <- Scripts to download or generate data
-│   │   ├── __init__.py
-│   │   └── make_dataset.py
-│   │
-│   ├── models           <- model implementations, training script and prediction script
-│   │   ├── __init__.py
-│   │   ├── model.py
-│   │
-│   ├── visualization    <- Scripts to create exploratory and results oriented visualizations
-│   │   ├── __init__.py
-│   │   └── visualize.py
-│   ├── train_model.py   <- script for training the model
-│   └── predict_model.py <- script for predicting from a model
-│
-└── LICENSE              <- Open-source license if one is chosen
+└── LICENSE              <- Open-source license: MIT
 ```
 
 ## Data loading 
-YLFW data is downloaded through https://github.com/JessyFrish/YLFW_Links, YLFW_benchmark
+YLFW data is downloaded through https://github.com/JessyFrish/YLFW_Links, YLFW_benchmark 
 RFW are downloaded through http://whdeng.cn/RFW/testing.html by asking for access. 
 Age estimation of the face images has been done using Cognitec FaceVACS. 
 Preprocessing of the images are done through data_loading_ylfw.ipynb and data_loading_rfw.ipynb, which creates the csv files raw_ylfw_df.csv and raw_rfw_df.csv. 
