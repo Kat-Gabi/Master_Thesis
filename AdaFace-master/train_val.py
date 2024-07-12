@@ -8,6 +8,8 @@ import head
 import net
 import numpy as np
 import utils
+import wandb
+from codecarbon import EmissionsTracker
 
 
 class Trainer(LightningModule):
@@ -34,31 +36,84 @@ class Trainer(LightningModule):
             ckpt = torch.load(self.hparams.start_from_model_statedict)
             self.model.load_state_dict({key.replace('model.', ''):val
                                         for key,val in ckpt['state_dict'].items() if 'model.' in key})
-
+            
+        # Configure optimizers and schedulers
+        optimizers, schedulers = self.configure_optimizers()
+        self.optimizer = optimizers[0]
+        self.scheduler = schedulers[0] if schedulers else None
+        
+        
     def get_current_lr(self):
         scheduler = None
+        
+        # Try to retrieve the scheduler from PyTorch Lightning's internal configuration
         if scheduler is None:
             try:
-                # pytorch lightning >= 1.8
+                # For PyTorch Lightning >= 1.8
                 scheduler = self.trainer.lr_scheduler_configs[0].scheduler
-            except:
-                pass
+                print("First scheduler: ", scheduler)
+            except Exception as e:
+                print(f"Error retrieving scheduler for PyTorch Lightning >= 1.8: {e}")
 
         if scheduler is None:
-            # pytorch lightning <=1.7
             try:
+                # For PyTorch Lightning <= 1.7
                 scheduler = self.trainer.lr_schedulers[0]['scheduler']
-            except:
-                pass
+                print("Second scheduler: ", scheduler)
+            except Exception as e:
+                print(f"Error retrieving scheduler for PyTorch Lightning <= 1.7: {e}")
 
         if scheduler is None:
-            raise ValueError('lr calculation not successful')
+            raise ValueError('Learning rate scheduler retrieval was not successful')
 
-        if isinstance(scheduler, lr_scheduler._LRScheduler):
-            lr = scheduler.get_last_lr()[0]
-        else:
-            lr = scheduler.get_epoch_values(self.current_epoch)[0]
+        # Retrieve the current learning rate from the scheduler
+        try:
+            if isinstance(scheduler, lr_scheduler._LRScheduler):
+                lr = scheduler.get_last_lr()[0]
+                print("Third LR scheduler: ", lr)
+            elif hasattr(scheduler, 'get_last_lr'): #NOGET MED DET HER VIRKER OG OVENSTÅENDE GØR IKKE
+                lr = scheduler.get_last_lr()[0]
+                print("FOURTH Scheduler has get_last_lr(), LR:", lr)
+            else:
+                # If the scheduler does not provide get_last_lr(), fallback to the optimizer's current learning rate
+                lr = scheduler.get_epoch_values(self.current_epoch)[0]
+                #lr = self.optimizer.param_groups[0]['lr']
+                print("FIFTH LR scheduler: ", lr)
+        except Exception as e:
+            print(f"Error retrieving learning rate from scheduler or optimizer: {e}")
+            #lr = 0.01  # Default fallback learning rate
+            #print("Fifth LR scheduler: ", lr)
+            pass
+
         return lr
+
+
+    # def get_current_lr(self):
+    #     scheduler = None
+    #     if scheduler is None:
+    #         try:
+    #             # pytorch lightning >= 1.8
+    #             scheduler = self.trainer.lr_scheduler_configs[0].scheduler
+    #         except:
+    #             pass
+
+    #     if scheduler is None:
+    #         # pytorch lightning <=1.7
+    #         try:
+    #             scheduler = self.trainer.lr_schedulers[0]['scheduler']
+    #         except:
+    #             pass
+
+    #     if scheduler is None:
+    #         raise ValueError('lr calculation not successful')
+
+    #     if isinstance(scheduler, lr_scheduler._LRScheduler):
+    #         lr = scheduler.get_last_lr()[0]
+    #     else:
+    #         #lr = 0.01
+    #         #lr = scheduler.get_epoch_values(self.current_epoch)[0]
+    #         lr = self.optimizer.param_groups[0]['lr']
+    #     return lr
 
 
     def forward(self, images, labels):
@@ -71,80 +126,102 @@ class Trainer(LightningModule):
 
 
     def training_step(self, batch, batch_idx):
+
+        tracker = EmissionsTracker()
+        tracker.start()
         images, labels = batch
 
         cos_thetas, norms, embeddings, labels = self.forward(images, labels)
         loss_train = self.cross_entropy_loss(cos_thetas, labels)
         lr = self.get_current_lr()
+        print("LEARNING RATE", lr)
+        acc1, acc5 = utils.calculate_accuracy(cos_thetas, labels, topk=(1, 5))
+        co2_emission = tracker.stop()
+
         # log
         self.log('lr', lr, on_step=True, on_epoch=True, logger=True)
         self.log('train_loss', loss_train, on_step=True, on_epoch=True, logger=True)
+        self.log('train_acc1', acc1, on_step=True, on_epoch=True, logger=True, sync_dist=True)
+        self.log('train_acc5', acc5, on_step=True, on_epoch=True, logger=True, sync_dist=True)
 
+        #gabi
+        # Log metrics to wandb
+        wandb.log({'epoch': self.current_epoch,
+            "CO2 emission (in Kg)": co2_emission,
+            "lr": self.get_current_lr(),
+            "train_loss": loss_train.item(),
+            "train_acc1": acc1,
+            "train_acc5": acc5
+        })
+            
         return loss_train
 
     def training_epoch_end(self, outputs):
-        return None
-
-    def validation_step(self, batch, batch_idx):
-        images, labels, dataname, image_index = batch
-        embeddings, norms = self.model(images)
-
-        fliped_images = torch.flip(images, dims=[3])
-        flipped_embeddings, flipped_norms = self.model(fliped_images)
-        stacked_embeddings = torch.stack([embeddings, flipped_embeddings], dim=0)
-        stacked_norms = torch.stack([norms, flipped_norms], dim=0)
-        embeddings, norms = utils.fuse_features_with_norm(stacked_embeddings, stacked_norms)
-
-        if self.hparams.distributed_backend == 'ddp':
-            # to save gpu memory
-            return {
-                'output': embeddings.to('cpu'),
-                'norm': norms.to('cpu'),
-                'target': labels.to('cpu'),
-                'dataname': dataname.to('cpu'),
-                'image_index': image_index.to('cpu')
-            }
-        else:
-            # dp requires the tensor to be cuda
-            return {
-                'output': embeddings,
-                'norm': norms,
-                'target': labels,
-                'dataname': dataname,
-                'image_index': image_index
-            }
-
-    def validation_epoch_end(self, outputs):
-
-        all_output_tensor, all_norm_tensor, all_target_tensor, all_dataname_tensor = self.gather_outputs(outputs)
-
-        dataname_to_idx = {"agedb_30": 0, "cfp_fp": 1, "lfw": 2, "cplfw": 3, "calfw": 4}
-        idx_to_dataname = {val: key for key, val in dataname_to_idx.items()}
-        val_logs = {}
-        for dataname_idx in all_dataname_tensor.unique():
-            dataname = idx_to_dataname[dataname_idx.item()]
-            # per dataset evaluation
-            embeddings = all_output_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
-            labels = all_target_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
-            issame = labels[0::2]
-            tpr, fpr, accuracy, best_thresholds = evaluate_utils.evaluate(embeddings, issame, nrof_folds=10)
-            acc, best_threshold = accuracy.mean(), best_thresholds.mean()
-
-            num_val_samples = len(embeddings)
-            val_logs[f'{dataname}_val_acc'] = acc
-            val_logs[f'{dataname}_best_threshold'] = best_threshold
-            val_logs[f'{dataname}_num_val_samples'] = num_val_samples
-
-        val_logs['val_acc'] = np.mean([
-            val_logs[f'{dataname}_val_acc'] for dataname in dataname_to_idx.keys() if f'{dataname}_val_acc' in val_logs
-        ])
-        val_logs['epoch'] = self.current_epoch
-
-        for k, v in val_logs.items():
-            # self.log(name=k, value=v, rank_zero_only=True)
-            self.log(name=k, value=v)
+        lr = self.get_current_lr()
+        print('CURRENT LR: ', lr)
 
         return None
+
+    # def validation_step(self, batch, batch_idx):
+    #     images, labels, dataname, image_index = batch
+    #     embeddings, norms = self.model(images)
+
+    #     fliped_images = torch.flip(images, dims=[3])
+    #     flipped_embeddings, flipped_norms = self.model(fliped_images)
+    #     stacked_embeddings = torch.stack([embeddings, flipped_embeddings], dim=0)
+    #     stacked_norms = torch.stack([norms, flipped_norms], dim=0)
+    #     embeddings, norms = utils.fuse_features_with_norm(stacked_embeddings, stacked_norms)
+
+    #     if self.hparams.distributed_backend == 'ddp':
+    #         # to save gpu memory
+    #         return {
+    #             'output': embeddings.to('cpu'),
+    #             'norm': norms.to('cpu'),
+    #             'target': labels.to('cpu'),
+    #             'dataname': dataname.to('cpu'),
+    #             'image_index': image_index.to('cpu')
+    #         }
+    #     else:
+    #         # dp requires the tensor to be cuda
+    #         return {
+    #             'output': embeddings,
+    #             'norm': norms,
+    #             'target': labels,
+    #             'dataname': dataname,
+    #             'image_index': image_index
+    #         }
+
+    # def validation_epoch_end(self, outputs):
+
+    #     all_output_tensor, all_norm_tensor, all_target_tensor, all_dataname_tensor = self.gather_outputs(outputs)
+
+    #     dataname_to_idx = {"agedb_30": 0, "cfp_fp": 1, "lfw": 2, "cplfw": 3, "calfw": 4}
+    #     idx_to_dataname = {val: key for key, val in dataname_to_idx.items()}
+    #     val_logs = {}
+    #     for dataname_idx in all_dataname_tensor.unique():
+    #         dataname = idx_to_dataname[dataname_idx.item()]
+    #         # per dataset evaluation
+    #         embeddings = all_output_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
+    #         labels = all_target_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
+    #         issame = labels[0::2]
+    #         tpr, fpr, accuracy, best_thresholds = evaluate_utils.evaluate(embeddings, issame, nrof_folds=10)
+    #         acc, best_threshold = accuracy.mean(), best_thresholds.mean()
+
+    #         num_val_samples = len(embeddings)
+    #         val_logs[f'{dataname}_val_acc'] = acc
+    #         val_logs[f'{dataname}_best_threshold'] = best_threshold
+    #         val_logs[f'{dataname}_num_val_samples'] = num_val_samples
+
+    #     val_logs['val_acc'] = np.mean([
+    #         val_logs[f'{dataname}_val_acc'] for dataname in dataname_to_idx.keys() if f'{dataname}_val_acc' in val_logs
+    #     ])
+    #     val_logs['epoch'] = self.current_epoch
+
+    #     for k, v in val_logs.items():
+    #         # self.log(name=k, value=v, rank_zero_only=True)
+    #         self.log(name=k, value=v)
+
+    #     return None
 
     def test_step(self, batch, batch_idx):
         return self.validation_step(batch, batch_idx)
@@ -179,6 +256,13 @@ class Trainer(LightningModule):
         for k, v in test_logs.items():
             # self.log(name=k, value=v, rank_zero_only=True)
             self.log(name=k, value=v)
+            
+        # for k, v in test_logs.items(): #######GABCHEKC
+        #     # self.log(name=k, value=v, rank_zero_only=True)
+        #     if 'num_test_samples' in k or k == 'epoch':
+        #         v = float(v)
+        #     self.log(name=k, value=v, sync_dist=True)
+
 
         return None
 
@@ -229,6 +313,15 @@ class Trainer(LightningModule):
         scheduler = lr_scheduler.MultiStepLR(optimizer,
                                              milestones=self.hparams.lr_milestones,
                                              gamma=self.hparams.lr_gamma)
+        
+        # Check if the scheduler has a method 'get_last_lr()'
+        if hasattr(scheduler, 'get_last_lr'):
+            print("HAS SCH")
+            lr = scheduler.get_last_lr()[0]
+            print("LR SCH", lr)
+        else:
+            print("Does not have")
+            
 
         return [optimizer], [scheduler]
 

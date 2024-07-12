@@ -11,7 +11,6 @@ desired_directory = '../MagFace-main'
 print("PATHHHH","/".join(os.path.realpath(__file__).split("/")[0:-2]) )
 sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/MagFace-main")
 
-import sys
 sys.path.append("..")
 from dataloader import dataloader
 from models import magface
@@ -114,13 +113,14 @@ wandb.init(
     config={"lr": args.lr, "epochs": args.epochs}
 )
 
-    # track hyperparameters and run metadata
+    #track hyperparameters and run metadata
     #config={args})
 
 def load_dict_finetuner(args, model):
     """
     Function for loading pre-trained model weights (from MagFace network_inf.py)
-    Pre-trained model in this thesis is: iresnet18
+    Model weights, optimizer etc. are stored in checkpoint['state_dict']
+    Pre-trained model in this thesis is: iresnet18, loaded from magface.builder
     Updates this model with the weights from a model from a checkpoint. 
     Returns model 
     """
@@ -133,10 +133,14 @@ def load_dict_finetuner(args, model):
             checkpoint = torch.load(args.pretrained, map_location=torch.device('cuda'))
         
         _state_dict = clean_dict_finetuner(model, checkpoint['state_dict'])
-        print("HERE")
         model_dict = model.state_dict()
+        for name, param in _state_dict.items():
+            model_dict[name].copy_(param.to('cuda'))  # Ensure parameters are on the correct device
         model_dict.update(_state_dict)
         model.load_state_dict(model_dict)
+        
+        #model_dict.update(_state_dict)
+        #model.load_state_dict(model_dict)
         
         # delete to release more space
         del checkpoint
@@ -162,8 +166,8 @@ def clean_dict_finetuner(model, state_dict):
             _state_dict[new_k] = v
         else:
             print("K? ", new_k)
-            print(v.size())
-            print()
+            #print(v.size())
+            #print()
             #print(k,i, "III, did not happen",v.size(), model.state_dict()[new_k].size(), "\nhvordan ser v ud V", v ) 
         # assert k[0:1] == 'module.features.'
         new_kk = '.'.join(k.split('.')[1:])
@@ -182,9 +186,35 @@ def clean_dict_finetuner(model, state_dict):
             num_model, num_ckpt))
     return _state_dict
 
+def unfreeze_last_layers_by_type(model, num_layers_to_unfreeze):
+    # Identify layers to unfreeze (Conv2d and Linear layers)
+    layers_to_unfreeze = []
+    layer_types = (torch.nn.Conv2d, torch.nn.Linear)
+    
+    # List of layers to exclude from unfreezing
+    exclude_layers = ['module.features.layer3.0.downsample.0', 'module.features.layer4.0.downsample.0']
+    
+    # Get all layers
+    for name, module in model.named_modules():
+        if isinstance(module, layer_types) and name not in exclude_layers:
+            layers_to_unfreeze.append(name)
+    
+    # Determine the last num_layers_to_unfreeze layers
+    layers_to_unfreeze = layers_to_unfreeze[-num_layers_to_unfreeze:]
+    print(f"Layers to unfreeze: {layers_to_unfreeze}")
+    
+    # Unfreeze the selected layers
+    for name, param in model.named_parameters():
+        layer_name = name.rsplit('.', 1)[0]
+        if layer_name in layers_to_unfreeze:
+            param.requires_grad = True
+            print(f"Unfroze layer: {layer_name}")
+
+
 
 def main(args):
-    # check the feasible of the lambda g
+    "from trainer.py"
+    # check the feasible of the lambda g - magface settings
     s = 64
     k = (args.u_margin-args.l_margin)/(args.u_a-args.l_a)
     min_lambda = s*k*args.u_a**2*args.l_a**2/(args.u_a**2-args.l_a**2)
@@ -201,21 +231,30 @@ def main(args):
 
 def main_worker(args):
     global best_acc1
-    print("Value of args.pretrained:", args.pretrained)  # Add this line for debugging
+    #print("Value of args.pretrained:", args.pretrained)  # Add this line for debugging
 
     if args.pretrained:
-        print("Value of args.pretrained: AFTER", args.pretrained)
-
+        
         cprint('=> modeling the network ...', 'green')
         model = magface.builder(args)
-        print("MODEL1:")
+        #print("MODEL1:", model)
+        #num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        #print("Number of trainable parameters: MODEL 1", num_params)
         #model = load_dict_inf(args, model) # loading using pre-trained model (as in network_inf.py)
+        
+        # prints which parameters are being loaded - not the fc layer..
+        # returns model... i tvivl om der skal være = tegn.
         load_dict_finetuner(args, model)
-        print("MODEL2:")
-        #model = torch.nn.DataParallel(model).cuda()
-        model = torch.nn.DataParallel(model) # if no gpu
+        #print("MODEL2:", model)
+        # Print number of parameters
+        #num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        #print("Number of trainable parameters: MODEL 2", num_params)
+        model = torch.nn.DataParallel(model).cuda() #.to('cpu')#.cuda()
+        #model = torch.nn.DataParallel(model).to(device) # if no gpu
 
-        print("MODEL3:")
+        ##### HERTIL
+        
+        #print("MODEL3:")
         # for name, param in model.named_parameters():
         #     cprint(' : layer name and parameter size - {} - {}'.format(name, param.size()), 'green')
         
@@ -238,7 +277,7 @@ def main_worker(args):
 
         cprint('=> building the dataloader ...', 'green')
         train_loader = dataloader.train_loader(args)
-        print("TRAIN LOADER????", train_loader)
+        print("TRAIN LOADER????", train_loader, "ARGS: are workers and batch size and train list"),
 
         cprint('=> building the criterion ...', 'green')
         criterion = magface.MagLoss(
@@ -252,10 +291,23 @@ def main_worker(args):
 
             global current_lr
             current_lr = utils.adjust_learning_rate(optimizer, epoch, args)
+            
+            # UNFREEZING LAST 9 LAYERS
+            # In your training loop or wherever you handle the epoch logic
+            if epoch == args.lr_drop_epoch[0]:
+                # Unfreeze the last num_layers_to_unfreeze unique layers
+                unfreeze_last_layers_by_type(model, num_layers_to_unfreeze=9)
+
+                # Reinitialize the optimizer with the updated parameters
+                optimizer = torch.optim.SGD(model.parameters(), current_lr, momentum=args.momentum, weight_decay=args.weight_decay)
+                cprint('=> UNFREEZING SELECTED LAYERS...', 'green')
 
             # train for one epoch
-            #co2_emission, acc1, acc5, loss = do_train(train_loader, model, criterion, optimizer, epoch, args)
-            do_train(train_loader, model, criterion, optimizer, epoch, args)
+            co2_emission, top1, top5, losses_id = do_train(train_loader, model, criterion, optimizer, epoch, args)
+            #do_train(train_loader, model, criterion, optimizer, epoch, args)
+                    
+            print("LOSS ID:", losses_id)
+
 
             # save pth
             if epoch % args.pth_save_epoch == 0:
@@ -273,7 +325,7 @@ def main_worker(args):
                 ))
                 cprint(' : save pth for epoch {}'.format(epoch + 1))
                 # log metrics to wandb
-                wandb.log({"CO2 emission (in Kg)": co2_emission, "acc1": acc1, "acc5": acc5,"loss": loss})
+                wandb.log({"epochs": epoch ,"CO2 emission (in Kg)": co2_emission, "acc1": top1.avg, "acc5": top5.avg,"losses_id": losses_id.avg})
     else:
         print("args.pretrained is False")  # Add this line for debugging
 
@@ -303,31 +355,61 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
         progress_template,
         prefix="Epoch: [{}]".format(epoch))
     end = time.time()
+    print("LEN TRAIN LOADER:", len(train_loader))
 
     # update lr
     learning_rate.update(current_lr)
-    model = model.to('cpu') #or cuda
+    model = model.to('cuda') #.to('cpu') #or cuda
 
     for i, (input, target) in enumerate(train_loader):
+        print("---!!--I AND TARGET!!!!!-----!!-----", i, target)
+        #print("--------TENSOR_SHAPE--------\nInput batch size:", input.size())
+        #print("Target batch size:", target.max())
+
         # measure data loading time
         data_time.update(time.time() - end)
         global iters
         iters += 1
         
-        input = input.to('cpu', non_blocking=True) #or cuda
-        target = target.to('cpu', non_blocking=True) #or cuda
+        
+        input = input.cuda(non_blocking=True) #.to('cuda', non_blocking=True) #.cuda(non_blocking=True) #.to('cpu', non_blocking=True) #or cuda
+        target = target.cuda(non_blocking=True)#.to('cuda', non_blocking=True) #.cuda(non_blocking=True) #.to('cpu', non_blocking=True) #or cuda
 
         #input = input.cuda(non_blocking=True)
         #target = target.cuda(non_blocking=True)
+        
+        #print("--------TENSOR_SHAPE--------\nInput batch size:Input batch size:", input.size())
+        #print("Target batch size:", target.size())
 
         # compute output
         output, x_norm = model(input, target)
+        
+        ###
+        # Debugging prints
+        print(f"Output shape: {output[0].shape}")
+        print(f"Target shape: {target.shape}, Target min: {target.min()}, Target max: {target.max()}, Output[0] size: {output[0].size(1)}")
+
+        # Ensure all target indices are within the valid range
+        #assert target.min() >= 0 and target.max() < output[0].size(1), "Target index out of bounds"
+
+                
+        
+        #print(f"Output shape from model: {output.shape}")
+        print(f"--------TENSOR_SHAPE--------\nx_norm shape from model: {x_norm.shape}")
+        
+        #output_squeezed = [torch.squeeze(tensor, dim=1) for tensor in output]
+        print(f"--------TENSOR_SHAPE--------\noutput shape from model:")
+        for idx, tensor in enumerate(output):
+            print(f"Shape of tensor {idx}: {tensor.shape}")
+              
 
         loss_id, loss_g, one_hot = criterion(output, target, x_norm)
         loss = loss_id + args.lambda_g * loss_g
+        print("AFTER LOSS")
 
         # measure accuracy and record loss
         acc1, acc5 = utils.accuracy(args, output[0], target, topk=(1, 5))
+        print("here")
 
         losses.update(loss.item(), input.size(0))
         top1.update(acc1[0], input.size(0))
@@ -346,6 +428,8 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
         batch_time.update(duration)
         end = time.time()
         throughputs.update(args.batch_size / duration)
+        print("here2")
+
 
         if i % args.print_freq == 0:
             progress.display(i)
@@ -362,7 +446,7 @@ def do_train(train_loader, model, criterion, optimizer, epoch, args):
                 np.savez('{}/vis/epoch_{}_iter{}'.format(args.pth_save_fold, epoch, i),
                          x_norm, logit, cos_theta)
     emissions = tracker.stop()
-    #return emissions, acc1, acc5, loss
+    return emissions, top1, top5, losses_id
 
 
 def debug_info(x_norm, l_a, u_a, l_margin, u_margin):

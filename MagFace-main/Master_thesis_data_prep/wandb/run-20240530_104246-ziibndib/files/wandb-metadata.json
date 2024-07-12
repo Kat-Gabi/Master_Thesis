@@ -1,0 +1,259 @@
+{
+    "os": "Linux-5.4.275-1.el7.elrepo.x86_64-x86_64-with-glibc2.17",
+    "python": "3.10.13",
+    "heartbeatAt": "2024-05-30T08:42:47.733581",
+    "startedAt": "2024-05-30T08:42:46.066417",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--arch",
+        "iresnet18",
+        "--train_list",
+        "../../data/data_full/HDA_processed_cluster_magface/fine_tune_train_list_magface_correct_index_tester.list",
+        "--pretrained",
+        "../models/magface_iresnet18_casia_dp.pth",
+        "--cpu_mode",
+        "0",
+        "--workers",
+        "4",
+        "--epochs",
+        "2",
+        "--start-epoch",
+        "0",
+        "--batch-size",
+        "256",
+        "--embedding-size",
+        "512",
+        "--last-fc-size",
+        "823",
+        "--arc-scale",
+        "64",
+        "--learning-rate",
+        "0.01",
+        "--momentum",
+        "0.9",
+        "--weight-decay",
+        "5e-4",
+        "--lr-drop-epoch",
+        "2",
+        "--lr-drop-ratio",
+        "0.1",
+        "--print-freq",
+        "10",
+        "--pth-save-fold",
+        "./test/",
+        "--pth-save-epoch",
+        "1",
+        "--l_a",
+        "10",
+        "--u_a",
+        "110",
+        "--l_margin",
+        "0.45",
+        "--u_margin",
+        "0.8",
+        "--lambda_g",
+        "35",
+        "--vis_mag",
+        "1"
+    ],
+    "state": "running",
+    "program": "/work3/s174139/Master_Thesis/MagFace-main/Master_thesis_data_prep/../run/fine_tuner.py",
+    "codePathLocal": null,
+    "codePath": "MagFace-main/run/fine_tuner.py",
+    "git": {
+        "remote": "git@github.com:Kat-Gabi/Master_Thesis.git",
+        "commit": "73791419c3714b231000cd23f7400d6f3250b1f3"
+    },
+    "email": "s174139@student.dtu.dk",
+    "root": "/work3/s174139/Master_Thesis",
+    "host": "n-62-12-24",
+    "username": "s174139",
+    "executable": "/work3/s174139/best_master_remote/bin/python",
+    "cpu_count": 32,
+    "cpu_count_logical": 32,
+    "cpu_freq": {
+        "current": 1446.9589687500002,
+        "min": 1200.0,
+        "max": 3900.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1704.906,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1611.408,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.007,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 2082.277,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.74,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.429,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.63,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1199.764,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.729,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.881,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1199.669,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.666,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.183,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.584,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.138,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.651,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1377.231,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.041,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3873.89,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3039.099,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.193,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.619,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.674,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1379.796,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.197,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.371,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.208,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1199.779,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.232,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 2424.709,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1200.26,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1201.726,
+            "min": 1200.0,
+            "max": 3900.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 71.9168586730957,
+            "used": 5.754741668701172
+        }
+    },
+    "gpu": "NVIDIA A100-PCIE-40GB",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA A100-PCIE-40GB",
+            "memory_total": 42949672960
+        }
+    ],
+    "memory": {
+        "total": 755.5554466247559
+    }
+}

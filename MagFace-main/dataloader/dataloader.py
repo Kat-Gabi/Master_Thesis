@@ -34,10 +34,29 @@ class MagTrainDataset(data.Dataset):
     def __getitem__(self, index):
         im_name = self.im_names[index]
         target = self.targets[index]
+        # Check for the range and unique target values
+        #unique_targets = set(self.targets)
+        #print(f"Number of unique targets: {len(unique_targets)}")
+        #print(f"Max target value: {max(unique_targets)}")
+        #print(f"Min target value: {min(unique_targets)}")
+        #print("TARGETS!!", target)
         img = cv2.imread(im_name)
+        
+        ## NEW ----
+        # Check if the image was loaded correctly
+        if img is None:
+            print(f"Warning: Image at path {im_name} could not be loaded.")
+            # Handle the error as you see fit, for example, return a dummy image
+            img = np.zeros((112, 112, 3), dtype=np.uint8)  # Assuming your images are of size 224x224
 
-        img = self.transform(img)
+        if self.transform:
+            img = self.transform(img)
+        #print("TARGET RETURNED", target)
         return img, target
+        ## ----
+
+        # img = self.transform(img)
+        # return img, target
 
     def __len__(self):
         return len(self.im_names)
@@ -47,6 +66,7 @@ def train_loader(args):
     train_trans = transforms.Compose([
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
+        
     ])
     train_dataset = MagTrainDataset(
         args.train_list,

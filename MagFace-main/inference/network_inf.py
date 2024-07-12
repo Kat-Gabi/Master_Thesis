@@ -4,15 +4,18 @@ import os
 
 
 # Specify the desired directory
-desired_directory = '/work3/s174139/Master_Thesis/MagFace-main/inference' 
+#desired_directory = '/work3/s174139/Master_Thesis/MagFace-main/inference' 
 
 # Change the current working directory
-print("PATHHHH","/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/MagFace-main/inference")
-sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/MagFace-main/inference")
+print("PATHHHH","/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/inference")
+sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/inference")
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 sys.path.append("..")
-from magface_models import iresnet
+#from magface_models import iresnet
+from models import iresnet
+
 from collections import OrderedDict
 from tqdm import tqdm
 from termcolor import cprint
