@@ -29,7 +29,7 @@ The directory structure of the project looks like this:
 │   │
 │   └── Master_thesis_data_prep/          <- Directory for model-specific data processing
 │
-├── figures               <- Saved figures for report
+├── figures              <- Saved figures for report
 │
 ├── notebooks            <- Jupyter notebooks for different types of analysis
 │
