@@ -54,3 +54,6 @@ The directory structure of the project looks like this:
 - To move these csvs to folders AdaFace and MagFace can work with, move_data function in Data_proc_funcs.py is used.
 - The balancing of the two data sets to create the final children and adults data sets are done in balance_data functions in Data_proc_funcs.py.
 - To use the respective balanced datasets for training MagFace, use make_image_lits_magface.py. 
+
+
+For more details or questions, send an email to s174139@dtu.dk or s183910@dtu.dk
